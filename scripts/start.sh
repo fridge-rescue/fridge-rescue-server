@@ -2,9 +2,9 @@
 PROJECT_ROOT="/home/ubuntu/app"
 JAR_FILE="$PROJECT_ROOT/fridge-rescue-server.jar"
 
-APP_LOG="$PROJECT_ROOT/logs/application.log"
-ERROR_LOG="$PROJECT_ROOT/logs/error.log"
-DEPLOY_LOG="$PROJECT_ROOT/logs/deploy.log"
+APP_LOG="$PROJECT_ROOT/application.log"
+ERROR_LOG="$PROJECT_ROOT/error.log"
+DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
 TIME_NOW=$(date +%c)
 
