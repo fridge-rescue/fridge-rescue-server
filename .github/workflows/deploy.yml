@@ -9,7 +9,7 @@ env:
   S3_BUCKET_NAME: fridge-rescue-deploy-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: fridge-rescue-server
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: fridge-rescue-deploy-group
-  
+
 permissions:
   contents: read
 
@@ -30,7 +30,14 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-    
+
+    # Property 주입
+    - name: Add ENV Properties
+      run: |
+        touch ./src/main/resources/application-dev.yml
+        echo "${{ secrets.APPLICATION_DEV_ENV }}" > ./src/main/resources/application-dev.yml
+        cat ./src/main/resources/application-dev.yml
+
     # Gradle build (Test 제외)
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
