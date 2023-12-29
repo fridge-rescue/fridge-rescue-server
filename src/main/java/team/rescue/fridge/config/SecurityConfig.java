@@ -1,4 +1,4 @@
-package team.rescue.fridge.oauth.config;
+package team.rescue.fridge.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
