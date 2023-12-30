@@ -1,14 +1,4 @@
 
-# Create fridge Table
-create table fridge
-(
-    fridge_id   bigint unique not null auto_increment,
-    created_at  datetime(6) not null,
-    modified_at datetime(6),
-
-    primary key (fridge_id)
-);
-
 # Create member Table
 create table member
 (
@@ -27,8 +17,19 @@ create table member
     created_at  datetime(6) not null,
     modified_at datetime(6),
 
-    primary key (member_id),
-    foreign key (fridge_id) references fridge (fridge_id)
+    primary key (member_id)
+);
+
+# Create fridge Table
+create table fridge
+(
+    fridge_id bigint unique not null auto_increment,
+    member_id bigint not null,
+    created_at datetime(6) not null,
+    modified_at datetime(6),
+
+    primary key (fridge_id),
+    foreign key (member_id) references member (member_id)
 );
 
 # Create notification Table
