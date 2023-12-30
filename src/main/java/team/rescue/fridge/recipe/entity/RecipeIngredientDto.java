@@ -8,27 +8,24 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @Entity
-@Table(name = "recipe_step")
+@Table(name = "recipe_ingredient")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class RecipeStepDto {
+public class RecipeIngredientDto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "recipe_step_id")
+	@Column(name = "recipe_ingredient_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "recipe_id")
 	private RecipeDto recipe;
 
-	@Column(name = "step_no")
-	private int stepNo;
+	@Column(name = "name", nullable = false, length = 20)
+	private String name;
 
-	@Column(name = "step_contents", nullable = false, length = 100)
-	private String stepContents;
-
-	@Column(name = "step_tip", nullable = false, length = 100)
-	private String stepTip;
+	@Column(name = "amount", nullable = false, length = 20)
+	private String amount;
 }
