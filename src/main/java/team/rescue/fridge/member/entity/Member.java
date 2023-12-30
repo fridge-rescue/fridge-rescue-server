@@ -93,7 +93,6 @@ public class Member {
 	private LocalDateTime modifiedAt;
 
 	public void updateEmailCode(String emailCode) {
-		System.out.println("email: " + this.email);
 		this.emailCode = emailCode;
 	}
 }
