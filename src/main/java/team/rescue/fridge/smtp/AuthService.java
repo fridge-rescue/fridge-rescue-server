@@ -48,7 +48,6 @@ public class AuthService {
 				.name(joinReqDto.getName())
 				.nickname(joinReqDto.getNickname())
 				.email(joinReqDto.getEmail())
-				.phone(joinReqDto.getPhone())
 				.password(passwordEncoder.encode(joinReqDto.getPassword()))
 				.role(RoleType.GUEST)
 				.provider(ProviderType.EMAIL)

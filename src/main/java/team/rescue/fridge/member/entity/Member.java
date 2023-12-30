@@ -48,9 +48,6 @@ public class Member {
 	@Column(name = "email", unique = true, nullable = false, length = 50)
 	private String email;
 
-	@Column(name = "phone", unique = true, length = 11)
-	private String phone;
-
 	@Column(name = "password", nullable = false, length = 100)
 	private String password;
 

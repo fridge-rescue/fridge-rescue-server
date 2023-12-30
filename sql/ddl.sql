@@ -7,7 +7,6 @@ create table member
     name        varchar(15)        not null,
     nickname    varchar(15)        not null,
     email       varchar(50) unique not null,
-    phone       varchar(11),
     password    varchar(100)       not null,
     role        enum ('USER','ADMIN') not null,
     provider    enum('EMAIL','GOOGLE') not null,

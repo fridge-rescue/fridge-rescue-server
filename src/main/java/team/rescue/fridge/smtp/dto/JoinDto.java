@@ -1,7 +1,6 @@
 package team.rescue.fridge.smtp.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -23,10 +22,6 @@ public class JoinDto {
 		@NotEmpty(message = "사용할 닉네임을 입력해주세요.")
 		@Pattern(regexp = "^[a-zA-Z가-힣]{2,15}", message = "한글 또는 영문으로 이루어진 최소 2글자, 최대 15자의 닉네임을 입력해주세요.")
 		private String nickname;
-
-		@Null(message = "휴대폰 번호를 입력해주세요.")
-		@Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$", message = "올바른 휴대폰 번호가 아닙니다.")
-		private String phone;
 
 		// 최대 30자
 		@NotEmpty(message = "로그인에 사용할 이메일을 입력해주세요.")
