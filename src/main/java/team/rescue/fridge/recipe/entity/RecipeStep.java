@@ -28,4 +28,5 @@ public class RecipeStep {
 
 	@Column(name = "step_tip", nullable = false, length = 100)
 	private String stepTip;
+
 }
