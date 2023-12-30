@@ -22,4 +22,5 @@ public class RecipeIngredient {
 
 	@Column(name = "amount", nullable = false, length = 20)
 	private String amount;
+
 }
