@@ -1,14 +1,4 @@
 
-# Create fridge Table
-create table fridge
-(
-    fridge_id   bigint unique not null auto_increment,
-    created_at  datetime(6) not null,
-    modified_at datetime(6),
-
-    primary key (fridge_id)
-);
-
 # Create member Table
 create table member
 (
@@ -17,17 +7,28 @@ create table member
     name        varchar(15)        not null,
     nickname    varchar(15)        not null,
     email       varchar(50) unique not null,
-    phone       varchar(11),
     password    varchar(100)       not null,
     role        enum ('USER','ADMIN') not null,
     provider    enum('EMAIL','GOOGLE') not null,
     provider_id varchar(100),
+    email_code  varchar(10),
     jwt_token   varchar(255),
     created_at  datetime(6) not null,
     modified_at datetime(6),
 
-    primary key (member_id),
-    foreign key (fridge_id) references fridge (fridge_id)
+    primary key (member_id)
+);
+
+# Create fridge Table
+create table fridge
+(
+    fridge_id bigint unique not null auto_increment,
+    member_id bigint not null,
+    created_at datetime(6) not null,
+    modified_at datetime(6),
+
+    primary key (fridge_id),
+    foreign key (member_id) references member (member_id)
 );
 
 # Create notification Table
