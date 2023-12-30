@@ -22,6 +22,7 @@ create table member
     role        enum ('USER','ADMIN') not null,
     provider    enum('EMAIL','GOOGLE') not null,
     provider_id varchar(100),
+    email_code  varchar(10),
     jwt_token   varchar(255),
     created_at  datetime(6) not null,
     modified_at datetime(6),
