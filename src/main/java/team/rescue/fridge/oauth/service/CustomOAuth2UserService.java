@@ -21,6 +21,11 @@ import team.rescue.fridge.oauth.PrincipalDetails;
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
+	private static final String PROVIDER_ID = "sub";
+	private static final String NICKNAME = "given_name";
+	private static final String NAME = "name";
+	private static final String EMAIL = "email";
+
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
 
@@ -31,10 +36,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		ProviderType provider = ProviderType.valueOf(
 				userRequest.getClientRegistration().getRegistrationId().toUpperCase()); // google
-		String providerId = oAuth2User.getAttribute("sub");
-		String nickname = oAuth2User.getAttribute("given_name");
-		String name = oAuth2User.getAttribute("name");
-		String email = oAuth2User.getAttribute("email");
+		String providerId = oAuth2User.getAttribute(PROVIDER_ID);
+		String nickname = oAuth2User.getAttribute(NICKNAME);
+		String name = oAuth2User.getAttribute(NAME);
+		String email = oAuth2User.getAttribute(EMAIL);
 
 		String createdPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
 		String encryptedPassword = passwordEncoder.encode(createdPassword);
