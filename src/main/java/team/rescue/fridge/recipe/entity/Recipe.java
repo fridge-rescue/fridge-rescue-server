@@ -31,7 +31,7 @@ public class Recipe {
 	@Column(name = "title", nullable = false, length = 100)
 	private String title;
 
-	@Column(name = "summary", nullable = false, length = 100)
+	@Column(name = "summary", length = 100)
 	private String summary;
 
 	@Column(name = "review_count")
@@ -44,5 +44,8 @@ public class Recipe {
 	@LastModifiedDate
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
+
+	@Column(name = "recipe_image_url", length = 100)
+	private String recipeImageUrl;
 
 }
