@@ -48,6 +48,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 				= memberRepository.findByProviderAndProviderId(provider, providerId);
 
 		if (findMember.isEmpty()) {
+			if (memberRepository.existsByEmail(email)) {
+				log.error("이미 존재하는 email. 다른 email을 사용하도록 하기 위한 방법 필요.");
+				throw new RuntimeException();
+			}
+
 			Member savedMember = memberRepository.save(Member.builder()
 					.name(name)
 					.email(email)
