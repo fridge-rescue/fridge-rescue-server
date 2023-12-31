@@ -17,8 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import team.rescue.fridge.dto.AuthMember;
-import team.rescue.fridge.dto.LoginDto;
-import team.rescue.fridge.dto.LoginDto.Response;
+import team.rescue.fridge.dto.LoginDto.LoginReqDto;
+import team.rescue.fridge.dto.LoginDto.LoginResDto;
 import team.rescue.fridge.security.dto.TokenDto;
 import team.rescue.fridge.security.token.JwtTokenType;
 
@@ -52,12 +52,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     log.debug("로그인 시도 : {}", request.getRequestURL());
 
     try {
-      LoginDto.Request loginDto = objectMapper.readValue(request.getInputStream(),
-          LoginDto.Request.class);
-      log.debug("이메일: {}, 비밀번호: {}", loginDto.getEmail(), loginDto.getPassword());
+      LoginReqDto loginReqDto = objectMapper.readValue(request.getInputStream(),
+          LoginReqDto.class);
+      log.debug("이메일: {}, 비밀번호: {}", loginReqDto.getEmail(), loginReqDto.getPassword());
 
       UsernamePasswordAuthenticationToken authRequestToken =
-          new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
+          new UsernamePasswordAuthenticationToken(loginReqDto.getEmail(), loginReqDto.getPassword());
 
       return authenticationManager.authenticate(authRequestToken);
 
@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     redisUtil.put(authMember.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
     TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
-    LoginDto.Response loginResponse = new Response(authMember.getMember(), tokenDto);
+    LoginResDto loginResponse = new LoginResDto(authMember.getMember(), tokenDto);
 
     response.setStatus(HttpStatus.OK.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
