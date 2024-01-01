@@ -32,7 +32,7 @@ public class AuthController {
 	 * @return GUEST 회원 정보
 	 */
 	@PostMapping("/email/join")
-	public ResponseEntity<?> joinWithEmail(
+	public ResponseEntity<?> emailJoin(
 			@RequestBody @Valid JoinDto.JoinReqDto joinReqDto
 	) {
 
@@ -50,7 +50,7 @@ public class AuthController {
 	 * @param providerType OAuth Provider Type
 	 */
 	@GetMapping("/oauth")
-	public void joinWithOAuth(
+	public void oAuthLoginOrJoin(
 			HttpServletResponse response,
 			@RequestParam ProviderType providerType
 	) throws IOException {
