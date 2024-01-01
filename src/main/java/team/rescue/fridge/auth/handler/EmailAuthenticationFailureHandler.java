@@ -13,10 +13,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 @RequiredArgsConstructor
 public class EmailAuthenticationFailureHandler implements AuthenticationEntryPoint {
 
-
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
+	public void commence(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			AuthenticationException authException
+	) throws IOException, ServletException {
 
 		log.error("[AuthenticationExceptionHandler] 로그인 실패");
 

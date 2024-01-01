@@ -16,13 +16,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import team.rescue.fridge.auth.user.AuthUser;
 import team.rescue.fridge.auth.dto.LoginDto.LoginReqDto;
 import team.rescue.fridge.auth.dto.LoginDto.LoginResDto;
 import team.rescue.fridge.auth.dto.TokenDto;
 import team.rescue.fridge.auth.provider.JwtTokenProvider;
-import team.rescue.fridge.util.RedisUtil;
 import team.rescue.fridge.auth.type.JwtTokenType;
+import team.rescue.fridge.auth.user.AuthUser;
+import team.rescue.fridge.util.RedisUtil;
 
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -44,7 +44,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		this.objectMapper = objectMapper;
 		this.redisUtil = redisUtil;
 	}
-
 
 	@Override
 	public Authentication attemptAuthentication(

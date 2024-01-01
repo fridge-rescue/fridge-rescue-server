@@ -39,12 +39,10 @@ import team.rescue.fridge.util.RedisUtil;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final OAuthService oAuth2UserService;
-	private final OAuthAuthorizationSuccessHandler oAuth2SuccessHandler;
-	private final OAuthAuthorizationFailureHandler oAuth2FailureHandler;
-	private final RedisUtil redisUtil;
+	private final OAuthService oAuthService;
+	private final AuthService authService;
 	private final PasswordEncoder passwordEncoder;
-	private final AuthService memberDetailService;
+	private final RedisUtil redisUtil;
 	private final ObjectMapper objectMapper;
 
 	@Bean
@@ -56,11 +54,6 @@ public class SecurityConfig {
 				)
 				.formLogin(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable)
-				.oauth2Login(oauth2Login ->
-						oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-										userInfoEndpointConfig.userService(oAuth2UserService))
-								.successHandler(oAuth2SuccessHandler)
-								.failureHandler(oAuth2FailureHandler))
 				.headers((headerConfig) ->
 						headerConfig.frameOptions(FrameOptionsConfig::disable)
 				) // h2-console 화면을 사용하기 위해 iframe 비허용 처리
@@ -73,9 +66,8 @@ public class SecurityConfig {
 								.requestMatchers("/", "/api/auth/**").permitAll()
 								.anyRequest().authenticated()
 				);
-		http.apply(new CustomSecurityFilterManager());
 
-		// exceptionHandling 추가
+		// Exception Handler 등록
 		http
 				.exceptionHandling(exceptionHandler -> {
 					exceptionHandler.authenticationEntryPoint(
@@ -83,6 +75,17 @@ public class SecurityConfig {
 					exceptionHandler.accessDeniedHandler(
 							new EmailAuthorizationFailureHandler()); // 인가(권한) 오류(403)
 				});
+
+		// OAuth Handler 등록
+		http
+				.oauth2Login(oauth2Login ->
+						oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
+										userInfoEndpointConfig.userService(oAuthService))
+								.successHandler(new OAuthAuthorizationSuccessHandler())
+								.failureHandler(new OAuthAuthorizationFailureHandler()));
+
+		// Filter 등록
+		http.apply(new CustomSecurityFilterManager());
 
 		return http.build();
 	}
@@ -109,7 +112,7 @@ public class SecurityConfig {
 		log.debug("[Bean 등록] AuthenticationManager");
 
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(memberDetailService);
+		provider.setUserDetailsService(authService);
 		provider.setPasswordEncoder(passwordEncoder);
 		return new ProviderManager(provider);
 	}
@@ -122,7 +125,7 @@ public class SecurityConfig {
 
 			AuthenticationManager authenticationManager = builder.getSharedObject(
 					AuthenticationManager.class);
-			
+
 			builder.addFilter(
 					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil));
 			builder.addFilter(new JwtAuthorizationFilter(authenticationManager));

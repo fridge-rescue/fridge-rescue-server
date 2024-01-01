@@ -17,8 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.ObjectUtils;
-import team.rescue.fridge.auth.user.AuthUser;
 import team.rescue.fridge.auth.provider.JwtTokenProvider;
+import team.rescue.fridge.auth.user.AuthUser;
 
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -31,8 +31,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain
+	) throws ServletException, IOException {
 
 		log.debug("[{}] JWT 유효성 검사", request.getRequestURI());
 
