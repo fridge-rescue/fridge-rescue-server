@@ -1,4 +1,4 @@
-package team.rescue.fridge.recipe.entity;
+package team.rescue.fridge.fridge.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,26 +17,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "recipe_ingredient")
+@Table(name = "fridge_ingredient")
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RecipeIngredient {
+public class FridgeIngredient {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "recipe_ingredient_id")
+	@Column(name = "fridge_ingredient_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recipe_id")
-	private Recipe recipe;
+	@JoinColumn(name = "fridge_id", nullable = false)
+	private Fridge fridge;
 
 	@Column(name = "name", nullable = false, length = 20)
 	private String name;
 
-	@Column(name = "amount", nullable = false, length = 20)
-	private String amount;
+	@Column(name = "memo", nullable = false, length = 20)
+	private String memo;
 
+	@Column(name = "expired_at")
+	private LocalDateTime expiredAt;
 }

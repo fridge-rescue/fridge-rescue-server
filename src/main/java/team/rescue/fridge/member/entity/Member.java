@@ -21,8 +21,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import team.rescue.fridge.notification.Notification;
-import team.rescue.fridge.review.entity.Cook;
+import team.rescue.fridge.auth.type.ProviderType;
+import team.rescue.fridge.auth.type.RoleType;
+import team.rescue.fridge.cook.entity.Cook;
+import team.rescue.fridge.notification.entity.Notification;
 import team.rescue.fridge.review.entity.Review;
 
 @Entity
@@ -71,15 +73,15 @@ public class Member {
 
 	// 알림 조회
 	@OneToMany(mappedBy = "member")
-	private final List<Notification> notificationList = new ArrayList<>();
+	private List<Notification> notificationList = new ArrayList<>();
 
 	// 요리 완료 조회
 	@OneToMany(mappedBy = "member")
-	private final List<Cook> cookList = new ArrayList<>();
+	private List<Cook> cookList = new ArrayList<>();
 
 	// 레시피 후기 조회
 	@OneToMany(mappedBy = "member")
-	private final List<Review> reviewList = new ArrayList<>();
+	private List<Review> reviewList = new ArrayList<>();
 
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)

@@ -1,8 +1,11 @@
-package team.rescue.fridge.recipe.entity;
+package team.rescue.fridge.notification.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,53 +15,42 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import team.rescue.fridge.member.entity.Member;
+import team.rescue.fridge.notification.type.NotificationType;
 
 @Entity
-@Table(name = "recipe")
+@Table(name = "notification")
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Recipe {
+public class Notification {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "recipe_id")
+	@Column(name = "notification_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@Column(name = "title", nullable = false, length = 100)
-	private String title;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "notification_type")
+	private NotificationType notificationType;
 
-	@Column(name = "summary", length = 100)
-	private String summary;
+	@Type(JsonType.class)
+	@Column(name = "notification_property", columnDefinition = "json", nullable = false)
+	private NotificationProperty notificationProperty;
 
-	@Column(name = "recipe_image_url", length = 100)
-	private String recipeImageUrl;
-
-	@Column(name = "review_count", nullable = false)
-	private Integer reviewCount;
-
-	@Column(name = "report_count", nullable = false)
-	private Integer reportCount;
+	@Column(name = "checked_at")
+	private LocalDateTime checkedAt;
 
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
-
-	@LastModifiedDate
-	@Column(name = "modified_at")
-	private LocalDateTime modifiedAt;
 }

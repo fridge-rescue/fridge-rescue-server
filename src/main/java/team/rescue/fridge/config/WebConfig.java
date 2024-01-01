@@ -33,6 +33,7 @@ public class WebConfig {
 	public JavaMailSender javaMailSender() {
 
 		log.debug("[Bean 등록] JavaMailSender");
+
 		JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 		javaMailSender.setHost(host);
 		javaMailSender.setUsername(username);
@@ -53,6 +54,7 @@ public class WebConfig {
 	public PasswordEncoder passwordEncoder() {
 
 		log.debug("[Bean 등록] PasswordEncoder");
+		
 		return new BCryptPasswordEncoder();
 	}
 }

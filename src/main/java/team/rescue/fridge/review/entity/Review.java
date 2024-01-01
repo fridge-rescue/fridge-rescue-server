@@ -17,7 +17,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import team.rescue.fridge.cook.entity.Cook;
 import team.rescue.fridge.member.entity.Member;
+import team.rescue.fridge.recipe.entity.Recipe;
 
 @Entity
 @Table(name = "review")
@@ -35,15 +37,14 @@ public class Review {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	// TODO: 레시피 테이블 매핑
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "recipe_id")
-//	private Recipe recipe;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "recipe_id")
+	private Recipe recipe;
 
 	@Column(name = "title", nullable = false, length = 50)
 	private String title;
 
-	@Column(name = "image_url")
+	@Column(name = "review_image_url")
 	private String image_url;
 
 	@Column(name = "contents", nullable = false, length = 1000)

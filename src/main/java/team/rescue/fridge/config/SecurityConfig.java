@@ -4,7 +4,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +23,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import team.rescue.fridge.handler.AuthenticationExceptionHandler;
-import team.rescue.fridge.handler.AuthorizationExceptionHandler;
-import team.rescue.fridge.oauth.handler.OAuth2FailureHandler;
-import team.rescue.fridge.oauth.handler.OAuth2SuccessHandler;
-import team.rescue.fridge.oauth.service.CustomOAuth2UserService;
-import team.rescue.fridge.security.JwtAuthenticationFilter;
-import team.rescue.fridge.security.JwtAuthorizationFilter;
-import team.rescue.fridge.security.MemberDetailService;
-import team.rescue.fridge.security.RedisUtil;
+import team.rescue.fridge.auth.filter.JwtAuthenticationFilter;
+import team.rescue.fridge.auth.filter.JwtAuthorizationFilter;
+import team.rescue.fridge.auth.handler.EmailAuthenticationFailureHandler;
+import team.rescue.fridge.auth.handler.EmailAuthorizationFailureHandler;
+import team.rescue.fridge.auth.handler.OAuthAuthorizationFailureHandler;
+import team.rescue.fridge.auth.handler.OAuthAuthorizationSuccessHandler;
+import team.rescue.fridge.auth.service.AuthService;
+import team.rescue.fridge.auth.service.OAuthService;
+import team.rescue.fridge.util.RedisUtil;
 
 @Slf4j
 @Configuration
@@ -40,12 +39,12 @@ import team.rescue.fridge.security.RedisUtil;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final CustomOAuth2UserService oAuth2UserService;
-	private final OAuth2SuccessHandler oAuth2SuccessHandler;
-	private final OAuth2FailureHandler oAuth2FailureHandler;
+	private final OAuthService oAuth2UserService;
+	private final OAuthAuthorizationSuccessHandler oAuth2SuccessHandler;
+	private final OAuthAuthorizationFailureHandler oAuth2FailureHandler;
 	private final RedisUtil redisUtil;
 	private final PasswordEncoder passwordEncoder;
-	private final MemberDetailService memberDetailService;
+	private final AuthService memberDetailService;
 	private final ObjectMapper objectMapper;
 
 	@Bean
@@ -68,12 +67,11 @@ public class SecurityConfig {
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS
 				.logout(withDefaults())
 				.authorizeHttpRequests((authorizeRequests) ->
-								authorizeRequests
-										.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-										.requestMatchers(PathRequest.toH2Console()).permitAll() // h2 콘솔
-										.requestMatchers("/", "/login/**").permitAll()  // 메인 화면, 로그인 화면, url path가 구체적으로 나오면 다시 수정.
-//                .requestMatchers("/post/**").hasRole(Role.USER.name)  // post관련 요청은 User role만. 나중에 Role을 추가하면 추가하기로.
-										.anyRequest().authenticated()
+						authorizeRequests
+								.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+								.requestMatchers(PathRequest.toH2Console()).permitAll() // h2 콘솔
+								.requestMatchers("/", "/api/auth/**").permitAll()
+								.anyRequest().authenticated()
 				);
 		http.apply(new CustomSecurityFilterManager());
 
@@ -81,16 +79,17 @@ public class SecurityConfig {
 		http
 				.exceptionHandling(exceptionHandler -> {
 					exceptionHandler.authenticationEntryPoint(
-							new AuthenticationExceptionHandler()); // 인증 실패(401)
+							new EmailAuthenticationFailureHandler()); // 인증 실패(401)
 					exceptionHandler.accessDeniedHandler(
-							new AuthorizationExceptionHandler()); // 인가(권한) 오류(403)
+							new EmailAuthorizationFailureHandler()); // 인가(권한) 오류(403)
 				});
 
 		return http.build();
 	}
 
 	CorsConfigurationSource corsConfigurationSource() {
-		log.debug("[+] corsConfigurationSource 등록");
+
+		log.debug("[Bean 등록] CorsConfigurationSource");
 
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(List.of("*"));  // 나중에 프론트 출처만 허용해야함
@@ -98,7 +97,7 @@ public class SecurityConfig {
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setAllowCredentials(true);  //클라이언트가 쿠키나 인증 관련 헤더를 사용하여 요청을 할 수 있도록 허용
 
-		// 모든 주소요청에 적용
+		// 모든 주소 요청에 적용
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
@@ -106,19 +105,26 @@ public class SecurityConfig {
 
 	@Bean
 	AuthenticationManager authenticationManager() {
-		log.debug("[+] AuthenticationManager 등록");
+
+		log.debug("[Bean 등록] AuthenticationManager");
+
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(memberDetailService);
 		provider.setPasswordEncoder(passwordEncoder);
 		return new ProviderManager(provider);
 	}
 
-	public class CustomSecurityFilterManager
-			extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
+	public class CustomSecurityFilterManager extends
+			AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
+
 		@Override
 		public void configure(HttpSecurity builder) throws Exception {
-			AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
-			builder.addFilter(new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil));
+
+			AuthenticationManager authenticationManager = builder.getSharedObject(
+					AuthenticationManager.class);
+			
+			builder.addFilter(
+					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil));
 			builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
 			super.configure(builder);
 		}

@@ -1,6 +1,14 @@
 package team.rescue.fridge.recipe.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +31,10 @@ public class RecipeStep {
 	@Column(name = "step_no")
 	private int stepNo;
 
-	@Column(name = "step_contents", nullable = false, length = 100)
+	@Column(name = "step_image_url", length = 100)
+	private String stepImageUrl;
+
+	@Column(name = "step_description", nullable = false, length = 100)
 	private String stepContents;
 
 	@Column(name = "step_tip", nullable = false, length = 100)

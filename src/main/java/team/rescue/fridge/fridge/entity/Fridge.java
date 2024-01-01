@@ -1,4 +1,4 @@
-package team.rescue.fridge.recipe.entity;
+package team.rescue.fridge.fridge.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,9 +8,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,37 +25,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import team.rescue.fridge.member.entity.Member;
 
 @Entity
-@Table(name = "recipe")
+@Table(name = "fridge")
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Recipe {
+public class Fridge {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "recipe_id")
+	@Column(name = "fridge_id")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@Column(name = "title", nullable = false, length = 100)
-	private String title;
-
-	@Column(name = "summary", length = 100)
-	private String summary;
-
-	@Column(name = "recipe_image_url", length = 100)
-	private String recipeImageUrl;
-
-	@Column(name = "review_count", nullable = false)
-	private Integer reviewCount;
-
-	@Column(name = "report_count", nullable = false)
-	private Integer reportCount;
+	// 냉장고 재료 조회
+	@OneToMany(mappedBy = "fridge")
+	private List<FridgeIngredient> ingredientList = new ArrayList<>();
 
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)
