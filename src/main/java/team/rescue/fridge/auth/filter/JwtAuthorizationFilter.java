@@ -75,12 +75,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			return;
 		}
 
-		AuthUser authMember = JwtTokenProvider.verify(accessToken);
+		AuthUser authUser = JwtTokenProvider.verify(accessToken);
 
 		// 생성된 AuthUser 객체로 인증된 Authentication 객체 생성
 		Authentication authentication =
 				new UsernamePasswordAuthenticationToken(
-						authMember, null, authMember.getAuthorities()
+						authUser, null, authUser.getAuthorities()
 				);
 
 		// SecurityContextHolder 저장

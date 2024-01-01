@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/fridges")
+@RequestMapping("/api/fridge")
 @RequiredArgsConstructor
 public class FridgeController {
 

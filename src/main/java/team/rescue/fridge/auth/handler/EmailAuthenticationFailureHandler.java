@@ -20,7 +20,7 @@ public class EmailAuthenticationFailureHandler implements AuthenticationEntryPoi
 			AuthenticationException authException
 	) throws IOException, ServletException {
 
-		log.error("[AuthenticationExceptionHandler] 로그인 실패");
+		log.error("[이메일 인증 실패]");
 
 		// 유효한 자격증명을 제공하지 않고 접근하려 할때 401
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
