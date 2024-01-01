@@ -56,8 +56,8 @@ create table notification
     member_id             bigint        not null,
     notification_type     enum ('INGREDIENT_EXPIRED','RECIPE_REVIEWED','RECIPE_RECOMMENDED'),
     notification_property json          not null,
-    created_at            datetime(6)   not null,
-    checked_at            datetime(6)   null,
+    created_at            timestamp(6)  not null,
+    checked_at            timestamp(6)  null,
 
     primary key (notification_id),
     foreign key (member_id) references member (member_id)
@@ -119,8 +119,8 @@ create table review
     title            varchar(50)   not null,
     review_image_url varchar(100),
     contents         varchar(1000) not null,
-    created_at       datetime(6)   not null,
-    modified_at      datetime(6),
+    created_at       timestamp(6)  not null,
+    modified_at      timestamp(6),
 
     primary key (review_id),
     foreign key (member_id) references member (member_id),
@@ -133,7 +133,7 @@ create table cook
     cook_id    bigint unique not null auto_increment,
     member_id  bigint        not null,
     recipe_id  bigint        not null,
-    created_at datetime(6)   not null,
+    created_at timestamp(6)  not null,
 
     primary key (cook_id),
     foreign key (member_id) references member (member_id),
@@ -147,7 +147,7 @@ create table report
     member_id  bigint        not null,
     recipe_id  bigint        not null,
     reason     varchar(200)  not null,
-    created_at datetime(6)   not null,
+    created_at timestamp(6)  not null,
 
     primary key (report_id),
     foreign key (member_id) references member (member_id),
