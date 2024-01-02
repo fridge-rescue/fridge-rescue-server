@@ -16,7 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -55,17 +55,20 @@ public class SecurityConfig {
 				)
 				.formLogin(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable)
-				.headers((headerConfig) ->
-						headerConfig.frameOptions(FrameOptionsConfig::disable)
-				) // h2-console 화면을 사용하기 위해 iframe 비허용 처리
+				.headers(HeadersConfigurer::disable) // iframe 비허용 처리
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS
-				.logout(withDefaults())
-				.authorizeHttpRequests((authorizeRequests) ->
-						authorizeRequests
-								.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-								.requestMatchers("/", "/api/auth/**").permitAll()
-								.anyRequest().authenticated()
-				);
+				.logout(withDefaults());
+
+		http
+				.authorizeHttpRequests(request -> {
+
+					request.requestMatchers("/api/auth/email/join").permitAll();
+					request.requestMatchers("/api/auth/email/login").permitAll();
+					request.requestMatchers("/api/auth/oauth").permitAll();
+
+					request.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll();
+					request.anyRequest().authenticated();
+				});
 
 		// Exception Handler 등록
 		http

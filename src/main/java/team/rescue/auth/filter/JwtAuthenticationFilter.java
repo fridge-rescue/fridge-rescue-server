@@ -27,7 +27,7 @@ import team.rescue.util.RedisUtil;
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-	private static final String LOGIN_PATH = "/api/auth/login";
+	private static final String LOGIN_PATH = "/api/auth/email/login";
 	private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;   // 24h
 
 	private final ObjectMapper objectMapper;
