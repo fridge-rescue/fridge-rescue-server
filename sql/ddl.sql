@@ -153,3 +153,16 @@ create table report
     foreign key (member_id) references member (member_id),
     foreign key (recipe_id) references recipe (recipe_id)
 );
+
+# 북마크 테이블 생성
+create table bookmark
+(
+    bookmark_id bigint unique not null auto_increment,
+    member_id   bigint        not null,
+    recipe_id   bigint        not null,
+    created_at  timestamp(6)  not null,
+
+    primary key (bookmark_id),
+    foreign key (member_id) references member (member_id),
+    foreign key (recipe_id) references recipe (recipe_id)
+);
