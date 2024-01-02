@@ -7,7 +7,6 @@ import jakarta.servlet.DispatcherType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -64,7 +63,6 @@ public class SecurityConfig {
 				.authorizeHttpRequests((authorizeRequests) ->
 						authorizeRequests
 								.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-								.requestMatchers(PathRequest.toH2Console()).permitAll() // h2 콘솔
 								.requestMatchers("/", "/api/auth/**").permitAll()
 								.anyRequest().authenticated()
 				);
