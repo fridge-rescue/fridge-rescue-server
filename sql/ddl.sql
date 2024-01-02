@@ -73,6 +73,7 @@ CREATE TABLE recipe
     recipe_image_url varchar(100)  not null,
     review_count     int           not null,
     report_count     int           not null,
+    bookmark_count   int           not null,
     created_at       timestamp(6)  not null,
     modified_at      timestamp(6),
 
