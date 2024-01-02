@@ -1,10 +1,10 @@
-package team.rescue.fridgerescueserver;
+package team.rescue;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FridgeRescueServerApplicationTests {
+class FridgeRescueApplicationTests {
 
 	@Test
 	void contextLoads() {
