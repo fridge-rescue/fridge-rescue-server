@@ -54,6 +54,9 @@ public class Recipe {
 	@Column(name = "report_count", nullable = false)
 	private Integer reportCount;
 
+	@Column(name = "bookmark_count", nullable = false)
+	private Integer bookmarkCount;
+
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
