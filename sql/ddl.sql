@@ -71,8 +71,10 @@ CREATE TABLE recipe
     title            varchar(100)  not null,
     summary          varchar(100)  not null,
     recipe_image_url varchar(100)  not null,
+    view_count       int           not null,
     review_count     int           not null,
     report_count     int           not null,
+    bookmark_count   int           not null,
     created_at       timestamp(6)  not null,
     modified_at      timestamp(6),
 
@@ -150,6 +152,19 @@ create table report
     created_at timestamp(6)  not null,
 
     primary key (report_id),
+    foreign key (member_id) references member (member_id),
+    foreign key (recipe_id) references recipe (recipe_id)
+);
+
+# 북마크 테이블 생성
+create table bookmark
+(
+    bookmark_id bigint unique not null auto_increment,
+    member_id   bigint        not null,
+    recipe_id   bigint        not null,
+    created_at  timestamp(6)  not null,
+
+    primary key (bookmark_id),
     foreign key (member_id) references member (member_id),
     foreign key (recipe_id) references recipe (recipe_id)
 );
