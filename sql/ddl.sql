@@ -71,6 +71,7 @@ CREATE TABLE recipe
     title            varchar(100)  not null,
     summary          varchar(100)  not null,
     recipe_image_url varchar(100)  not null,
+    view_count       int           not null,
     review_count     int           not null,
     report_count     int           not null,
     bookmark_count   int           not null,
