@@ -1,16 +1,34 @@
 package team.rescue.auth.handler;
 
+import static team.rescue.auth.type.JwtTokenType.ACCESS_TOKEN;
+import static team.rescue.auth.type.JwtTokenType.REFRESH_TOKEN;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import team.rescue.auth.user.OAuthUser;
+import team.rescue.auth.dto.LoginDto.LoginResDto;
+import team.rescue.auth.provider.JwtTokenProvider;
+import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.util.RedisUtil;
 
 @Slf4j
+@RequiredArgsConstructor
 public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHandler {
+
+	private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24; // 24h
+	private static final String TOKEN_PREFIX = "Bearer ";
+	private static final String HEADER_ACCESS_TOKEN = "Access-Token";
+	private static final String HEADER_REFRESH_TOKEN = "Refresh-Token";
+
+	private final RedisUtil redisUtil;
 
 	@Override
 	public void onAuthenticationSuccess(
@@ -19,12 +37,26 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 			Authentication authentication
 	) throws IOException, ServletException {
 
-		// TODO: OAuth2 인증 성공 후 실행할 로직 작성
-
-		// SecurityContext에 저장된 Authentication 객체
-		OAuthUser principalDetails = (OAuthUser) authentication.getPrincipal();
+		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 		log.info(principalDetails.getAttributes().toString());
 
-		// 여기서 jwt 토큰을 가지고 로그인 로직 구현
+		String accessToken = JwtTokenProvider.createToken(principalDetails, ACCESS_TOKEN);
+		String refreshToken = JwtTokenProvider.createToken(principalDetails, REFRESH_TOKEN);
+
+		log.debug("accessToken = {}", accessToken);
+		log.debug("refreshToken = {}", refreshToken);
+
+		redisUtil.put(principalDetails.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
+
+		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember());
+
+		response.setStatus(HttpStatus.OK.value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+		// access token, refresh token을 Header에 담아서 클라이언트에게 전달
+		response.setHeader(HEADER_ACCESS_TOKEN, TOKEN_PREFIX + accessToken);
+		response.setHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + refreshToken);
+
+		new ObjectMapper().writeValue(response.getOutputStream(), loginResponse);
 	}
 }

@@ -13,7 +13,7 @@ import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.provider.MailProvider;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
-import team.rescue.auth.user.AuthUser;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
@@ -42,7 +42,7 @@ public class AuthService implements UserDetailsService {
 				});
 
 		log.debug(member.getEmail());
-		return new AuthUser(member);
+		return new PrincipalDetails(member);
 	}
 
 	/**

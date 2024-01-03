@@ -48,44 +48,37 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-				.csrf(AbstractHttpConfigurer::disable)
-				.sessionManagement((sessionManagement) ->
-						sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				)
-				.formLogin(AbstractHttpConfigurer::disable)
+		http.csrf(AbstractHttpConfigurer::disable).sessionManagement(
+						(sessionManagement) -> sessionManagement.sessionCreationPolicy(
+								SessionCreationPolicy.STATELESS)).formLogin(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable)
 				.headers(HeadersConfigurer::disable) // iframe 비허용 처리
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS
 				.logout(withDefaults());
 
-		http
-				.authorizeHttpRequests(request -> {
+		http.authorizeHttpRequests(request -> {
 
-					request.requestMatchers("/api/auth/email/join").permitAll();
-					request.requestMatchers("/api/auth/email/login").permitAll();
-					request.requestMatchers("/api/auth/oauth").permitAll();
+			request.requestMatchers("/api/auth/email/join").permitAll();
+			request.requestMatchers("/api/auth/email/login").permitAll();
+			request.requestMatchers("/api/auth/oauth").permitAll();
 
-					request.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll();
-					request.anyRequest().authenticated();
-				});
+			request.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll();
+			request.anyRequest().authenticated();
+		});
 
 		// Exception Handler 등록
-		http
-				.exceptionHandling(exceptionHandler -> {
-					exceptionHandler.authenticationEntryPoint(
-							new EmailAuthenticationFailureHandler()); // 인증 실패(401)
-					exceptionHandler.accessDeniedHandler(
-							new EmailAuthorizationFailureHandler()); // 인가(권한) 오류(403)
-				});
+		http.exceptionHandling(exceptionHandler -> {
+			exceptionHandler.authenticationEntryPoint(
+					new EmailAuthenticationFailureHandler()); // 인증 실패(401)
+			exceptionHandler.accessDeniedHandler(
+					new EmailAuthorizationFailureHandler()); // 인가(권한) 오류(403)
+		});
 
 		// OAuth Handler 등록
-		http
-				.oauth2Login(oauth2Login ->
-						oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-										userInfoEndpointConfig.userService(oAuthService))
-								.successHandler(new OAuthAuthorizationSuccessHandler())
-								.failureHandler(new OAuthAuthorizationFailureHandler()));
+		http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
+						userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuthService))
+				.successHandler(new OAuthAuthorizationSuccessHandler(redisUtil))
+				.failureHandler(new OAuthAuthorizationFailureHandler()));
 
 		// Filter 등록
 		http.apply(new CustomSecurityFilterManager());

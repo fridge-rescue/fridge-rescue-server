@@ -6,10 +6,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import team.rescue.auth.type.JwtTokenType;
 import team.rescue.auth.type.RoleType;
-import team.rescue.auth.user.AuthUser;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.member.entity.Member;
 
 
@@ -21,25 +22,28 @@ public class JwtTokenProvider {
 	private static final String HEADER = "Authorization";
 	private static final String KEY_ID = "id";
 	private static final String KEY_ROLE = "role";
-	private static String JWT_TOKEN_KEY;
+
+	private static String jwtTokenKey;
+
+	@Value("${spring.jwt.secret}")
+	public void setKey(String key) {
+		jwtTokenKey = key;
+	}
 
 	/**
 	 * 토큰 타입에 따라 토큰 생성
 	 */
-	public static String createToken(AuthUser authMember, JwtTokenType tokenType) {
+	public static String createToken(PrincipalDetails principalDetails, JwtTokenType tokenType) {
 
-		log.debug("[JWT {} 발급] email={}", tokenType.name(), authMember.getUsername());
+		log.debug("[JWT {} 발급] email={}", tokenType.name(), principalDetails.getUsername());
 
 		Date now = new Date(System.currentTimeMillis());
 		Date expireDate = new Date(now.getTime() + tokenType.getExpireTime());
 
-		return JWT.create()
-				.withSubject(authMember.getUsername())
-				.withIssuedAt(now)
-				.withExpiresAt(expireDate)
-				.withClaim(KEY_ID, authMember.getMember().getId())
-				.withClaim(KEY_ROLE, authMember.getMember().getRole().name())
-				.sign(Algorithm.HMAC512(JWT_TOKEN_KEY));
+		return JWT.create().withSubject(principalDetails.getUsername()).withIssuedAt(now)
+				.withExpiresAt(expireDate).withClaim(KEY_ID, principalDetails.getMember().getId())
+				.withClaim(KEY_ROLE, principalDetails.getMember().getRole().name())
+				.sign(Algorithm.HMAC512(jwtTokenKey));
 	}
 
 	/**
@@ -49,25 +53,20 @@ public class JwtTokenProvider {
 	 * @param token 검증할 토큰
 	 * @return 검증된 유저의 UserDetails 객체
 	 */
-	public static AuthUser verify(String token) {
+	public static PrincipalDetails verify(String token) {
 
 		log.debug("start verify token={}", token);
 
-		DecodedJWT decodedJWT =
-				JWT.require(Algorithm.HMAC512(JWT_TOKEN_KEY)).build().verify(token);
+		DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(jwtTokenKey)).build().verify(token);
 
 		Long id = decodedJWT.getClaim(KEY_ID).asLong();
 		String email = decodedJWT.getSubject();
 		String role = decodedJWT.getClaim(KEY_ROLE).asString();
 
-		Member member = Member.builder()
-				.id(id)
-				.email(email)
-				.role(RoleType.valueOf(role))
-				.build();
+		Member member = Member.builder().id(id).email(email).role(RoleType.valueOf(role)).build();
 
 		log.debug("role={}", member.getRole());
-		return new AuthUser(member);
+		return new PrincipalDetails(member);
 	}
 
 	public static boolean isExpiredToken(String token) {

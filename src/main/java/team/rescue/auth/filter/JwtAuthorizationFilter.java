@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.ObjectUtils;
 import team.rescue.auth.provider.JwtTokenProvider;
-import team.rescue.auth.user.AuthUser;
+import team.rescue.auth.user.PrincipalDetails;
 
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
@@ -75,12 +75,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			return;
 		}
 
-		AuthUser authUser = JwtTokenProvider.verify(accessToken);
+		PrincipalDetails principalDetails = JwtTokenProvider.verify(accessToken);
 
 		// 생성된 AuthUser 객체로 인증된 Authentication 객체 생성
 		Authentication authentication =
 				new UsernamePasswordAuthenticationToken(
-						authUser, null, authUser.getAuthorities()
+						principalDetails, null, principalDetails.getAuthorities()
 				);
 
 		// SecurityContextHolder 저장

@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
-import team.rescue.auth.user.OAuthUser;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -49,7 +49,7 @@ public class OAuthService extends DefaultOAuth2UserService {
 
 		if (findMember.isEmpty()) {
 			if (memberRepository.existsByEmail(email)) {
-				log.error("이미 존재하는 email. 다른 email을 사용하도록 하기 위한 방법 필요.");
+				log.error("가입된 이메일이 이미 존재하니 email 로그인을 시도하세요.");
 				throw new RuntimeException();
 			}
 
@@ -63,9 +63,9 @@ public class OAuthService extends DefaultOAuth2UserService {
 					.providerId(providerId)
 					.build());
 
-			return new OAuthUser(savedMember, oAuth2User.getAttributes());
+			return new PrincipalDetails(savedMember, oAuth2User.getAttributes());
 		} else {
-			return new OAuthUser(findMember.get(), oAuth2User.getAttributes());
+			return new PrincipalDetails(findMember.get(), oAuth2User.getAttributes());
 		}
 	}
 }

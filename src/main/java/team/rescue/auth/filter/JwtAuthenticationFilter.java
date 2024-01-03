@@ -18,16 +18,18 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import team.rescue.auth.dto.LoginDto.LoginReqDto;
 import team.rescue.auth.dto.LoginDto.LoginResDto;
-import team.rescue.auth.dto.TokenDto;
 import team.rescue.auth.provider.JwtTokenProvider;
 import team.rescue.auth.type.JwtTokenType;
-import team.rescue.auth.user.AuthUser;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private static final String LOGIN_PATH = "/api/auth/email/login";
+	private static final String TOKEN_PREFIX = "Bearer ";
+	private static final String HEADER_ACCESS_TOKEN = "Access-Token";
+	private static final String HEADER_REFRESH_TOKEN = "Refresh-Token";
 	private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;   // 24h
 
 	private final ObjectMapper objectMapper;
@@ -37,8 +39,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	public JwtAuthenticationFilter(
 			AuthenticationManager authenticationManager,
 			ObjectMapper objectMapper,
-			RedisUtil redisUtil) {
-
+			RedisUtil redisUtil
+	) {
 		setFilterProcessesUrl(LOGIN_PATH);
 		this.authenticationManager = authenticationManager;
 		this.objectMapper = objectMapper;
@@ -64,7 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			return authenticationManager.authenticate(authRequestToken);
 
 		} catch (Exception e) {
-			log.error("loginDto 읽기 실패");
+			log.error("일치하는 회원 정보 없음");
 			throw new RuntimeException();
 		}
 	}
@@ -79,24 +81,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				request.getRequestURI());
 
 		// 로그인에 성공한 유저
-		final AuthUser authMember = (AuthUser) authentication.getPrincipal();
+		final PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
 		// access token 생성
-		String accessToken = JwtTokenProvider.createToken(authMember, JwtTokenType.ACCESS_TOKEN);
+		String accessToken = JwtTokenProvider.createToken(principalDetails, JwtTokenType.ACCESS_TOKEN);
 
 		// refresh token 생성
-		String refreshToken = JwtTokenProvider.createToken(authMember, JwtTokenType.REFRESH_TOKEN);
+		String refreshToken = JwtTokenProvider.createToken(principalDetails,
+				JwtTokenType.REFRESH_TOKEN);
 
 		// redis 저장
-		redisUtil.put(authMember.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
+		redisUtil.put(principalDetails.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
-		TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
-		LoginResDto loginResponse = new LoginResDto(authMember.getMember(), tokenDto);
+		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember());
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-		// access token, refresh token을 클라이언트에게 전달
+		// access token, refresh token을 Header에 담아서 클라이언트에게 전달
+		response.setHeader(HEADER_ACCESS_TOKEN, TOKEN_PREFIX + accessToken);
+		response.setHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + refreshToken);
+
 		new ObjectMapper().writeValue(response.getOutputStream(), loginResponse);
 
 	}

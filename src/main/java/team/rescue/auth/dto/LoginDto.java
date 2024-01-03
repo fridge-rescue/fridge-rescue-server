@@ -18,16 +18,14 @@ public class LoginDto {
 	@Getter
 	public static class LoginResDto {
 
-		private final String name;
-		private final String email;
-		private final RoleType role;
-		private final TokenDto tokenDto;
+		private final Long id;
+		private final String nickname;
+		private final RoleType roleType;
 
-		public LoginResDto(Member user, TokenDto token) {
-			this.name = user.getName();
-			this.email = user.getEmail();
-			this.role = user.getRole();
-			this.tokenDto = token;
+		public LoginResDto(Member user) {
+			this.id = user.getId();
+			this.nickname = user.getNickname();
+			this.roleType = user.getRole();
 		}
 	}
 }
