@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.cook.entity.Cook;
+import team.rescue.fridge.entity.Fridge;
 import team.rescue.notification.entity.Notification;
 import team.rescue.review.entity.Review;
 
@@ -71,6 +73,9 @@ public class Member {
 	@Column(name = "jwt_token")
 	private String token;
 
+	@OneToOne(mappedBy = "member")
+	private Fridge fridge;
+
 	// 알림 조회
 	@OneToMany(mappedBy = "member")
 	private List<Notification> notificationList = new ArrayList<>();
@@ -97,5 +102,9 @@ public class Member {
 
 	public void updateRole(RoleType role) {
 		this.role = role;
+	}
+
+	public void registerFridge(Fridge fridge) {
+		this.fridge = fridge;
 	}
 }
