@@ -1,6 +1,9 @@
 spring:
   profiles:
     group:
+      test:
+        - test
+        - secret
       develop:
         - dev
         - secret
