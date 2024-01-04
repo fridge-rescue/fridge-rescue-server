@@ -13,7 +13,9 @@ import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.provider.MailProvider;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
-import team.rescue.auth.user.AuthUser;
+import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.error.exception.UserException;
+import team.rescue.error.type.UserError;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
@@ -36,13 +38,10 @@ public class AuthService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 		log.debug("[+] loadUserByUsername start");
 		Member member = memberRepository.findUserByEmail(userEmail)
-				.orElseThrow(() -> {
-					log.error("Invalid User Email!!");
-					return new RuntimeException();
-				});
+				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
 
 		log.debug(member.getEmail());
-		return new AuthUser(member);
+		return new PrincipalDetails(member);
 	}
 
 	/**
@@ -102,10 +101,8 @@ public class AuthService implements UserDetailsService {
 	 */
 	private void validateCreateMember(String email) {
 
-		// TODO: 에러 핸들링
 		if (memberRepository.existsByEmail(email)) {
-			log.error("Email 중복");
-			throw new RuntimeException();
+			throw new UserException(UserError.ALREADY_EXIST_EMAIL);
 		}
 	}
 }

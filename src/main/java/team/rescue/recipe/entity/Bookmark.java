@@ -17,54 +17,32 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import team.rescue.member.entity.Member;
 
 @Entity
-@Table(name = "recipe")
+@Table(name = "bookmark")
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Recipe {
+public class Bookmark {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "recipe_id")
+	@Column(name = "bookmark_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@Column(name = "title", nullable = false, length = 100)
-	private String title;
-
-	@Column(name = "summary", length = 100)
-	private String summary;
-
-	@Column(name = "recipe_image_url", length = 100)
-	private String recipeImageUrl;
-
-	@Column(name = "view_count", nullable = false)
-	private Integer viewCount;
-
-	@Column(name = "review_count", nullable = false)
-	private Integer reviewCount;
-
-	@Column(name = "report_count", nullable = false)
-	private Integer reportCount;
-
-	@Column(name = "bookmark_count", nullable = false)
-	private Integer bookmarkCount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "recipe_id")
+	private Recipe recipe;
 
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
-
-	@LastModifiedDate
-	@Column(name = "modified_at")
-	private LocalDateTime modifiedAt;
 }
