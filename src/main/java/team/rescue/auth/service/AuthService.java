@@ -103,6 +103,7 @@ public class AuthService implements UserDetailsService {
 	 * @param code  유저 입력 이메일 코드
 	 * @return MemberInfo
 	 */
+	@Transactional
 	public MemberInfoDto confirmEmailCode(String email, String code) {
 
 		Member member = memberRepository.findUserByEmail(email)
