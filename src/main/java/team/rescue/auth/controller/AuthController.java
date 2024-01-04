@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ public class AuthController {
 	 * @return GUEST 회원 정보
 	 */
 	@PostMapping("/email/join")
+	@PreAuthorize("permitAll()")
 	public ResponseEntity<?> emailJoin(
 			@RequestBody @Valid JoinDto.JoinReqDto joinReqDto
 	) {
@@ -54,17 +56,19 @@ public class AuthController {
 	/**
 	 * 이메일 인증 코드 확인
 	 *
-	 * @param code 이메일 인증 코드
+	 * @param emailConfirmDto 이메일 인증 요청
 	 * @return 확인 여부 반환
 	 */
 	@PostMapping("/email/confirm")
+	@PreAuthorize("hasAuthority('GUEST')")
 	public ResponseEntity<?> emailConfirm(
-			@RequestBody String code,
+			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
 			@AuthenticationPrincipal PrincipalDetails details
 	) {
 
-		log.info("[이메일 코드 확인] code={}", code);
-		MemberInfoDto memberInfoDto = authService.confirmEmailCode(details.getName(), code);
+		log.info("[이메일 코드 확인] code={}", emailConfirmDto.getCode());
+		MemberInfoDto memberInfoDto = authService
+				.confirmEmailCode(details.getUsername(), emailConfirmDto.getCode());
 
 		return ResponseEntity.ok(memberInfoDto);
 	}
@@ -76,6 +80,7 @@ public class AuthController {
 	 * @param providerType OAuth Provider Type
 	 */
 	@GetMapping("/oauth")
+	@PreAuthorize("permitAll()")
 	public void oAuthLoginOrJoin(
 			HttpServletResponse response,
 			@RequestParam ProviderType providerType
