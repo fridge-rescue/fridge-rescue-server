@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.error.exception.UserException;
-import team.rescue.error.type.ValidationException;
+import team.rescue.error.exception.ValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(UserException.class)
 	public ResponseEntity<?> userException(UserException e) {
-		
+
 		log.error(e.getErrorMessage());
 
 		ResponseDto<?> response = ResponseDto.builder()
