@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class ResponseDto<T> {
 
-	private final int code;
-	private final String message;
+	private int code = -1;
+	private String message = null;
 	private final T data;
 
 	@Builder

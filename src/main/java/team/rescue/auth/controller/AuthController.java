@@ -3,9 +3,9 @@ package team.rescue.auth.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +17,7 @@ import team.rescue.auth.dto.JoinDto;
 import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.type.ProviderType;
+import team.rescue.common.dto.ResponseDto;
 
 @Slf4j
 @RestController
@@ -41,7 +42,10 @@ public class AuthController {
 
 		JoinResDto joinResDto = authService.createEmailUser(joinReqDto);
 
-		return ResponseEntity.created(URI.create("/members/" + joinResDto.getId())).build();
+		return new ResponseEntity<>(
+				ResponseDto.builder().data(joinReqDto).build(),
+				HttpStatus.CREATED
+		);
 	}
 
 	/**
