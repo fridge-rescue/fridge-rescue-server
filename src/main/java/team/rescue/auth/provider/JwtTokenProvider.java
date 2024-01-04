@@ -7,7 +7,6 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import team.rescue.auth.type.JwtTokenType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
@@ -16,7 +15,6 @@ import team.rescue.member.entity.Member;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class JwtTokenProvider {
 
 	private static final String HEADER = "Authorization";
