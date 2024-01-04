@@ -106,7 +106,7 @@ public class AuthService implements UserDetailsService {
 	public MemberInfoDto confirmEmailCode(String email, String code) {
 
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new RuntimeException("유저 없음"));
+				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
 
 		// Validate Email Code
 		validateEmailCode(member, code);
@@ -128,8 +128,7 @@ public class AuthService implements UserDetailsService {
 	 */
 	private void validateEmailCode(Member member, String code) {
 		if (!Objects.equals(member.getEmailCode(), code)) {
-			log.error("[이메일 코드 불일치]");
-			throw new RuntimeException("이메일 코드 불일치");
+			throw new UserException(UserError.EMAIL_CODE_MIS_MATCH);
 		}
 	}
 

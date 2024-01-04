@@ -20,8 +20,8 @@ import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.user.PrincipalDetails;
-import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.common.dto.ResponseDto;
+import team.rescue.member.dto.MemberDto.MemberInfoDto;
 
 @Slf4j
 @RestController
@@ -48,7 +48,7 @@ public class AuthController {
 		JoinResDto joinResDto = authService.createEmailUser(joinReqDto);
 
 		return new ResponseEntity<>(
-				ResponseDto.builder().data(joinReqDto).build(),
+				ResponseDto.builder().data(joinResDto).build(),
 				HttpStatus.CREATED
 		);
 	}
@@ -70,7 +70,10 @@ public class AuthController {
 		MemberInfoDto memberInfoDto = authService
 				.confirmEmailCode(details.getUsername(), emailConfirmDto.getCode());
 
-		return ResponseEntity.ok(memberInfoDto);
+		return new ResponseEntity<>(
+				ResponseDto.builder().data(memberInfoDto).build(),
+				HttpStatus.OK
+		);
 	}
 
 	/**
