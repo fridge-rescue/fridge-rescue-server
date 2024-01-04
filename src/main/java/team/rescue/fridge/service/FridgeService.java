@@ -26,17 +26,16 @@ public class FridgeService {
 	private final MemberRepository memberRepository;
 	private final FridgeIngredientRepository fridgeIngredientRepository;
 
-
 	/**
 	 * 냉장고 생성
 	 *
+	 * @param member 냉장고 소유 유저
 	 * @return 생성된 냉장고
-	 * TODO: 이메일 인증 시 생성
 	 */
 	@Transactional
-	public Fridge createFridge() {
+	public Fridge createFridge(Member member) {
 
-		return fridgeRepository.save(Fridge.builder().build());
+		return fridgeRepository.save(Fridge.builder().member(member).build());
 	}
 
 	/**
