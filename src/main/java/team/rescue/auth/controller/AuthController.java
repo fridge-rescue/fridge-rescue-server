@@ -44,6 +44,16 @@ public class AuthController {
 		return ResponseEntity.created(URI.create("/members/" + joinResDto.getId())).build();
 	}
 
+	@PostMapping("/email/confirm")
+	public ResponseEntity<?> emailConfirm(
+			@RequestBody String code
+	) {
+
+		log.info("[이메일 코드 확인] code={}", code);
+		
+		return null;
+	}
+
 	/**
 	 * OAuth 회원 가입/로그인
 	 *
