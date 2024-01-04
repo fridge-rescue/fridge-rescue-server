@@ -77,14 +77,17 @@ public class Member {
 	private Fridge fridge;
 
 	// 알림 조회
+	@Builder.Default
 	@OneToMany(mappedBy = "member")
 	private List<Notification> notificationList = new ArrayList<>();
 
 	// 요리 완료 조회
+	@Builder.Default
 	@OneToMany(mappedBy = "member")
 	private List<Cook> cookList = new ArrayList<>();
 
 	// 레시피 후기 조회
+	@Builder.Default
 	@OneToMany(mappedBy = "member")
 	private List<Review> reviewList = new ArrayList<>();
 

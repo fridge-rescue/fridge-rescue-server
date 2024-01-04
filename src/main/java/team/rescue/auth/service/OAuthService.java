@@ -16,9 +16,9 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OAuthService extends DefaultOAuth2UserService {
 
 	private static final String PROVIDER_ID = "sub";
