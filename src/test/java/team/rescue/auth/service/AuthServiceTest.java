@@ -19,6 +19,8 @@ import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.provider.MailProvider;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
+import team.rescue.error.exception.UserException;
+import team.rescue.error.type.UserError;
 import team.rescue.fridge.entity.Fridge;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
@@ -59,7 +61,6 @@ class AuthServiceTest {
 				.willReturn(false);
 
 		// Stub 2: 이메일 코드 생성 및 전송 완료
-		// 여기서 Mocking을 하니까
 		Member member = Member.builder()
 				.name(joinReqDto.getName())
 				.nickname(joinReqDto.getNickname())
@@ -75,9 +76,8 @@ class AuthServiceTest {
 
 		// then
 		// GUEST 권한 유저 생성
-		// 이쪽에서는 당연히 Mocking 한 값을 주지 않나?
-		Assertions.assertEquals(joinResDto.getRole(), RoleType.GUEST);
-		Assertions.assertEquals(joinResDto.getEmail(), member.getEmail());
+		Assertions.assertEquals(RoleType.GUEST, joinResDto.getRole());
+		Assertions.assertEquals(member.getEmail(), joinResDto.getEmail());
 	}
 
 	@Test
@@ -95,13 +95,18 @@ class AuthServiceTest {
 				.willReturn(true);
 
 		// when
-		RuntimeException exception = Assertions.assertThrows(RuntimeException.class,
+		UserException exception = Assertions.assertThrows(UserException.class,
 				() -> authService.createEmailUser(joinReqDto));
 
 		// then
-		// TODO: 공통 예외 처리 응답으로 변경
-		Assertions.assertEquals(exception.getClass(), RuntimeException.class);
+		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getCode(),
+				exception.getCode());
+		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getHttpStatus(),
+				exception.getStatusCode());
+		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getErrorMessage(),
+				exception.getErrorMessage());
 	}
+
 
 	@Test
 	@DisplayName("이메일 인증 메일 전송 성공")
@@ -132,7 +137,7 @@ class AuthServiceTest {
 		// then
 		// Email Code 저장
 		Assertions.assertNotNull(savedMember.getEmailCode());
-		Assertions.assertEquals(savedMember.getEmailCode(), emailCode);
+		Assertions.assertEquals(emailCode, savedMember.getEmailCode());
 	}
 
 	@Test
@@ -167,7 +172,7 @@ class AuthServiceTest {
 
 		// then
 		// 유저 권한이 GUEST 가 아니라 USER로 업데이트 된다.
-		Assertions.assertEquals(memberInfoDto.getRole(), RoleType.USER);
+		Assertions.assertEquals(RoleType.USER, memberInfoDto.getRole());
 	}
 
 	@Test
@@ -192,16 +197,20 @@ class AuthServiceTest {
 				.willReturn(Optional.empty());
 
 		// when
-		RuntimeException exception = Assertions.assertThrows(RuntimeException.class,
+		UserException exception = Assertions.assertThrows(UserException.class,
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		// TODO: 공통 예외 처리 응답으로 변경
-		Assertions.assertEquals(exception.getClass(), RuntimeException.class);
+		Assertions.assertEquals(UserError.NOT_FOUND_USER.getCode(),
+				exception.getCode());
+		Assertions.assertEquals(UserError.NOT_FOUND_USER.getHttpStatus(),
+				exception.getStatusCode());
+		Assertions.assertEquals(UserError.NOT_FOUND_USER.getErrorMessage(),
+				exception.getErrorMessage());
 	}
 
 	@Test
-	@DisplayName("이메일 코드 인증 실패 - 이메일 코드가 불일치하는 경우 이메일 인증이 불가하다.")
+	@DisplayName("이메일 코드 인증 실패 - 이메일 인증 코드가 불일치하는 경우 이메일 인증이 불가하다.")
 	public void confirm_email_code_failure_mis_match_code() throws Exception {
 
 		// given
@@ -209,9 +218,6 @@ class AuthServiceTest {
 		String code = "123456";
 
 		// Stub 1: 해당 이메일로 가입한 유저 있음
-		given(memberRepository.findUserByEmail(anyString()))
-				.willReturn(Optional.empty());
-
 		// Stub 2: 저장된 이메일 코드와 확인 요청한 코드가 다름
 		Member member = Member.builder()
 				.name("test")
@@ -222,13 +228,19 @@ class AuthServiceTest {
 				.role(RoleType.GUEST)
 				.provider(ProviderType.EMAIL)
 				.build();
+		given(memberRepository.findUserByEmail(anyString()))
+				.willReturn(Optional.of(member));
 
 		// when
-		RuntimeException exception = Assertions.assertThrows(RuntimeException.class,
+		UserException exception = Assertions.assertThrows(UserException.class,
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		// TODO: 공통 예외 처리 응답으로 변경
-		Assertions.assertEquals(exception.getClass(), RuntimeException.class);
+		Assertions.assertEquals(UserError.EMAIL_CODE_MIS_MATCH.getCode(),
+				exception.getCode());
+		Assertions.assertEquals(UserError.EMAIL_CODE_MIS_MATCH.getHttpStatus(),
+				exception.getStatusCode());
+		Assertions.assertEquals(UserError.EMAIL_CODE_MIS_MATCH.getErrorMessage(),
+				exception.getErrorMessage());
 	}
 }

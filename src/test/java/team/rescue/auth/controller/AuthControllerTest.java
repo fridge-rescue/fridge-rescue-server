@@ -62,7 +62,7 @@ class AuthControllerTest extends MockMember {
 	}
 
 	@Test
-	@DisplayName("이메일 회원 가입 - 인증 메일이 전송 되고, 인증 전까지 유저는 GUEST 권한을 갖는다.")
+	@DisplayName("이메일 회원 가입 성공 - 인증 메일이 전송 되고, 인증 전까지 유저는 GUEST 권한을 갖는다.")
 	public void email_join_success() throws Exception {
 
 		// given
@@ -95,14 +95,14 @@ class AuthControllerTest extends MockMember {
 		// Status == 201 Created
 		resultActions.andExpect(status().isCreated());
 		// Response Body
-		resultActions.andExpect(jsonPath("$.name").value(joinReqDto.getName()));
-		resultActions.andExpect(jsonPath("$.nickname").value(joinReqDto.getNickname()));
-		resultActions.andExpect(jsonPath("$.email").value(joinReqDto.getEmail()));
-		resultActions.andExpect(jsonPath("$.role").value(RoleType.GUEST.name()));
+		resultActions.andExpect(jsonPath("$.data.name").value(joinReqDto.getName()));
+		resultActions.andExpect(jsonPath("$.data.nickname").value(joinReqDto.getNickname()));
+		resultActions.andExpect(jsonPath("$.data.email").value(joinReqDto.getEmail()));
+		resultActions.andExpect(jsonPath("$.data.role").value(RoleType.GUEST.name()));
 	}
 
 	@Test
-	@DisplayName("이메일 인증")
+	@DisplayName("이메일 인증 성공")
 	@WithMockMember
 	public void confirm_email_code() throws Exception {
 
@@ -127,9 +127,9 @@ class AuthControllerTest extends MockMember {
 		// then
 		// Status == 200 OK
 		resultActions.andExpect(status().isOk());
-		resultActions.andExpect(jsonPath("$.id").value(existMember.getId()));
-		resultActions.andExpect(jsonPath("$.nickname").value(existMember.getNickname()));
+		resultActions.andExpect(jsonPath("$.data.id").value(existMember.getId()));
+		resultActions.andExpect(jsonPath("$.data.nickname").value(existMember.getNickname()));
 		// Role == USER
-		resultActions.andExpect(jsonPath("$.role").value(RoleType.USER.name()));
+		resultActions.andExpect(jsonPath("$.data.role").value(RoleType.USER.name()));
 	}
 }
