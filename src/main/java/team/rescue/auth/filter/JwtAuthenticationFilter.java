@@ -21,6 +21,8 @@ import team.rescue.auth.dto.LoginDto.LoginResDto;
 import team.rescue.auth.provider.JwtTokenProvider;
 import team.rescue.auth.type.JwtTokenType;
 import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.error.exception.AuthException;
+import team.rescue.error.type.AuthError;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
@@ -66,8 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			return authenticationManager.authenticate(authRequestToken);
 
 		} catch (Exception e) {
-			log.error("일치하는 회원 정보 없음");
-			throw new RuntimeException();
+			throw new AuthException(AuthError.AUTHENTICATION_FAILURE);
 		}
 	}
 
