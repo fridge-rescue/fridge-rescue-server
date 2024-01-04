@@ -1,5 +1,6 @@
 package team.rescue.auth.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.error.exception.UserException;
 import team.rescue.error.type.UserError;
 import team.rescue.fridge.service.FridgeService;
+import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -93,11 +95,41 @@ public class AuthService implements UserDetailsService {
 		return memberRepository.save(member);
 	}
 
-	private boolean confirmEmailCode(String code) {
+	/**
+	 * 이메일 코드 인증
+	 *
+	 * @param email 로그인 유저 이메일
+	 * @param code  유저 입력 이메일 코드
+	 * @return MemberInfo
+	 */
+	public MemberInfoDto confirmEmailCode(String email, String code) {
 
-		return false;
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new RuntimeException("유저 없음"));
+
+		// Validate Email Code
+		validateEmailCode(member, code);
+
+		// Role Update
+		member.updateRole(RoleType.USER);
+
+		// 냉장고 생성
+
+		return MemberInfoDto.fromEntity(member);
 	}
 
+	/**
+	 * 유저 입력 이메일 코드와 실제 이메일 코드 일치 여부 확인
+	 *
+	 * @param member 요청 유저
+	 * @param code   유저 입력 이메일 코드
+	 */
+	private void validateEmailCode(Member member, String code) {
+		if (!Objects.equals(member.getEmailCode(), code)) {
+			log.error("[이메일 코드 불일치]");
+			throw new RuntimeException("이메일 코드 불일치");
+		}
+	}
 
 	/**
 	 * 회원 생성 검증
