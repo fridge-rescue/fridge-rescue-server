@@ -94,6 +94,12 @@ public class AuthService implements UserDetailsService {
 		return memberRepository.save(member);
 	}
 
+	private boolean confirmEmailCode(String code) {
+
+		return false;
+	}
+
+
 	/**
 	 * 회원 생성 검증
 	 * <p> 이메일 중복 불가
