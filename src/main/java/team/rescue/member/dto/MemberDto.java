@@ -12,13 +12,13 @@ public class MemberDto {
 
 		private Long id;
 		private String nickname;
-	}
 
-	public static MemberInfoDto fromEntity(Member member) {
-		MemberInfoDto memberInfo = new MemberInfoDto();
-		memberInfo.setId(member.getId());
-		memberInfo.setNickname(member.getNickname());
+		public static MemberInfoDto fromEntity(Member member) {
+			MemberInfoDto memberInfo = new MemberInfoDto();
+			memberInfo.setId(member.getId());
+			memberInfo.setNickname(member.getNickname());
 
-		return memberInfo;
+			return memberInfo;
+		}
 	}
 }

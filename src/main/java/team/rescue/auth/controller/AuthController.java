@@ -7,6 +7,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,8 @@ import team.rescue.auth.dto.JoinDto;
 import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.type.ProviderType;
+import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.member.dto.MemberDto.MemberInfoDto;
 
 @Slf4j
 @RestController
@@ -44,14 +47,22 @@ public class AuthController {
 		return ResponseEntity.created(URI.create("/members/" + joinResDto.getId())).build();
 	}
 
+	/**
+	 * 이메일 인증 코드 확인
+	 *
+	 * @param code 이메일 인증 코드
+	 * @return 확인 여부 반환
+	 */
 	@PostMapping("/email/confirm")
 	public ResponseEntity<?> emailConfirm(
-			@RequestBody String code
+			@RequestBody String code,
+			@AuthenticationPrincipal PrincipalDetails details
 	) {
 
 		log.info("[이메일 코드 확인] code={}", code);
-		
-		return null;
+		MemberInfoDto memberInfoDto = authService.confirmEmailCode(details.getName(), code);
+
+		return ResponseEntity.ok(memberInfoDto);
 	}
 
 	/**
