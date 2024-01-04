@@ -18,10 +18,12 @@ public class RandomCodeUtil {
 			Random random = SecureRandom.getInstanceStrong();
 			StringBuilder code = new StringBuilder();
 			for (int i = 0; i < digit; i++) {
-				code.append(random.nextInt());
+
+				code.append(random.nextInt(10));
+				System.out.println(code);
 			}
 			return code.toString();
-			
+
 		} catch (NoSuchAlgorithmException e) {
 			log.error("[랜덤 코드 생성 오류]");
 			throw new RuntimeException(e);
