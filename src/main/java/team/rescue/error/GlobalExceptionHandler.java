@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import team.rescue.common.dto.ResponseDto;
+import team.rescue.error.exception.ServiceException;
 import team.rescue.error.exception.UserException;
 import team.rescue.error.exception.ValidationException;
 
@@ -23,6 +24,25 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> userException(UserException e) {
 
 		log.error(e.getErrorMessage());
+
+		ResponseDto<?> response = ResponseDto.builder()
+				.code(e.getCode())
+				.message(e.getErrorMessage())
+				.data(null).build();
+
+		return new ResponseEntity<>(response, e.getStatusCode());
+	}
+
+	/**
+	 * 서비스(비즈니스) 로직 관련 에러 핸들링
+	 *
+	 * @param e ServiceException
+	 * @return Error Response with custom UserException Status Code
+	 */
+	@ExceptionHandler(ServiceException.class)
+	public ResponseEntity<?> userException(ServiceException e) {
+
+		log.error(e.getMessage());
 
 		ResponseDto<?> response = ResponseDto.builder()
 				.code(e.getCode())
