@@ -17,6 +17,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import team.rescue.auth.dto.LoginDto.LoginResDto;
 import team.rescue.auth.provider.JwtTokenProvider;
 import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.error.exception.UserException;
+import team.rescue.error.type.UserError;
+import team.rescue.member.entity.Member;
+import team.rescue.member.repository.MemberRepository;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
@@ -29,6 +33,7 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 	private static final String HEADER_REFRESH_TOKEN = "Refresh-Token";
 
 	private final RedisUtil redisUtil;
+	private final MemberRepository memberRepository;
 
 	@Override
 	public void onAuthenticationSuccess(
@@ -46,6 +51,8 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 		log.debug("accessToken = {}", accessToken);
 		log.debug("refreshToken = {}", refreshToken);
 
+		saveRefreshToken(principalDetails, refreshToken);
+
 		redisUtil.put(principalDetails.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
 		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember());
@@ -58,5 +65,13 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 		response.setHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + refreshToken);
 
 		new ObjectMapper().writeValue(response.getOutputStream(), loginResponse);
+	}
+
+	private void saveRefreshToken(PrincipalDetails principalDetails, String refreshToken) {
+		Member member = memberRepository.findUserByEmail(principalDetails.getUsername())
+				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+
+		member.updateToken(refreshToken);
+		memberRepository.save(member);
 	}
 }
