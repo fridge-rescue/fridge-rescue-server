@@ -3,6 +3,7 @@ package team.rescue.review.dto;
 import lombok.Getter;
 import lombok.Setter;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 import team.rescue.review.entity.Review;
 
 public class ReviewDto {
@@ -26,7 +27,7 @@ public class ReviewDto {
 		private Long id;
 		private String title;
 		private String imageUrl;
-		private MemberInfoDto member;
+		private MemberInfoDto author;
 
 		public static ReviewInfoDto fromEntity(Review review) {
 
@@ -34,7 +35,7 @@ public class ReviewDto {
 			reviewInfo.setId(review.getId());
 			reviewInfo.setTitle(review.getTitle());
 			reviewInfo.setImageUrl(review.getImageUrl());
-			reviewInfo.setMember(MemberInfoDto.fromEntity(review.getMember()));
+			reviewInfo.setAuthor(MemberInfoDto.fromEntity(review.getMember()));
 
 			return reviewInfo;
 		}
@@ -44,6 +45,26 @@ public class ReviewDto {
 	@Getter
 	@Setter
 	public static class ReviewDetailDto {
+
+		private Long id;
+		private String title;
+		private String imageUrl;
+		private String contents;
+		private MemberInfoDto author;
+		private RecipeInfoDto recipe;
+
+		public static ReviewDetailDto fromEntity(Review review) {
+
+			ReviewDetailDto reviewDetail = new ReviewDetailDto();
+			reviewDetail.setId(review.getId());
+			reviewDetail.setTitle(review.getTitle());
+			reviewDetail.setImageUrl(review.getImageUrl());
+			reviewDetail.setContents(review.getContents());
+			reviewDetail.setAuthor(MemberInfoDto.fromEntity(review.getMember()));
+			reviewDetail.setRecipe(RecipeInfoDto.fromEntity(review.getRecipe()));
+
+			return reviewDetail;
+		}
 
 	}
 

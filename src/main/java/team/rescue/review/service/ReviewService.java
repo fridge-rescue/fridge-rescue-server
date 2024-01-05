@@ -9,7 +9,9 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.file.FileService;
 import team.rescue.cook.entity.Cook;
 import team.rescue.cook.repository.CookRepository;
+import team.rescue.error.exception.ServiceException;
 import team.rescue.error.exception.UserException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.error.type.UserError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
@@ -68,10 +70,19 @@ public class ReviewService {
 		return ReviewInfoDto.fromEntity(reviewRepository.save(review));
 	}
 
-	public ReviewDetailDto readReview() {
+	/**
+	 * 특정 리뷰 상세 조회
+	 *
+	 * @param reviewId 조회할 리뷰 ID
+	 * @return 리뷰 상세 DTO
+	 */
+	@Transactional(readOnly = true)
+	public ReviewDetailDto getReview(Long reviewId) {
 
-		return null;
+		log.info("[리뷰 상세 조회]");
+		Review review = reviewRepository.findById(reviewId)
+				.orElseThrow(() -> new ServiceException(ServiceError.NOT_FOUND_RECIPE));
+
+		return ReviewDetailDto.fromEntity(review);
 	}
-
-
 }
