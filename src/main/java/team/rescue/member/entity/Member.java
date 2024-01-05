@@ -94,4 +94,8 @@ public class Member {
 	public void updateEmailCode(String emailCode) {
 		this.emailCode = emailCode;
 	}
+
+	public void updateToken(String token) {
+		this.token = token;
+	}
 }
