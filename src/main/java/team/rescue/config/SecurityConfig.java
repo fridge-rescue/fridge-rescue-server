@@ -60,9 +60,7 @@ public class SecurityConfig {
 
 		http.authorizeHttpRequests(request -> {
 
-			request.requestMatchers("/api/auth/email/join").permitAll();
-			request.requestMatchers("/api/auth/email/login").permitAll();
-			request.requestMatchers("/api/auth/oauth").permitAll();
+			request.requestMatchers("/api/**").permitAll();
 
 			request.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll();
 			request.anyRequest().authenticated();
@@ -125,7 +123,8 @@ public class SecurityConfig {
 					AuthenticationManager.class);
 
 			builder.addFilter(
-					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil, memberRepository));
+					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil,
+							memberRepository));
 			builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
 			super.configure(builder);
 		}
