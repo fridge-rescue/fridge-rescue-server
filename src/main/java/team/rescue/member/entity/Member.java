@@ -109,8 +109,10 @@ public class Member {
 
 	public void registerFridge(Fridge fridge) {
 		this.fridge = fridge;
+	}
 
 	public void updateToken(String token) {
 		this.token = token;
 	}
 }
+
