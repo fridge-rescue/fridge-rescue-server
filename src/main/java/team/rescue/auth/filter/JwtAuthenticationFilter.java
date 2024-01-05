@@ -22,7 +22,11 @@ import team.rescue.auth.provider.JwtTokenProvider;
 import team.rescue.auth.type.JwtTokenType;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.error.exception.AuthException;
+import team.rescue.error.exception.UserException;
 import team.rescue.error.type.AuthError;
+import team.rescue.error.type.UserError;
+import team.rescue.member.entity.Member;
+import team.rescue.member.repository.MemberRepository;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
@@ -37,16 +41,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private final ObjectMapper objectMapper;
 	private final AuthenticationManager authenticationManager;
 	private final RedisUtil redisUtil;
+	private final MemberRepository memberRepository;
 
 	public JwtAuthenticationFilter(
 			AuthenticationManager authenticationManager,
 			ObjectMapper objectMapper,
-			RedisUtil redisUtil
+			RedisUtil redisUtil,
+			MemberRepository memberRepository
 	) {
 		setFilterProcessesUrl(LOGIN_PATH);
 		this.authenticationManager = authenticationManager;
 		this.objectMapper = objectMapper;
 		this.redisUtil = redisUtil;
+		this.memberRepository = memberRepository;
 	}
 
 	@Override
@@ -91,6 +98,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String refreshToken = JwtTokenProvider.createToken(principalDetails,
 				JwtTokenType.REFRESH_TOKEN);
 
+		saveRefreshToken(principalDetails, refreshToken);
+
 		// redis 저장
 		redisUtil.put(principalDetails.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
@@ -126,5 +135,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		body.put("error", failed.getMessage());
 
 		new ObjectMapper().writeValue(response.getOutputStream(), body);
+	}
+
+	private void saveRefreshToken(PrincipalDetails principalDetails, String refreshToken) {
+		Member member = memberRepository.findUserByEmail(principalDetails.getUsername())
+				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+
+		member.updateToken(refreshToken);
+		memberRepository.save(member);
 	}
 }

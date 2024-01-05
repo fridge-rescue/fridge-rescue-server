@@ -31,6 +31,7 @@ import team.rescue.auth.handler.OAuthAuthorizationFailureHandler;
 import team.rescue.auth.handler.OAuthAuthorizationSuccessHandler;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.service.OAuthService;
+import team.rescue.member.repository.MemberRepository;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
@@ -45,6 +46,7 @@ public class SecurityConfig {
 	private final PasswordEncoder passwordEncoder;
 	private final RedisUtil redisUtil;
 	private final ObjectMapper objectMapper;
+	private final MemberRepository memberRepository;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -77,7 +79,7 @@ public class SecurityConfig {
 		// OAuth Handler 등록
 		http.oauth2Login(oauth2Login -> oauth2Login.userInfoEndpoint(
 						userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuthService))
-				.successHandler(new OAuthAuthorizationSuccessHandler(redisUtil))
+				.successHandler(new OAuthAuthorizationSuccessHandler(redisUtil, memberRepository))
 				.failureHandler(new OAuthAuthorizationFailureHandler()));
 
 		// Filter 등록
@@ -123,7 +125,7 @@ public class SecurityConfig {
 					AuthenticationManager.class);
 
 			builder.addFilter(
-					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil));
+					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil, memberRepository));
 			builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
 			super.configure(builder);
 		}
