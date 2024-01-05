@@ -30,7 +30,7 @@ public class MailProvider {
 
 	public String sendEmail(Member member) {
 
-		String emailCode = RandomCodeUtil.generateEmailCode();
+		String emailCode = RandomCodeUtil.generateCode();
 
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -42,15 +42,16 @@ public class MailProvider {
 			messageHelper.setText(emailCode);
 			javaMailSender.send(mimeMessage);
 
-			log.info("회원가입 인증 메일 전송 완료");
+			log.info("[회원 가입 인증 메일 전송 완료]");
 
 		} catch (MessagingException e) {
 
-			log.error("Email 전송 오류");
+			log.error("[Email 전송 오류]");
 			throw new RuntimeException(e);
 		}
 
 		return emailCode;
 	}
+
 
 }

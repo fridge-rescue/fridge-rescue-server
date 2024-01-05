@@ -14,7 +14,8 @@ public enum UserError {
 
 	NOT_FOUND_EMAIL(-1, HttpStatus.NOT_FOUND, "등록되지 않은 이메일입니다."),
 	NOT_FOUND_USER(-1, HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
-	ALREADY_EXIST_EMAIL(-1, HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
+	ALREADY_EXIST_EMAIL(-1, HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+	EMAIL_CODE_MIS_MATCH(-1, HttpStatus.BAD_REQUEST, "이메일 인증 코드가 일치하지 않습니다.");
 
 	private final int code;
 	private final HttpStatus httpStatus;

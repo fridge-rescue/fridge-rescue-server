@@ -15,8 +15,8 @@ import team.rescue.member.entity.Member;
 
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
 	private static final String HEADER = "Authorization";
