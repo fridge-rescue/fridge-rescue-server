@@ -125,7 +125,7 @@ public class SecurityConfig {
 					AuthenticationManager.class);
 
 			builder.addFilter(
-					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil));
+					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil, memberRepository));
 			builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
 			super.configure(builder);
 		}
