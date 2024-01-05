@@ -23,7 +23,6 @@ import team.rescue.review.repository.ReviewRepository;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReviewService {
 
@@ -34,6 +33,14 @@ public class ReviewService {
 	private final FileService fileService;
 
 
+	/**
+	 * 리뷰 등록
+	 *
+	 * @param reviewReqDto 리뷰 등록 요청 데이터
+	 * @param image        리뷰 이미지 파일
+	 * @param details      Principal
+	 * @return 등록 리뷰 요약 데이터 DTO
+	 */
 	@Transactional
 	public ReviewInfoDto createReview(
 			ReviewReqDto reviewReqDto,

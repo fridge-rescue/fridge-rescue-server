@@ -25,6 +25,14 @@ public class ReviewController {
 
 	private final ReviewService reviewService;
 
+	/**
+	 * 리뷰 등록
+	 *
+	 * @param data    리뷰 등록 요청 데이터
+	 * @param image   리뷰 사진
+	 * @param details 로그인 유저
+	 * @return 생성된 리뷰 요약 데이터
+	 */
 	@PostMapping
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> createReview(

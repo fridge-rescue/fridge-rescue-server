@@ -10,8 +10,13 @@ import team.rescue.common.dto.ImageDto;
 @Service
 public class FileService {
 
-	// TODO: 이후 이미지 리사이징 후 S3 업로드 로직으로 변경
-	// 현재는 이름값만 반환
+	/**
+	 * 이미지 S3 저장
+	 * TODO: 현재 이미지 originName을 반환하도록 임시 처리, 이후 실제 로직 구현 필요
+	 *
+	 * @param image S3 버킷에 저장할 이미지 파일
+	 * @return S3 URL
+	 */
 	public String uploadImageToS3(MultipartFile image) {
 
 		log.info("[S3 이미지 업로드]");
