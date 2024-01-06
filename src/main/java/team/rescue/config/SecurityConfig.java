@@ -61,6 +61,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(request -> {
 
 			request.requestMatchers("/api/**").permitAll();
+			request.requestMatchers("/api/recipes/{recipeId}").permitAll();
 
 			request.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll();
 			request.anyRequest().authenticated();
