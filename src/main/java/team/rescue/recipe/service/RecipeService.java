@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import team.rescue.common.file.FileService;
-import team.rescue.error.exception.RecipeException;
+import team.rescue.error.exception.ServiceException;
 import team.rescue.error.exception.UserException;
-import team.rescue.error.type.RecipeError;
+import team.rescue.error.type.ServiceError;
 import team.rescue.error.type.UserError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
@@ -41,7 +41,7 @@ public class RecipeService {
     Recipe recipe = recipesRepository.findById(id)
         .orElseThrow(() -> {
           log.error("레시피 없음");
-          return new RecipeException(RecipeError.RECIPE_NOT_FOUND);
+          return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
         });
     log.debug("레시피 {}", recipe);
 

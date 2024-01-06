@@ -32,7 +32,7 @@ public class RecipeController {
   public ResponseEntity<ResponseDto<RecipeResDto>> getRecipe(@PathVariable Long recipeId) {
     RecipeResDto recipeResDto = recipeService.getRecipe(recipeId);
     return new ResponseEntity<>(
-        new ResponseDto<>(200, "레시피 조회에 성공하였습니다.", recipeResDto),
+        new ResponseDto<>(1, "레시피 조회에 성공하였습니다.", recipeResDto),
         HttpStatus.OK
     );
   }
@@ -50,7 +50,7 @@ public class RecipeController {
         recipeService.addRecipe(recipeImageFile, stepImageFileList, recipesReqDto, email);
 
       return new ResponseEntity<>(
-          new ResponseDto<>(201, "레시피가 성공적으로 등록되었습니다.", recipesResDto),
+          new ResponseDto<>(1, "레시피가 성공적으로 등록되었습니다.", recipesResDto),
           HttpStatus.CREATED
       );
   }
