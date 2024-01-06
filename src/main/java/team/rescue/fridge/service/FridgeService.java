@@ -50,7 +50,7 @@ public class FridgeService {
 	 */
 	public FridgeDto getFridgeIngredients(String email) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
@@ -78,7 +78,7 @@ public class FridgeService {
 	public List<FridgeIngredientResDto> addIngredient(String email,
 			List<FridgeIngredientAddReqDto> fridgeIngredientAddReqDtoList) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
