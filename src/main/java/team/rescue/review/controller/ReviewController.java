@@ -44,7 +44,7 @@ public class ReviewController {
 			@AuthenticationPrincipal PrincipalDetails details
 	) {
 
-		log.info("[리뷰 업르드] recipeId={}, title={}, imageOriginFileName={}", data.getRecipeId(),
+		log.info("[리뷰 업로드] recipeId={}, title={}, imageOriginFileName={}", data.getRecipeId(),
 				data.getTitle(), image.getOriginalFilename());
 
 		ReviewInfoDto reviewInfo = reviewService.createReview(data, image, details);

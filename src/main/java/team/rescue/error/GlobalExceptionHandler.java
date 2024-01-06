@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ServiceException.class)
 	public ResponseEntity<?> userException(ServiceException e) {
 
-		log.error(e.getMessage());
+		log.error(e.getErrorMessage());
 
 		ResponseDto<?> response = ResponseDto.builder()
 				.code(e.getCode())
