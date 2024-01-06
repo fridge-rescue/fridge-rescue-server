@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -28,6 +29,8 @@ public class OAuthService extends DefaultOAuth2UserService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
+
+	private final FridgeService fridgeService;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -62,6 +65,8 @@ public class OAuthService extends DefaultOAuth2UserService {
 					.provider(provider)
 					.providerId(providerId)
 					.build());
+
+			fridgeService.createFridge(savedMember);
 
 			return new PrincipalDetails(savedMember, oAuth2User.getAttributes());
 		} else {
