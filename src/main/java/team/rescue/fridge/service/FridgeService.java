@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.exception.UserException;
+import team.rescue.error.type.ServiceError;
+import team.rescue.error.type.UserError;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientAddReqDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientResDto;
@@ -46,16 +50,10 @@ public class FridgeService {
 	 */
 	public FridgeDto getFridgeIngredients(String email) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> {
-					log.error("일치하는 사용자 정보 없음");
-					return new RuntimeException();
-				});
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> {
-					log.error("해당 회원은 냉장고가 없음");
-					return new RuntimeException();
-				});
+				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
 
 		List<FridgeIngredient> fridgeIngredients = fridgeIngredientRepository.findByFridge(fridge);
 		List<FridgeIngredientResDto> fridgeIngredientResDtoList = fridgeIngredients.stream()
@@ -80,16 +78,10 @@ public class FridgeService {
 	public List<FridgeIngredientResDto> addIngredient(String email,
 			List<FridgeIngredientAddReqDto> fridgeIngredientAddReqDtoList) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> {
-					log.error("일치하는 사용자 정보 없음");
-					return new RuntimeException();
-				});
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> {
-					log.error("해당 회원은 냉장고가 없음");
-					return new RuntimeException();
-				});
+				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
 
 		for (FridgeIngredientAddReqDto fridgeIngredientAddReqDto : fridgeIngredientAddReqDtoList) {
 			if (!fridgeIngredientRepository.existsByNameAndMemoAndExpiredAt(
