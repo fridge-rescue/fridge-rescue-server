@@ -52,7 +52,7 @@ public class OAuthService extends DefaultOAuth2UserService {
 		if (findMember.isEmpty()) {
 			if (memberRepository.existsByEmail(email)) {
 				log.error("가입된 이메일이 이미 존재하니 email 로그인을 시도하세요.");
-				throw new UserException(UserError.ALREADY_EXIST_EMAIL);
+				throw new UserException(UserError.EMAIL_ALREADY_EXIST);
 			}
 
 			Member savedMember = memberRepository.save(Member.builder()
