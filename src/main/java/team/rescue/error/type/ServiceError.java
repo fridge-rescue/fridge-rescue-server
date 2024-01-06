@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ServiceError {
 
+	NOT_FOUND_FRIDGE(-1, HttpStatus.NOT_FOUND, "냉장고 정보가 없습니다."),
 	NOT_FOUND_RECIPE(-1, HttpStatus.NOT_FOUND, "이미 삭제된 레시피입니다.");
 
 	private final int code;
