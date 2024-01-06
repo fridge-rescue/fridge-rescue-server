@@ -81,7 +81,7 @@ public class ReviewService {
 
 		log.info("[리뷰 상세 조회]");
 		Review review = reviewRepository.findById(reviewId)
-				.orElseThrow(() -> new ServiceException(ServiceError.NOT_FOUND_RECIPE));
+				.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
 
 		return ReviewDetailDto.fromEntity(review);
 	}

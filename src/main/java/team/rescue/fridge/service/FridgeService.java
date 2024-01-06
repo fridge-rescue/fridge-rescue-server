@@ -53,7 +53,7 @@ public class FridgeService {
 				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> new ServiceException(ServiceError.NOT_FOUND_FRIDGE));
+				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
 
 		List<FridgeIngredient> fridgeIngredients = fridgeIngredientRepository.findByFridge(fridge);
 		List<FridgeIngredientResDto> fridgeIngredientResDtoList = fridgeIngredients.stream()
@@ -81,7 +81,7 @@ public class FridgeService {
 				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> new ServiceException(ServiceError.NOT_FOUND_FRIDGE));
+				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
 
 		for (FridgeIngredientAddReqDto fridgeIngredientAddReqDto : fridgeIngredientAddReqDtoList) {
 			if (!fridgeIngredientRepository.existsByNameAndMemoAndExpiredAt(
