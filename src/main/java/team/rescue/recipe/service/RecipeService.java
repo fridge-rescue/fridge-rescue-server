@@ -41,7 +41,7 @@ public class RecipeService {
     Recipe recipe = recipesRepository.findById(id)
         .orElseThrow(() -> {
           log.error("레시피 없음");
-          return new RecipeException(RecipeError.NOT_FOUND_RECIPE);
+          return new RecipeException(RecipeError.RECIPE_NOT_FOUND);
         });
     log.debug("레시피 {}", recipe);
 
