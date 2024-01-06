@@ -1,36 +1,64 @@
 package team.rescue.common.file;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import team.rescue.common.dto.ImageDto;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
+import team.rescue.util.ImageUtil;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FileService {
 
-	/**
-	 * 이미지 S3 저장
-	 * TODO: 현재 이미지 originName을 반환하도록 임시 처리, 이후 실제 로직 구현 필요
-	 *
-	 * @param image S3 버킷에 저장할 이미지 파일
-	 * @return S3 URL
-	 */
+	private final AmazonS3 s3Client;
+
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucketName;
+	private static final String S3_BUCKET_DIR_PREFIX = "origin/";
+
 	public String uploadImageToS3(MultipartFile image) {
 
-		log.info("[S3 이미지 업로드]");
+		log.info("[S3 이미지 업로드] imageName={}", image.getOriginalFilename());
 
-		if (image.isEmpty()) {
-			return null;
+		// 파일 존재 여부 확인
+		validateFile(image);
+
+		if (image.getOriginalFilename() == null) {
+			throw new ServiceException(ServiceError.FILE_EXTENSION_INVALID);
 		}
+		String fileName =
+				S3_BUCKET_DIR_PREFIX + ImageUtil.generateImageName(image.getOriginalFilename());
+
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setContentType(image.getContentType());
 
 		try {
-			ImageDto imageDto = new ImageDto(image);
-
-			return imageDto.getOriginFilename();
+			PutObjectRequest putObjectRequest = new PutObjectRequest(
+					bucketName, fileName, image.getInputStream(), objectMetadata
+			);
+			s3Client.putObject(putObjectRequest);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+
+		return s3Client.getUrl(bucketName, fileName).toString();
+	}
+
+
+	private void validateFile(MultipartFile file) {
+		if (file.isEmpty()) {
+			throw new ServiceException(ServiceError.FILE_NOT_EXIST);
+		}
+		if (file.getOriginalFilename() == null) {
+			throw new ServiceException(ServiceError.FILE_EXTENSION_INVALID);
 		}
 	}
 }
