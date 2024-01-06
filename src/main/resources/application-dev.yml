@@ -6,6 +6,10 @@ server:
       force: true
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      location: "/src/resource/images"
   datasource:
     url: jdbc:mysql://localhost:3307/fridgerescue?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -33,8 +37,6 @@ spring:
 
   elasticsearch:
     uris: "http://localhost:9200"
-
-
 
 logging:
   level:

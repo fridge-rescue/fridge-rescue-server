@@ -3,6 +3,7 @@ package team.rescue.util;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.UUID;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,5 +30,14 @@ public class RandomCodeUtil {
 			throw new RuntimeException(e);
 			// throw new CustomException(BusinessException.NO_SUCH_ALGORITHM)
 		}
+	}
+
+	/**
+	 * UUID 생성
+	 *
+	 * @return UUID
+	 */
+	public String generateUUID() {
+		return UUID.randomUUID().toString();
 	}
 }
