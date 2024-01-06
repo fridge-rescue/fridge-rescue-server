@@ -21,8 +21,7 @@ public class ImageUtil {
 		String extension = getFileExtension(originName);
 		String now = String.valueOf(System.currentTimeMillis()); // 파일 업로드 시간
 
-		return originName
-				+ now
+		return now
 				+ NAME_SEPARATOR
 				+ RandomCodeUtil.generateUUID()
 				+ FILE_SEPARATOR
