@@ -45,7 +45,7 @@ public class Recipe {
 	@Column(name = "summary", length = 100)
 	private String summary;
 
-	@Column(name = "recipe_image_url", length = 100)
+	@Column(name = "recipe_image_url", length = 150)
 	private String recipeImageUrl;
 
 	@Column(name = "view_count", nullable = false)
