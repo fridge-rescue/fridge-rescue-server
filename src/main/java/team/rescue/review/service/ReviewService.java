@@ -53,7 +53,7 @@ public class ReviewService {
 		log.info("[리뷰 생성]");
 
 		Member member = memberRepository.findUserByEmail(details.getMember().getEmail())
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		Cook cook = cookRepository.getReferenceById(reviewReqDto.getCookId());
 		Recipe recipe = recipeRepository.getReferenceById(reviewReqDto.getRecipeId());

@@ -139,7 +139,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 	private void saveRefreshToken(PrincipalDetails principalDetails, String refreshToken) {
 		Member member = memberRepository.findUserByEmail(principalDetails.getUsername())
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		member.updateToken(refreshToken);
 		memberRepository.save(member);

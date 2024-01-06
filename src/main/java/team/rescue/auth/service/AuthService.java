@@ -40,7 +40,7 @@ public class AuthService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 		log.debug("[+] loadUserByUsername start");
 		Member member = memberRepository.findUserByEmail(userEmail)
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		log.debug(member.getEmail());
 		return new PrincipalDetails(member);
@@ -106,7 +106,7 @@ public class AuthService implements UserDetailsService {
 	public MemberInfoDto confirmEmailCode(String email, String code) {
 
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
 
 		// Validate Email Code
 		validateEmailCode(member, code);
@@ -141,7 +141,7 @@ public class AuthService implements UserDetailsService {
 	private void validateCreateMember(String email) {
 
 		if (memberRepository.existsByEmail(email)) {
-			throw new UserException(UserError.ALREADY_EXIST_EMAIL);
+			throw new UserException(UserError.EMAIL_ALREADY_EXIST);
 		}
 	}
 }
