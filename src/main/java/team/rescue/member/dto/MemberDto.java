@@ -1,5 +1,6 @@
 package team.rescue.member.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import team.rescue.auth.type.RoleType;
@@ -22,6 +23,26 @@ public class MemberDto {
 			memberInfo.setRole(member.getRole());
 
 			return memberInfo;
+		}
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class MemberResDto {
+
+		private Long id;
+		private String name;
+		private String nickname;
+		private String email;
+
+		public static MemberResDto of(Member member) {
+			return MemberResDto.builder()
+					.id(member.getId())
+					.name(member.getName())
+					.nickname(member.getNickname())
+					.email(member.getEmail())
+					.build();
 		}
 	}
 }
