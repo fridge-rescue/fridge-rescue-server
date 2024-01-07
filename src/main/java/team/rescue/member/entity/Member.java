@@ -114,5 +114,13 @@ public class Member {
 	public void updateToken(String token) {
 		this.token = token;
 	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void updatePassword(String password) {
+		this.password = password;
+	}
 }
 

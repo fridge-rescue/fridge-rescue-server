@@ -1,12 +1,19 @@
 package team.rescue.member.service;
 
+import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
+import static team.rescue.error.type.ServiceError.USER_PASSWORD_MISMATCH;
+
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.UserError;
-import team.rescue.member.dto.MemberDto.MemberResDto;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
+import team.rescue.member.dto.MemberDto.MemberDetailDto;
+import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
+import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -17,11 +24,50 @@ import team.rescue.member.repository.MemberRepository;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final PasswordEncoder passwordEncoder;
 
-	public MemberResDto getMembersInfo(String email) {
+	public MemberDetailDto getMembersInfo(String email) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
-		return MemberResDto.of(member);
+		return MemberDetailDto.of(member);
+	}
+
+	@Transactional
+	public MemberDetailDto updateMemberNickname(String email,
+			MemberNicknameUpdateDto memberNicknameUpdateDto) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		member.updateNickname(memberNicknameUpdateDto.getNickname());
+
+		Member updatedMember = memberRepository.save(member);
+
+		return MemberDetailDto.of(updatedMember);
+	}
+
+	@Transactional
+	public MemberDetailDto updateMemberPassword(String email,
+			MemberPasswordUpdateDto memberPasswordUpdateDto) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		boolean passwordMatch = passwordEncoder.matches(memberPasswordUpdateDto.getCurrentPassword(),
+				member.getPassword());
+
+		if (!passwordMatch) {
+			throw new ServiceException(USER_PASSWORD_MISMATCH);
+		}
+
+		if (!Objects.equals(memberPasswordUpdateDto.getNewPassword(),
+				memberPasswordUpdateDto.getNewPasswordCheck())) {
+			throw new ServiceException(ServiceError.PASSWORD_AND_PASSWORD_CHECK_MISMATCH);
+		}
+
+		member.updatePassword(passwordEncoder.encode(memberPasswordUpdateDto.getNewPassword()));
+
+		Member updatedMember = memberRepository.save(member);
+
+		return MemberDetailDto.of(updatedMember);
 	}
 }
