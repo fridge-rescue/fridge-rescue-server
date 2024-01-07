@@ -7,45 +7,25 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.error.exception.ServiceException;
-import team.rescue.error.exception.UserException;
 import team.rescue.error.exception.ValidationException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	/**
-	 * 유저 관련 에러 핸들링
-	 *
-	 * @param e UserException
-	 * @return Error Response with custom UserException Status Code
-	 */
-	@ExceptionHandler(UserException.class)
-	public ResponseEntity<?> userException(UserException e) {
-
-		log.error(e.getErrorMessage());
-
-		ResponseDto<?> response = ResponseDto.builder()
-				.code(e.getCode())
-				.message(e.getErrorMessage())
-				.data(null).build();
-
-		return new ResponseEntity<>(response, e.getStatusCode());
-	}
 
 	/**
 	 * 서비스(비즈니스) 로직 관련 에러 핸들링
 	 *
 	 * @param e ServiceException
-	 * @return Error Response with custom UserException Status Code
+	 * @return Error Response with custom ServiceException Status Code
 	 */
 	@ExceptionHandler(ServiceException.class)
-	public ResponseEntity<?> userException(ServiceException e) {
+	public ResponseEntity<?> serviceException(ServiceException e) {
 
 		log.error(e.getErrorMessage());
 
 		ResponseDto<?> response = ResponseDto.builder()
-				.code(e.getCode())
 				.message(e.getErrorMessage())
 				.data(null).build();
 
@@ -65,7 +45,6 @@ public class GlobalExceptionHandler {
 		log.error(e.getMessage());
 
 		ResponseDto<?> response = ResponseDto.builder()
-				.code(-1)
 				.message(e.getMessage())
 				.data(e.getErrorMap()).build();
 

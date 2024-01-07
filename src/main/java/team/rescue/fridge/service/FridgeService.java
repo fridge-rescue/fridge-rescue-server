@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.rescue.error.exception.ServiceException;
-import team.rescue.error.exception.UserException;
 import team.rescue.error.type.ServiceError;
-import team.rescue.error.type.UserError;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientAddReqDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientResDto;
@@ -50,7 +48,7 @@ public class FridgeService {
 	 */
 	public FridgeDto getFridgeIngredients(String email) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
@@ -78,7 +76,7 @@ public class FridgeService {
 	public List<FridgeIngredientResDto> addIngredient(String email,
 			List<FridgeIngredientAddReqDto> fridgeIngredientAddReqDtoList) {
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
