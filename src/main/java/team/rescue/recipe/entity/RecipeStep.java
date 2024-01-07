@@ -35,7 +35,7 @@ public class RecipeStep {
 	@Column(name = "step_no")
 	private int stepNo;
 
-	@Column(name = "step_image_url", nullable = true, length = 100)
+	@Column(name = "step_image_url", length = 150)
 	private String stepImageUrl;
 
 	@Column(name = "step_description", nullable = false, length = 100)

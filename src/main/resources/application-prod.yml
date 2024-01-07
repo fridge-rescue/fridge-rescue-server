@@ -6,6 +6,9 @@ server:
       force: true
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2MB
   datasource:
     url: jdbc:mysql://${rds.hostname}:${rds.port}/${rds.db.name}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -26,6 +29,18 @@ spring:
 
   elasticsearch:
     uris: ${es.uri}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${aws.s3.key.access}
+      secretKey: ${aws.s3.key.secret}
+    s3:
+      bucket: ${aws.s3.bucket}
+    region:
+      static: ${cloud.aws.region.static}
+    stack:
+      auto: false
 
 logging:
   level:

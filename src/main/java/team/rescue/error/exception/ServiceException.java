@@ -16,5 +16,4 @@ public class ServiceException extends RuntimeException {
 		this.statusCode = serviceError.getHttpStatus();
 		this.errorMessage = serviceError.getErrorMessage();
 	}
-
 }

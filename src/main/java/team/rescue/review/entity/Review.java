@@ -52,7 +52,7 @@ public class Review {
 	@Column(name = "title", nullable = false, length = 50)
 	private String title;
 
-	@Column(name = "review_image_url")
+	@Column(name = "review_image_url", length = 150)
 	private String imageUrl;
 
 	@Column(name = "contents", nullable = false, length = 1000)
