@@ -21,13 +21,11 @@ public class GlobalExceptionHandler {
 	 * @return Error Response with custom ServiceException Status Code
 	 */
 	@ExceptionHandler(ServiceException.class)
-	public ResponseEntity<?> serviceException(ServiceException e) {
+	public ResponseEntity<ResponseDto<Object>> serviceException(ServiceException e) {
 
 		log.error(e.getErrorMessage());
 
-		ResponseDto<?> response = ResponseDto.builder()
-				.message(e.getErrorMessage())
-				.data(null).build();
+		ResponseDto<Object> response = new ResponseDto<>(e.getErrorMessage(), null);
 
 		return new ResponseEntity<>(response, e.getStatusCode());
 	}
@@ -40,13 +38,11 @@ public class GlobalExceptionHandler {
 	 * @return Error Response with BAD_REQUEST(400)
 	 */
 	@ExceptionHandler(ValidationException.class)
-	public ResponseEntity<?> validationException(ValidationException e) {
+	public ResponseEntity<ResponseDto<Object>> validationException(ValidationException e) {
 
 		log.error(e.getMessage());
 
-		ResponseDto<?> response = ResponseDto.builder()
-				.message(e.getMessage())
-				.data(e.getErrorMap()).build();
+		ResponseDto<Object> response = new ResponseDto<>(e.getMessage(), e.getErrorMap());
 
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
