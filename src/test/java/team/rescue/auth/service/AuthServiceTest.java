@@ -99,11 +99,11 @@ class AuthServiceTest {
 				() -> authService.createEmailUser(joinReqDto));
 
 		// then
-		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getCode(),
+		Assertions.assertEquals(UserError.EMAIL_ALREADY_EXIST.getCode(),
 				exception.getCode());
-		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getHttpStatus(),
+		Assertions.assertEquals(UserError.EMAIL_ALREADY_EXIST.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getErrorMessage(),
+		Assertions.assertEquals(UserError.EMAIL_ALREADY_EXIST.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 
@@ -201,11 +201,11 @@ class AuthServiceTest {
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		Assertions.assertEquals(UserError.NOT_FOUND_USER.getCode(),
+		Assertions.assertEquals(UserError.USER_NOT_FOUND.getCode(),
 				exception.getCode());
-		Assertions.assertEquals(UserError.NOT_FOUND_USER.getHttpStatus(),
+		Assertions.assertEquals(UserError.USER_NOT_FOUND.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(UserError.NOT_FOUND_USER.getErrorMessage(),
+		Assertions.assertEquals(UserError.USER_NOT_FOUND.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 
