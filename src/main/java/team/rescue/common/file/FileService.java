@@ -50,12 +50,12 @@ public class FileService {
 
 			PutObjectRequest putObjectRequest = new PutObjectRequest(
 					bucketName,
-					S3_BUCKET_DOWNLOAD_DIR_PREFIX + fileName,
+					S3_BUCKET_UPLOAD_DIR_PREFIX + fileName,
 					image.getInputStream(),
 					objectMetadata
 			);
 			s3Client.putObject(putObjectRequest);
-			
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
