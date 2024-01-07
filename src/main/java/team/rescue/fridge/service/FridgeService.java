@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.dto.FridgeDto;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientAddReqDto;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientResDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
 import team.rescue.fridge.entity.Fridge;
 import team.rescue.fridge.entity.FridgeIngredient;
 import team.rescue.fridge.repository.FridgeIngredientRepository;
@@ -43,10 +43,11 @@ public class FridgeService {
 	/**
 	 * <p>냉장고 재료를 조회하는 메소드
 	 *
-	 * @param email
-	 * @return
+	 * @param email 유저 이메일
+	 * @return 해당 유저 냉장고 재료 목록
 	 */
 	public FridgeDto getFridgeIngredients(String email) {
+
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
@@ -54,13 +55,13 @@ public class FridgeService {
 				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
 
 		List<FridgeIngredient> fridgeIngredients = fridgeIngredientRepository.findByFridge(fridge);
-		List<FridgeIngredientResDto> fridgeIngredientResDtoList = fridgeIngredients.stream()
-				.map(FridgeIngredientResDto::of)
+		List<FridgeIngredientInfoDto> fridgeIngredientInfoList = fridgeIngredients.stream()
+				.map(FridgeIngredientInfoDto::of)
 				.collect(Collectors.toList());
 
 		return FridgeDto.builder()
 				.id(fridge.getId())
-				.fridgeIngredientResDtoList(fridgeIngredientResDtoList)
+				.fridgeIngredientInfoList(fridgeIngredientInfoList)
 				.build();
 	}
 
@@ -68,30 +69,33 @@ public class FridgeService {
 	 * <p>입력받은 리스트를 순회하면서 냉장고에 재료를 저장
 	 * 이름, 메모, 유통기한이 모두 동일한 재료가 두 번 입력되는 경우 재료 등록 처리 하지 않음
 	 *
-	 * @param email
-	 * @param fridgeIngredientAddReqDtoList
-	 * @return
+	 * @param email                         유저 이메일
+	 * @param fridgeIngredientCreateDtoList 생성할 재료 리스트
+	 * @return 생성한 재료 목록
 	 */
 	@Transactional
-	public List<FridgeIngredientResDto> addIngredient(String email,
-			List<FridgeIngredientAddReqDto> fridgeIngredientAddReqDtoList) {
+	public List<FridgeIngredientInfoDto> addIngredient(
+			String email,
+			List<FridgeIngredientCreateDto> fridgeIngredientCreateDtoList
+	) {
+
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
 
-		for (FridgeIngredientAddReqDto fridgeIngredientAddReqDto : fridgeIngredientAddReqDtoList) {
+		for (FridgeIngredientCreateDto fridgeIngredientCreateDto : fridgeIngredientCreateDtoList) {
 			if (!fridgeIngredientRepository.existsByNameAndMemoAndExpiredAt(
-					fridgeIngredientAddReqDto.getName(),
-					fridgeIngredientAddReqDto.getMemo(),
-					fridgeIngredientAddReqDto.getExpiredAt())) {
+					fridgeIngredientCreateDto.getName(),
+					fridgeIngredientCreateDto.getMemo(),
+					fridgeIngredientCreateDto.getExpiredAt())) {
 
 				FridgeIngredient fridgeIngredient = FridgeIngredient.builder()
 						.fridge(fridge)
-						.name(fridgeIngredientAddReqDto.getName())
-						.memo(fridgeIngredientAddReqDto.getMemo())
-						.expiredAt(fridgeIngredientAddReqDto.getExpiredAt())
+						.name(fridgeIngredientCreateDto.getName())
+						.memo(fridgeIngredientCreateDto.getMemo())
+						.expiredAt(fridgeIngredientCreateDto.getExpiredAt())
 						.build();
 
 				fridgeIngredientRepository.save(fridgeIngredient);
@@ -99,7 +103,7 @@ public class FridgeService {
 		}
 
 		List<FridgeIngredient> fridgeIngredients = fridgeIngredientRepository.findByFridge(fridge);
-		return fridgeIngredients.stream().map(FridgeIngredientResDto::of)
+		return fridgeIngredients.stream().map(FridgeIngredientInfoDto::of)
 				.collect(Collectors.toList());
 	}
 

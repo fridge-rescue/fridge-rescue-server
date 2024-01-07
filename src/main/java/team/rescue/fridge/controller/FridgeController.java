@@ -15,8 +15,8 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.error.exception.ValidationException;
 import team.rescue.fridge.dto.FridgeDto;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientAddReqDto;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientResDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.validator.ListValidator;
 
@@ -47,21 +47,21 @@ public class FridgeController {
 	/**
 	 * 냉장고 재료 등록
 	 *
-	 * @param fridgeIngredientAddDtoList 등록할 재료 목록
-	 * @param principalDetails           로그인 유저
-	 * @param errors                     TODO: AOP, ControllerAdvice 타는지 확인 필요
+	 * @param fridgeIngredientCreateDtoList 등록할 재료 목록
+	 * @param principalDetails              로그인 유저
+	 * @param errors                        TODO: AOP, ControllerAdvice 타는지 확인 필요
 	 * @return 등록한 재료 목록
 	 */
 	@PostMapping("/ingredients")
-	public ResponseEntity<ResponseDto<List<FridgeIngredientResDto>>> addIngredient(
-			@RequestBody List<FridgeIngredientAddReqDto> fridgeIngredientAddDtoList,
+	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> addIngredient(
+			@RequestBody List<FridgeIngredientCreateDto> fridgeIngredientCreateDtoList,
 			@AuthenticationPrincipal PrincipalDetails principalDetails,
 			Errors errors
 	) {
 
 		// List<Dto> 형태는 @Valid 어노테이션이 동작하지 않아서
 		// CustomValidator를 생성해서 유효성 검증을 해줘야 함.
-		listValidator.validate(fridgeIngredientAddDtoList, errors);
+		listValidator.validate(fridgeIngredientCreateDtoList, errors);
 
 		if (errors.hasErrors()) {
 			if (errors.getFieldError() != null) {
@@ -71,10 +71,10 @@ public class FridgeController {
 		}
 
 		String email = principalDetails.getUsername();
-		List<FridgeIngredientResDto> fridgeIngredientResDto =
-				fridgeService.addIngredient(email, fridgeIngredientAddDtoList);
+		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList =
+				fridgeService.addIngredient(email, fridgeIngredientCreateDtoList);
 
-		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientResDto));
+		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientInfoDtoList));
 
 	}
 }
