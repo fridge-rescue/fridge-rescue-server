@@ -25,12 +25,14 @@ public enum ServiceError {
 	EMAIL_CODE_MIS_MATCH(HttpStatus.BAD_REQUEST, "이메일 인증 코드가 일치하지 않습니다."),
 
 	// Recipe
-	RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미 삭제된 레시피입니다."),
+	RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피를 찾을 수 없습니다."),
 
 	// Fridge
-	FRIDGE_NOT_FOUND(HttpStatus.NOT_FOUND, "냉장고 정보가 없습니다.");
+	FRIDGE_NOT_FOUND(HttpStatus.NOT_FOUND, "냉장고 정보가 없습니다."),
 
-	
+	// FridgeIngredient
+	INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "재료 정보가 없습니다.");
+
 	private final HttpStatus httpStatus;
 	private final String errorMessage;
 }

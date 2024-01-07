@@ -41,4 +41,10 @@ public class FridgeIngredient {
 
 	@Column(name = "expired_at")
 	private LocalDateTime expiredAt;
+
+	public void updateFridgeIngredient(String name, String memo, LocalDateTime expiredAt) {
+		this.name = name;
+		this.memo = memo;
+		this.expiredAt = expiredAt;
+	}
 }

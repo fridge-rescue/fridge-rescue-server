@@ -2,6 +2,7 @@ package team.rescue.fridge.dto;
 
 import jakarta.validation.constraints.Future;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,4 +43,29 @@ public class FridgeIngredientDto {
 		}
 	}
 
+	@Getter
+	@Setter
+	@Builder
+	public static class FridgeIngredientUpdateDto {
+
+		private Long id;
+		private String name;
+		private String memo;
+		private LocalDateTime expiredAt;
+	}
+
+	@Getter
+	@Setter
+	public static class FridgeIngredientDeleteDto {
+
+		private Long id;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class FridgeIngredientEditDto {
+		private List<Long> deleteItem;
+		private List<FridgeIngredientUpdateDto> updateItem;
+	}
 }
