@@ -117,7 +117,7 @@ public class AuthService implements UserDetailsService {
 		// 냉장고 생성
 		member.registerFridge(fridgeService.createFridge(member));
 
-		return MemberInfoDto.fromEntity(member);
+		return MemberInfoDto.of(member);
 	}
 
 	/**

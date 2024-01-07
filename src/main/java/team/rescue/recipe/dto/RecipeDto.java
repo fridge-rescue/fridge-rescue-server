@@ -29,6 +29,7 @@ public class RecipeDto {
 		private String writerMemberNickName;
 
 	}
+
 	@Getter
 	@Setter
 	public static class RecipeInfoDto {
@@ -37,11 +38,11 @@ public class RecipeDto {
 		private String title;
 		private MemberInfoDto author;
 
-		public static RecipeInfoDto fromEntity(Recipe recipe) {
+		public static RecipeInfoDto of(Recipe recipe) {
 			RecipeInfoDto recipeInfo = new RecipeInfoDto();
 			recipeInfo.setId(recipe.getId());
 			recipeInfo.setTitle(recipe.getTitle());
-			recipeInfo.setAuthor(MemberInfoDto.fromEntity(recipe.getMember()));
+			recipeInfo.setAuthor(MemberInfoDto.of(recipe.getMember()));
 
 			return recipeInfo;
 		}

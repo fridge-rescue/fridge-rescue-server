@@ -65,7 +65,7 @@ public class ReviewService {
 				.imageUrl(fileService.uploadImageToS3(image))
 				.build();
 
-		return ReviewInfoDto.fromEntity(reviewRepository.save(review));
+		return ReviewInfoDto.of(reviewRepository.save(review));
 	}
 
 	/**
@@ -81,6 +81,6 @@ public class ReviewService {
 		Review review = reviewRepository.findById(reviewId)
 				.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
 
-		return ReviewDetailDto.fromEntity(review);
+		return ReviewDetailDto.of(review);
 	}
 }
