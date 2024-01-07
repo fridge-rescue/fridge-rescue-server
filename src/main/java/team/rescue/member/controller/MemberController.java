@@ -27,12 +27,13 @@ public class MemberController {
 
 	@GetMapping("/info")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<ResponseDto<MemberDetailDto>> getMembersInfo(
+	public ResponseEntity<ResponseDto<MemberDetailDto>> getMemberInfo(
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		String email = principalDetails.getUsername();
 
-		MemberDetailDto memberDetailDto = memberService.getMembersInfo(email);
+
+		MemberDetailDto memberDetailDto = memberService.getMemberInfo(email);
 
 		return ResponseEntity.ok(new ResponseDto<>("회원 정보 조회에 성공하였습니다.", memberDetailDto));
 	}

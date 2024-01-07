@@ -3,8 +3,11 @@ package team.rescue.member.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.rescue.auth.type.RoleType;
 import team.rescue.member.entity.Member;
@@ -49,16 +52,20 @@ public class MemberDto {
 		}
 	}
 
-	@Getter
-	@Setter
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
 	public static class MemberNicknameUpdateDto {
 
 		@Pattern(regexp = "^[a-zA-Z가-힣0-9]{2,15}", message = "한글, 영문 또는 숫자를 포함한 최소 2글자, 최대 15자의 닉네임을 입력해주세요.")
 		private String nickname;
 	}
 
-	@Getter
-	@Setter
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
 	public static class MemberPasswordUpdateDto {
 
 		@NotEmpty(message = "현재 비밀번호를 입력해주세요.")

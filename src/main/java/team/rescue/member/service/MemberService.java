@@ -26,7 +26,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public MemberDetailDto getMembersInfo(String email) {
+	public MemberDetailDto getMemberInfo(String email) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
