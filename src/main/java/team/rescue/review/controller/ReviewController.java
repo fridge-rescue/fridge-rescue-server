@@ -38,7 +38,7 @@ public class ReviewController {
 	 */
 	@PostMapping
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<?> createReview(
+	public ResponseEntity<ResponseDto<ReviewInfoDto>> createReview(
 			@RequestPart ReviewReqDto data,
 			@RequestPart MultipartFile image,
 			@AuthenticationPrincipal PrincipalDetails details
@@ -50,7 +50,7 @@ public class ReviewController {
 		ReviewInfoDto reviewInfo = reviewService.createReview(data, image, details);
 
 		return new ResponseEntity<>(
-				new ResponseDto<>(1, "레시피 리뷰가 등록되었습니다.", reviewInfo),
+				new ResponseDto<>("레시피 리뷰가 등록되었습니다.", reviewInfo),
 				HttpStatus.CREATED
 		);
 
@@ -71,7 +71,7 @@ public class ReviewController {
 		ReviewDetailDto reviewDetailDto = reviewService.getReview(reviewId);
 
 		return new ResponseEntity<>(
-				new ResponseDto<>(1, null, reviewDetailDto),
+				new ResponseDto<>(null, reviewDetailDto),
 				HttpStatus.CREATED
 		);
 	}

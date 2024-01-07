@@ -6,13 +6,11 @@ import lombok.Getter;
 @Getter
 public class ResponseDto<T> {
 
-	private int code = -1;
 	private String message = null;
 	private final T data;
 
 	@Builder
-	public ResponseDto(int code, String message, T data) {
-		this.code = code;
+	public ResponseDto(String message, T data) {
 		this.message = message;
 		this.data = data;
 	}

@@ -39,7 +39,7 @@ public class AuthController {
 	 */
 	@PostMapping("/email/join")
 	@PreAuthorize("permitAll()")
-	public ResponseEntity<?> emailJoin(
+	public ResponseEntity<ResponseDto<JoinResDto>> emailJoin(
 			@RequestBody @Valid JoinDto.JoinReqDto joinReqDto
 	) {
 
@@ -48,7 +48,7 @@ public class AuthController {
 		JoinResDto joinResDto = authService.createEmailUser(joinReqDto);
 
 		return new ResponseEntity<>(
-				ResponseDto.builder().data(joinResDto).build(),
+				new ResponseDto<>("회원 가입이 완료되었습니다. 이메일 코드를 인증해주세요.", joinResDto),
 				HttpStatus.CREATED
 		);
 	}
@@ -61,7 +61,7 @@ public class AuthController {
 	 */
 	@PostMapping("/email/confirm")
 	@PreAuthorize("hasAuthority('GUEST')")
-	public ResponseEntity<?> emailConfirm(
+	public ResponseEntity<ResponseDto<MemberInfoDto>> emailConfirm(
 			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
 			@AuthenticationPrincipal PrincipalDetails details
 	) {
@@ -71,7 +71,7 @@ public class AuthController {
 				.confirmEmailCode(details.getUsername(), emailConfirmDto.getCode());
 
 		return new ResponseEntity<>(
-				ResponseDto.builder().data(memberInfoDto).build(),
+				new ResponseDto<>(null, memberInfoDto),
 				HttpStatus.OK
 		);
 	}
