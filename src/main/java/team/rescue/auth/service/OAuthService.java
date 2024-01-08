@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
-import team.rescue.fridge.service.FridgeService;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.UserError;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
+import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
