@@ -84,14 +84,14 @@ public class FridgeController {
 
 	@PutMapping("/ingredients")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> editIngredient(
+	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> updateIngredient(
 			@RequestBody FridgeIngredientUpdateDto fridgeIngredientUpdateDto,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
 		String email = principalDetails.getUsername();
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList =
-				fridgeService.editIngredient(email, fridgeIngredientUpdateDto);
+				fridgeService.modifyIngredient(email, fridgeIngredientUpdateDto);
 
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientInfoDtoList));
 	}

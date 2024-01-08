@@ -115,7 +115,7 @@ public class FridgeService {
 	}
 
 	@Transactional
-	public List<FridgeIngredientInfoDto> editIngredient(String email,
+	public List<FridgeIngredientInfoDto> modifyIngredient(String email,
 			FridgeIngredientUpdateDto fridgeIngredientUpdateDto) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
@@ -127,7 +127,7 @@ public class FridgeService {
 		deleteIngredient(deleteItemList, fridge);
 
 		List<FridgeIngredientInfoDto> updateItemList = fridgeIngredientUpdateDto.getUpdateItem();
-		updateIngredient(updateItemList, fridge);
+		modifyIngredient(updateItemList, fridge);
 
 		List<FridgeIngredient> fridgeIngredientList = fridgeIngredientRepository.findByFridge(
 				fridge);
@@ -149,7 +149,7 @@ public class FridgeService {
 		}
 	}
 
-	private void updateIngredient(List<FridgeIngredientInfoDto> updateItemList, Fridge
+	private void modifyIngredient(List<FridgeIngredientInfoDto> updateItemList, Fridge
 			fridge) {
 		for (FridgeIngredientInfoDto fridgeIngredientInfoDto : updateItemList) {
 			FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(
