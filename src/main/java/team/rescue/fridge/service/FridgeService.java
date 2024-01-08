@@ -115,7 +115,7 @@ public class FridgeService {
 	}
 
 	@Transactional
-	public List<FridgeIngredientInfoDto> modifyIngredient(String email,
+	public List<FridgeIngredientInfoDto> updateIngredient(String email,
 			FridgeIngredientUpdateDto fridgeIngredientUpdateDto) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));

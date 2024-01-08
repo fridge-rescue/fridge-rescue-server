@@ -4,15 +4,17 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import team.rescue.fridge.entity.FridgeIngredient;
 
 public class FridgeIngredientDto {
 
-	@Getter
-	@Setter
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	@Builder
 	public static class FridgeIngredientCreateDto {
 
@@ -24,8 +26,9 @@ public class FridgeIngredientDto {
 		private LocalDateTime expiredAt;
 	}
 
-	@Getter
-	@Setter
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	@Builder
 	public static class FridgeIngredientInfoDto {
 
@@ -46,8 +49,9 @@ public class FridgeIngredientDto {
 		}
 	}
 
-	@Getter
-	@Setter
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	@Builder
 	public static class FridgeIngredientUpdateDto {
 
