@@ -1,5 +1,5 @@
 server:
-  port: 5000
+  port: ${SERVER_PORT}
   servlet:
     encoding:
       charset: UTF-8
@@ -10,10 +10,10 @@ spring:
     multipart:
       max-file-size: 2MB
   datasource:
-    url: jdbc:mysql://${rds.hostname}:${rds.port}/${rds.db.name}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${RDS_HOST_NAME}:${RDS_PORT}/${RDS_DB_NAME}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${rds.username}
-    password: ${rds.password}
+    username: ${RDS_USER_NAME}
+    password: ${RDS_PASSWORD}
   jpa:
     open-in-view: false
     hibernate:
@@ -21,24 +21,47 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_CLIENT_ID}
+            client-secret: ${OAUTH2_CLIENT_SECRET}
+            scope:
+              - profile
+              - email
+  mail:
+    host: smtp.gmail.com
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USER_NAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  jwt:
+    secret: ${JWT_SECRET}
 
   data:
     redis:
-      host: localhost
-      port: 6380
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
   elasticsearch:
-    uris: ${es.uri}
+    uris: ${ES_URL}
 
 cloud:
   aws:
     credentials:
-      accessKey: ${aws.s3.key.access}
-      secretKey: ${aws.s3.key.secret}
+      accessKey: ${AWS_S3_KEY_ACCESS}
+      secretKey: ${AWS_S3_KEY_SECRET}
     s3:
-      bucket: ${aws.s3.bucket}
+      bucket: ${AWS_S3_BUCKET}
     region:
-      static: ${cloud.aws.region.static}
+      static: ${CLOUD_AWS_REGION_STATIC}
     stack:
       auto: false
 
