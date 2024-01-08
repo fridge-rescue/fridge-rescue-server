@@ -54,13 +54,13 @@ jobs:
           cp -r .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
 
-      # Beanstalk Deploy 플러그인 사용
+      # Beanstalk Deploy
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_EB_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_EB_SECRET_KEY }}
-          application-name: ${{ env.EB_APPLICATION_NAME }} # EB Application Name
+          application_name: ${{ env.EB_APPLICATION_NAME }} # EB Application Name
           environment_name: ${{ env.EB_ENVIRONMENT_NAME }} # EB Environment Name
           version_label: version-${{ steps.current-time.outputs.formattedTime }} # 배포 버전은 타임스탬프를 이용하여 구분
           region: ${{ env.AWS_REGION }}
