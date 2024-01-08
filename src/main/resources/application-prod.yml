@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT}
+  port: ${server.port}
   servlet:
     encoding:
       charset: UTF-8
@@ -10,10 +10,10 @@ spring:
     multipart:
       max-file-size: 2MB
   datasource:
-    url: jdbc:mysql://${RDS_HOST_NAME}:${RDS_PORT}/${RDS_DB_NAME}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${rds.host.name}:${rds.port}/${rds.db.name}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${RDS_USER_NAME}
-    password: ${RDS_PASSWORD}
+    username: ${rds.user.name}
+    password: ${rds.password}
   jpa:
     open-in-view: false
     hibernate:
@@ -26,16 +26,16 @@ spring:
       client:
         registration:
           google:
-            client-id: ${OAUTH2_CLIENT_ID}
-            client-secret: ${OAUTH2_CLIENT_SECRET}
+            client-id: ${oauth2.client.id}
+            client-secret: ${oauth2.client.secret}
             scope:
               - profile
               - email
   mail:
     host: smtp.gmail.com
-    port: ${EMAIL_PORT}
-    username: ${EMAIL_USER_NAME}
-    password: ${EMAIL_PASSWORD}
+    port: ${email.port}
+    username: ${email.user.name}
+    password: ${email.password}
     properties:
       mail:
         smtp:
@@ -43,25 +43,25 @@ spring:
           starttls:
             enable: true
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${jwt.secret}
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      host: ${redis.host}
+      port: ${redis.port}
 
   elasticsearch:
-    uris: ${ES_URL}
+    uris: ${es.url}
 
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_S3_KEY_ACCESS}
-      secretKey: ${AWS_S3_KEY_SECRET}
+      accessKey: ${aws.s3.key.access}
+      secretKey: ${aws.s3.key.secret}
     s3:
-      bucket: ${AWS_S3_BUCKET}
+      bucket: ${aws.s3.bucket}
     region:
-      static: ${CLOUD_AWS_REGION_STATIC}
+      static: ${cloud.aws.region.static}
     stack:
       auto: false
 
