@@ -48,24 +48,8 @@ public class FridgeIngredientDto {
 	@Builder
 	public static class FridgeIngredientUpdateDto {
 
-		private Long id;
-		private String name;
-		private String memo;
-		private LocalDateTime expiredAt;
-	}
-
-	@Getter
-	@Setter
-	public static class FridgeIngredientDeleteDto {
-
-		private Long id;
-	}
-
-	@Getter
-	@Setter
-	@Builder
-	public static class FridgeIngredientEditDto {
 		private List<Long> deleteItem;
-		private List<FridgeIngredientUpdateDto> updateItem;
+		private List<FridgeIngredientInfoDto> updateItem;
 	}
+
 }

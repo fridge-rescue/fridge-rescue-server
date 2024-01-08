@@ -15,7 +15,6 @@ import team.rescue.error.exception.AuthException;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientEditDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUpdateDto;
 import team.rescue.fridge.entity.Fridge;
@@ -117,17 +116,17 @@ public class FridgeService {
 
 	@Transactional
 	public List<FridgeIngredientInfoDto> editIngredient(String email,
-			FridgeIngredientEditDto fridgeIngredientEditDto) {
+			FridgeIngredientUpdateDto fridgeIngredientUpdateDto) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(FRIDGE_NOT_FOUND));
 
-		List<Long> deleteItemList = fridgeIngredientEditDto.getDeleteItem();
+		List<Long> deleteItemList = fridgeIngredientUpdateDto.getDeleteItem();
 		deleteIngredient(deleteItemList, fridge);
 
-		List<FridgeIngredientUpdateDto> updateItemList = fridgeIngredientEditDto.getUpdateItem();
+		List<FridgeIngredientInfoDto> updateItemList = fridgeIngredientUpdateDto.getUpdateItem();
 		updateIngredient(updateItemList, fridge);
 
 		List<FridgeIngredient> fridgeIngredientList = fridgeIngredientRepository.findByFridge(
@@ -150,11 +149,11 @@ public class FridgeService {
 		}
 	}
 
-	private void updateIngredient(List<FridgeIngredientUpdateDto> updateItemList, Fridge
+	private void updateIngredient(List<FridgeIngredientInfoDto> updateItemList, Fridge
 			fridge) {
-		for (FridgeIngredientUpdateDto fridgeIngredientUpdateDto : updateItemList) {
+		for (FridgeIngredientInfoDto fridgeIngredientInfoDto : updateItemList) {
 			FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(
-							fridgeIngredientUpdateDto.getId())
+							fridgeIngredientInfoDto.getId())
 					.orElseThrow(() -> new ServiceException(INGREDIENT_NOT_FOUND));
 
 			if (fridgeIngredient.getFridge() != fridge) {
@@ -162,9 +161,9 @@ public class FridgeService {
 			}
 
 			fridgeIngredient.updateFridgeIngredient(
-					fridgeIngredientUpdateDto.getName(),
-					fridgeIngredientUpdateDto.getMemo(),
-					fridgeIngredientUpdateDto.getExpiredAt());
+					fridgeIngredientInfoDto.getName(),
+					fridgeIngredientInfoDto.getMemo(),
+					fridgeIngredientInfoDto.getExpiredAt());
 
 			fridgeIngredientRepository.save(fridgeIngredient);
 		}

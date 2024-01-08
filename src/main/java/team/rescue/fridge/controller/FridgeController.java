@@ -18,8 +18,8 @@ import team.rescue.common.dto.ResponseDto;
 import team.rescue.error.exception.ValidationException;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientEditDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUpdateDto;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.validator.ListValidator;
 
@@ -85,13 +85,13 @@ public class FridgeController {
 	@PutMapping("/ingredients")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> editIngredient(
-			@RequestBody FridgeIngredientEditDto fridgeIngredientEditDto,
+			@RequestBody FridgeIngredientUpdateDto fridgeIngredientUpdateDto,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
 		String email = principalDetails.getUsername();
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList =
-				fridgeService.editIngredient(email, fridgeIngredientEditDto);
+				fridgeService.editIngredient(email, fridgeIngredientUpdateDto);
 
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientInfoDtoList));
 	}
