@@ -15,7 +15,7 @@ public class MemberDto {
 		private String nickname;
 		private RoleType role;
 
-		public static MemberInfoDto fromEntity(Member member) {
+		public static MemberInfoDto of(Member member) {
 			MemberInfoDto memberInfo = new MemberInfoDto();
 			memberInfo.setId(member.getId());
 			memberInfo.setNickname(member.getNickname());

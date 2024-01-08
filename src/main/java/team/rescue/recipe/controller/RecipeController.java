@@ -26,32 +26,47 @@ import team.rescue.recipe.service.RecipeService;
 @RequiredArgsConstructor
 public class RecipeController {
 
-  private final RecipeService recipeService;
+	private final RecipeService recipeService;
 
-  @GetMapping("/{recipeId}")
-  public ResponseEntity<ResponseDto<RecipeResDto>> getRecipe(@PathVariable Long recipeId) {
-    RecipeResDto recipeResDto = recipeService.getRecipe(recipeId);
-    return new ResponseEntity<>(
-        new ResponseDto<>(1, "레시피 조회에 성공하였습니다.", recipeResDto),
-        HttpStatus.OK
-    );
-  }
+	/**
+	 * 특정 레시피 상세 조회
+	 *
+	 * @param recipeId 조회할 레시피 ID
+	 * @return 해당 레시피 상세 데이터
+	 */
+	@GetMapping("/{recipeId}")
+	public ResponseEntity<ResponseDto<RecipeResDto>> getRecipe(@PathVariable Long recipeId) {
+		RecipeResDto recipeResDto = recipeService.getRecipe(recipeId);
+		return new ResponseEntity<>(
+				new ResponseDto<>("레시피 조회에 성공하였습니다.", recipeResDto),
+				HttpStatus.OK
+		);
+	}
 
-  @PutMapping("/recipes")
-  public ResponseEntity<ResponseDto<RecipesResDto>> addRecipe(
-      @RequestPart("file") MultipartFile recipeImageFile,
-      @RequestPart("stepFiles") List<MultipartFile> stepImageFileList,
-      @RequestPart("add") RecipesReqDto recipesReqDto,
-      @AuthenticationPrincipal PrincipalDetails principalDetails) {
+	/**
+	 * 레시피 등록
+	 *
+	 * @param recipeImageFile   레시피 대표 이미지 파일
+	 * @param stepImageFileList 레시피 스텝 이미지 파일
+	 * @param recipesReqDto     등록할 레시피 데이터
+	 * @param principalDetails  로그인 유저
+	 * @return 등록한 레시피 데이터
+	 */
+	@PutMapping("/recipes")
+	public ResponseEntity<ResponseDto<RecipesResDto>> addRecipe(
+			@RequestPart("file") MultipartFile recipeImageFile,
+			@RequestPart("stepFiles") List<MultipartFile> stepImageFileList,
+			@RequestPart("add") RecipesReqDto recipesReqDto,
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-    String email = principalDetails.getUsername();
+		String email = principalDetails.getUsername();
 
-    RecipesResDto recipesResDto =
-        recipeService.addRecipe(recipeImageFile, stepImageFileList, recipesReqDto, email);
+		RecipesResDto recipesResDto =
+				recipeService.addRecipe(recipeImageFile, stepImageFileList, recipesReqDto, email);
 
-      return new ResponseEntity<>(
-          new ResponseDto<>(1, "레시피가 성공적으로 등록되었습니다.", recipesResDto),
-          HttpStatus.CREATED
-      );
-  }
+		return new ResponseEntity<>(
+				new ResponseDto<>("레시피가 성공적으로 등록되었습니다.", recipesResDto),
+				HttpStatus.CREATED
+		);
+	}
 }

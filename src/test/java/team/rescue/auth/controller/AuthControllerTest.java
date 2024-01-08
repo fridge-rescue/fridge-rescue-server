@@ -113,7 +113,7 @@ class AuthControllerTest extends MockMember {
 
 		// Stub: 이메일 인증 완료
 		this.existMember.updateRole(RoleType.USER);
-		MemberInfoDto memberInfoDto = MemberInfoDto.fromEntity(existMember);
+		MemberInfoDto memberInfoDto = MemberInfoDto.of(existMember);
 		given(authService.confirmEmailCode(anyString(), anyString()))
 				.willReturn(memberInfoDto);
 

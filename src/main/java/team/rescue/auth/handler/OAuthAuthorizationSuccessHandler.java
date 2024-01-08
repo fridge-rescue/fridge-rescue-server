@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import team.rescue.auth.dto.LoginDto.LoginResDto;
 import team.rescue.auth.provider.JwtTokenProvider;
 import team.rescue.auth.user.PrincipalDetails;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.UserError;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.util.RedisUtil;
@@ -69,7 +69,7 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 
 	private void saveRefreshToken(PrincipalDetails principalDetails, String refreshToken) {
 		Member member = memberRepository.findUserByEmail(principalDetails.getUsername())
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		member.updateToken(refreshToken);
 		memberRepository.save(member);
