@@ -6,8 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static team.rescue.error.type.UserError.USER_NOT_FOUND;
-import static team.rescue.error.type.UserError.USER_PASSWORD_MISMATCH;
+import static team.rescue.error.type.ServiceError.PASSWORD_AND_PASSWORD_CHECK_MISMATCH;
+import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
+import static team.rescue.error.type.ServiceError.USER_PASSWORD_MISMATCH;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -20,11 +21,9 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import team.rescue.error.exception.ServiceException;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.ServiceError;
-import team.rescue.member.dto.MemberDto.MemberNicknameUpdateReqDto;
-import team.rescue.member.dto.MemberDto.MemberPasswordUpdateReqDto;
-import team.rescue.member.dto.MemberDto.MemberResDto;
+import team.rescue.member.dto.MemberDto.MemberDetailDto;
+import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
+import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -55,12 +54,12 @@ class MemberServiceTest {
 				.willReturn(Optional.of(member));
 
 		// when
-		MemberResDto memberResDto = memberService.getMemberInfo("test@gmail.com");
+		MemberDetailDto memberDetailDto = memberService.getMemberInfo("test@gmail.com");
 
 		// then
-		assertEquals("test", memberResDto.getName());
-		assertEquals("테스트", memberResDto.getNickname());
-		assertEquals("test@gmail.com", memberResDto.getEmail());
+		assertEquals("test", memberDetailDto.getName());
+		assertEquals("테스트", memberDetailDto.getNickname());
+		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
 
 	@Test
@@ -71,11 +70,11 @@ class MemberServiceTest {
 				.willReturn(Optional.empty());
 
 		// when
-		UserException userException = assertThrows(UserException.class,
+		ServiceException serviceException = assertThrows(ServiceException.class,
 				() -> memberService.getMemberInfo("test@gmail.com"));
 
 		// then
-		assertEquals(USER_NOT_FOUND.getHttpStatus(), userException.getStatusCode());
+		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
 	}
 
 	@Test
@@ -103,15 +102,15 @@ class MemberServiceTest {
 						.build());
 
 		// when
-		MemberResDto memberResDto = memberService.updateMemberNickname("test@gmail.com",
-				MemberNicknameUpdateReqDto.builder()
+		MemberDetailDto memberDetailDto = memberService.updateMemberNickname("test@gmail.com",
+				MemberNicknameUpdateDto.builder()
 						.nickname("테스트2")
 						.build());
 
 		// then
-		assertEquals("test", memberResDto.getName());
-		assertEquals("테스트2", memberResDto.getNickname());
-		assertEquals("test@gmail.com", memberResDto.getEmail());
+		assertEquals("test", memberDetailDto.getName());
+		assertEquals("테스트2", memberDetailDto.getNickname());
+		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
 
 	@Test
@@ -122,11 +121,11 @@ class MemberServiceTest {
 				.willReturn(Optional.empty());
 
 		// when
-		UserException userException = assertThrows(UserException.class,
+		ServiceException serviceException = assertThrows(ServiceException.class,
 				() -> memberService.getMemberInfo("test@gmail.com"));
 
 		// then
-		assertEquals(USER_NOT_FOUND.getHttpStatus(), userException.getStatusCode());
+		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
 	}
 
 	@Test
@@ -141,7 +140,7 @@ class MemberServiceTest {
 				.password("1234567890")
 				.build();
 
-		MemberPasswordUpdateReqDto memberPasswordUpdateReqDto = MemberPasswordUpdateReqDto.builder()
+		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("1234567890")
 				.newPassword("0987654321")
 				.newPasswordCheck("0987654321")
@@ -150,7 +149,7 @@ class MemberServiceTest {
 		given(memberRepository.findUserByEmail("test@gmail.com"))
 				.willReturn(Optional.of(member));
 
-		given(passwordEncoder.matches(memberPasswordUpdateReqDto.getCurrentPassword(),
+		given(passwordEncoder.matches(memberPasswordUpdateDto.getCurrentPassword(),
 				member.getPassword()))
 				.willReturn(true);
 
@@ -164,13 +163,13 @@ class MemberServiceTest {
 						.build());
 
 		// when
-		MemberResDto memberResDto = memberService.updateMemberPassword("test@gmail.com",
-				memberPasswordUpdateReqDto);
+		MemberDetailDto memberDetailDto = memberService.updateMemberPassword("test@gmail.com",
+				memberPasswordUpdateDto);
 
 		// then
-		assertEquals("test", memberResDto.getName());
-		assertEquals("테스트", memberResDto.getNickname());
-		assertEquals("test@gmail.com", memberResDto.getEmail());
+		assertEquals("test", memberDetailDto.getName());
+		assertEquals("테스트", memberDetailDto.getNickname());
+		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
 
 	@Test
@@ -181,11 +180,11 @@ class MemberServiceTest {
 				.willReturn(Optional.empty());
 
 		// when
-		UserException userException = assertThrows(UserException.class,
+		ServiceException serviceException = assertThrows(ServiceException.class,
 				() -> memberService.getMemberInfo("test@gmail.com"));
 
 		// then
-		assertEquals(USER_NOT_FOUND.getHttpStatus(), userException.getStatusCode());
+		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
 	}
 
 	@Test
@@ -200,7 +199,7 @@ class MemberServiceTest {
 				.password("1234567890")
 				.build();
 
-		MemberPasswordUpdateReqDto memberPasswordUpdateReqDto = MemberPasswordUpdateReqDto.builder()
+		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("1234567890")
 				.newPassword("0987654321")
 				.newPasswordCheck("0987654321")
@@ -209,16 +208,16 @@ class MemberServiceTest {
 		given(memberRepository.findUserByEmail("test@gmail.com"))
 				.willReturn(Optional.of(member));
 
-		given(passwordEncoder.matches(memberPasswordUpdateReqDto.getCurrentPassword(),
+		given(passwordEncoder.matches(memberPasswordUpdateDto.getCurrentPassword(),
 				member.getPassword()))
 				.willReturn(false);
 
 		// when
-		UserException userException = assertThrows(UserException.class,
-				() -> memberService.updateMemberPassword("test@gmail.com", memberPasswordUpdateReqDto));
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> memberService.updateMemberPassword("test@gmail.com", memberPasswordUpdateDto));
 
 		// then
-		assertEquals(USER_PASSWORD_MISMATCH.getHttpStatus(), userException.getStatusCode());
+		assertEquals(USER_PASSWORD_MISMATCH.getHttpStatus(), serviceException.getStatusCode());
 	}
 
 	@Test
@@ -233,7 +232,7 @@ class MemberServiceTest {
 				.password("1234567890")
 				.build();
 
-		MemberPasswordUpdateReqDto memberPasswordUpdateReqDto = MemberPasswordUpdateReqDto.builder()
+		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("1234567890")
 				.newPassword("0987654321")
 				.newPasswordCheck("123124124")
@@ -241,19 +240,19 @@ class MemberServiceTest {
 
 		// when
 		ServiceException serviceException = assertThrows(ServiceException.class,
-				() -> passwordAndPasswordCheckMismatch(memberPasswordUpdateReqDto));
+				() -> passwordAndPasswordCheckMismatch(memberPasswordUpdateDto));
 
 		// then
-		assertEquals(ServiceError.PASSWORD_AND_PASSWORD_CHECK_MISMATCH.getHttpStatus(),
+		assertEquals(PASSWORD_AND_PASSWORD_CHECK_MISMATCH.getHttpStatus(),
 				serviceException.getStatusCode());
 		verify(memberRepository, never()).save(any());
 	}
 
 	private void passwordAndPasswordCheckMismatch(
-			MemberPasswordUpdateReqDto memberPasswordUpdateReqDto) {
-		if (!Objects.equals(memberPasswordUpdateReqDto.getNewPassword(),
-				memberPasswordUpdateReqDto.getNewPasswordCheck())) {
-			throw new ServiceException(ServiceError.PASSWORD_AND_PASSWORD_CHECK_MISMATCH);
+			MemberPasswordUpdateDto memberPasswordUpdateDto) {
+		if (!Objects.equals(memberPasswordUpdateDto.getNewPassword(),
+				memberPasswordUpdateDto.getNewPasswordCheck())) {
+			throw new ServiceException(PASSWORD_AND_PASSWORD_CHECK_MISMATCH);
 		}
 	}
 }

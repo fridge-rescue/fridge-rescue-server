@@ -32,10 +32,16 @@ public class MemberController {
 	) {
 		String email = principalDetails.getUsername();
 
+<<<<<<< HEAD
 
 		MemberDetailDto memberDetailDto = memberService.getMemberInfo(email);
 
 		return ResponseEntity.ok(new ResponseDto<>("회원 정보 조회에 성공하였습니다.", memberDetailDto));
+=======
+		MemberDetailDto memberDetailDto = memberService.getMemberInfo(email);
+
+		return ResponseEntity.ok(new ResponseDto<>(1, "회원 정보 조회에 성공하였습니다.", memberDetailDto));
+>>>>>>> de878d9 (fix: dto 네이밍 변경)
 	}
 
 	@PatchMapping("/info/nickname")
@@ -49,7 +55,11 @@ public class MemberController {
 		MemberDetailDto memberDetailDto = memberService.updateMemberNickname(email,
 				memberNicknameUpdateDto);
 
+<<<<<<< HEAD
 		return ResponseEntity.ok(new ResponseDto<>("회원 닉네임 변경에 성공하였습니다.", memberDetailDto));
+=======
+		return ResponseEntity.ok(new ResponseDto<>(1, "회원 닉네임 변경에 성공하였습니다.", memberDetailDto));
+>>>>>>> de878d9 (fix: dto 네이밍 변경)
 	}
 
 	@PatchMapping("/info/password")
@@ -63,6 +73,10 @@ public class MemberController {
 		MemberDetailDto memberDetailDto = memberService.updateMemberPassword(email,
 				memberPasswordUpdateDto);
 
+<<<<<<< HEAD
 		return ResponseEntity.ok(new ResponseDto<>("회원 비밀번호 변경에 성공하였습니다.", memberDetailDto));
+=======
+		return ResponseEntity.ok(new ResponseDto<>(1, "회원 비밀번호 변경에 성공하였습니다.", memberDetailDto));
+>>>>>>> de878d9 (fix: dto 네이밍 변경)
 	}
 }

@@ -21,9 +21,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import team.rescue.auth.type.RoleType;
-import team.rescue.member.dto.MemberDto.MemberNicknameUpdateReqDto;
-import team.rescue.member.dto.MemberDto.MemberPasswordUpdateReqDto;
-import team.rescue.member.dto.MemberDto.MemberResDto;
+import team.rescue.member.dto.MemberDto.MemberDetailDto;
+import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
+import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.member.service.MemberService;
 import team.rescue.mock.MockMember;
@@ -55,7 +55,7 @@ class MemberControllerTest extends MockMember {
 	@WithMockMember(role = RoleType.USER)
 	void successGetMemberInfo() throws Exception {
 		// given
-		MemberResDto memberResDto = MemberResDto.builder()
+		MemberDetailDto memberDetailDto = MemberDetailDto.builder()
 				.id(1L)
 				.name("test")
 				.nickname("테스트")
@@ -63,7 +63,7 @@ class MemberControllerTest extends MockMember {
 				.build();
 
 		given(memberService.getMemberInfo("test@gmail.com"))
-				.willReturn(memberResDto);
+				.willReturn(memberDetailDto);
 
 		// when
 		// then
@@ -81,26 +81,26 @@ class MemberControllerTest extends MockMember {
 	@WithMockMember(role = RoleType.USER)
 	void successUpdateMemberNickname() throws Exception {
 		// given
-		MemberNicknameUpdateReqDto memberNicknameUpdateReqDto = MemberNicknameUpdateReqDto.builder()
+		MemberNicknameUpdateDto memberNicknameUpdateDto = MemberNicknameUpdateDto.builder()
 				.nickname("테스트2")
 				.build();
 
-		MemberResDto memberResDto = MemberResDto.builder()
+		MemberDetailDto memberDetailDto = MemberDetailDto.builder()
 				.id(1L)
 				.name("test")
 				.nickname("테스트2")
 				.email("test@gmail.com")
 				.build();
 
-		given(memberService.updateMemberNickname("test@gmail.com", memberNicknameUpdateReqDto))
-				.willReturn(memberResDto);
+		given(memberService.updateMemberNickname("test@gmail.com", memberNicknameUpdateDto))
+				.willReturn(memberDetailDto);
 
 		// when
 		// then
 		mockMvc.perform(patch("/api/members/info/nickname")
 						.contentType(APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(
-								memberNicknameUpdateReqDto
+								memberNicknameUpdateDto
 						)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.id").value(1L))
@@ -115,14 +115,14 @@ class MemberControllerTest extends MockMember {
 	@WithMockMember(role = RoleType.USER)
 	void successUpdateMemberPassword() throws Exception {
 		// given
-		MemberPasswordUpdateReqDto memberPasswordUpdateReqDto = MemberPasswordUpdateReqDto.builder()
+		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("asdfasdfasdf")
 				.newPassword("qwerqwerqwer")
 				.newPasswordCheck("qwerqwerqwer")
 				.build();
 
-		given(memberService.updateMemberPassword("test@gmail.com", memberPasswordUpdateReqDto))
-				.willReturn(MemberResDto.builder()
+		given(memberService.updateMemberPassword("test@gmail.com", memberPasswordUpdateDto))
+				.willReturn(MemberDetailDto.builder()
 						.id(1L)
 						.name("test")
 						.nickname("테스트")
@@ -134,7 +134,7 @@ class MemberControllerTest extends MockMember {
 		mockMvc.perform(patch("/api/members/info/password")
 						.contentType(APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(
-								memberPasswordUpdateReqDto
+								memberPasswordUpdateDto
 						)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.message").value("회원 비밀번호 변경에 성공하였습니다."))
