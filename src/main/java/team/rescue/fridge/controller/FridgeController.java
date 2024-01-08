@@ -1,21 +1,21 @@
 package team.rescue.fridge.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import team.rescue.aop.ListValidation;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
-import team.rescue.error.exception.ValidationException;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
@@ -39,7 +39,7 @@ public class FridgeController {
 	 * @return 냉장고 및 포함된 재료 리스트
 	 */
 	@GetMapping
-	@PreAuthorize("hasAuthroize('USER')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<FridgeDto>> getFridge(
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
@@ -53,28 +53,17 @@ public class FridgeController {
 	 *
 	 * @param fridgeIngredientCreateDtoList 등록할 재료 목록
 	 * @param principalDetails              로그인 유저
-	 * @param errors                        TODO: AOP, ControllerAdvice 타는지 확인 필요
 	 * @return 등록한 재료 목록
 	 */
 	@PostMapping("/ingredients")
 	@PreAuthorize("hasAuthority('USER')")
+	@ListValidation
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> addIngredient(
 			@RequestBody List<FridgeIngredientCreateDto> fridgeIngredientCreateDtoList,
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			Errors errors
+			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
-		listValidator.validate(fridgeIngredientCreateDtoList, errors);
-
-		if (errors.hasErrors()) {
-			if (errors.getFieldError() != null) {
-				log.error("유효성 검증 실패: {}", errors.getFieldError().getDefaultMessage());
-				throw new ValidationException(errors.getFieldError().getDefaultMessage(), null);
-			}
-		}
-
 		String email = principalDetails.getUsername();
-
 
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList = fridgeService.addIngredient(email,
 				fridgeIngredientCreateDtoList);
@@ -85,7 +74,7 @@ public class FridgeController {
 	@PutMapping("/ingredients")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> updateIngredient(
-			@RequestBody FridgeIngredientUpdateDto fridgeIngredientUpdateDto,
+			@RequestBody @Valid FridgeIngredientUpdateDto fridgeIngredientUpdateDto,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
