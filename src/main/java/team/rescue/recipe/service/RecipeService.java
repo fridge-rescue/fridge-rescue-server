@@ -14,7 +14,6 @@ import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeResDto;
 import team.rescue.recipe.dto.RecipeIngredientDto;
-import team.rescue.recipe.dto.RecipeStepDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
 import team.rescue.recipe.entity.Recipe;
