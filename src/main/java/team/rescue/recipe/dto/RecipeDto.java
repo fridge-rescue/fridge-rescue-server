@@ -5,23 +5,32 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
 import team.rescue.recipe.entity.Recipe;
-import team.rescue.recipe.entity.RecipeIngredient;
-import team.rescue.recipe.entity.RecipeStep;
 
 public class RecipeDto {
 
 	// 레시피 등록(생성) 요청 DTO
 	@Getter
 	@Setter
+	@Builder
 	public static class RecipeCreateDto {
 
 		private String title;
 		private String summary;
-		private List<RecipeIngredient> recipeIngredients;
-		private List<RecipeStep> recipeSteps;
+		private MultipartFile recipeImageUrl;
+		private List<RecipeIngredientDto> recipeIngredients;
+		private List<RecipeStepCreateDto> recipeSteps;
 
+		public static RecipeCreateDto of(Recipe recipe) {
+			return RecipeCreateDto.builder()
+					.title(recipe.getTitle())
+					.summary(recipe.getSummary())
+					.build();
+		}
 	}
 
 	// 레시피 요약 조회 응답 DTO
@@ -77,7 +86,7 @@ public class RecipeDto {
 		private Integer bookmarkCount;
 		private LocalDateTime createdAt;
 		private List<RecipeIngredientDto> recipeIngredientList;
-		private List<RecipeStepDto> recipeStepList;
+		private List<RecipeStepInfoDto> recipeStepList;
 		private Long writerMemberId;
 		private String writerMemberNickName;
 
