@@ -10,4 +10,6 @@ import team.rescue.member.entity.Member;
 public interface FridgeRepository extends JpaRepository<Fridge, Long> {
 	Optional<Fridge> findByMember(Member member);
 
+	void deleteByMember(Member member);
+
 }

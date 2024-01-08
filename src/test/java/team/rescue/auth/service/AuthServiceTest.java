@@ -1,11 +1,16 @@
 package team.rescue.auth.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +27,12 @@ import team.rescue.auth.type.RoleType;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.entity.Fridge;
+import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.mock.WithMockMember;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -38,6 +45,9 @@ class AuthServiceTest {
 
 	@Mock
 	MemberRepository memberRepository;
+
+	@Mock
+	FridgeRepository fridgeRepository;
 
 	@Mock
 	MailProvider mailProvider;
@@ -76,8 +86,8 @@ class AuthServiceTest {
 
 		// then
 		// GUEST 권한 유저 생성
-		Assertions.assertEquals(RoleType.GUEST, joinResDto.getRole());
-		Assertions.assertEquals(member.getEmail(), joinResDto.getEmail());
+		assertEquals(RoleType.GUEST, joinResDto.getRole());
+		assertEquals(member.getEmail(), joinResDto.getEmail());
 	}
 
 	@Test
@@ -95,13 +105,13 @@ class AuthServiceTest {
 				.willReturn(true);
 
 		// when
-		ServiceException exception = Assertions.assertThrows(ServiceException.class,
+		ServiceException exception = assertThrows(ServiceException.class,
 				() -> authService.createEmailUser(joinReqDto));
 
 		// then
-		Assertions.assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getHttpStatus(),
+		assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getErrorMessage(),
+		assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 
@@ -134,8 +144,8 @@ class AuthServiceTest {
 
 		// then
 		// Email Code 저장
-		Assertions.assertNotNull(savedMember.getEmailCode());
-		Assertions.assertEquals(emailCode, savedMember.getEmailCode());
+		assertNotNull(savedMember.getEmailCode());
+		assertEquals(emailCode, savedMember.getEmailCode());
 	}
 
 	@Test
@@ -170,7 +180,7 @@ class AuthServiceTest {
 
 		// then
 		// 유저 권한이 GUEST 가 아니라 USER로 업데이트 된다.
-		Assertions.assertEquals(RoleType.USER, memberInfoDto.getRole());
+		assertEquals(RoleType.USER, memberInfoDto.getRole());
 	}
 
 	@Test
@@ -195,13 +205,13 @@ class AuthServiceTest {
 				.willReturn(Optional.empty());
 
 		// when
-		ServiceException exception = Assertions.assertThrows(ServiceException.class,
+		ServiceException exception = assertThrows(ServiceException.class,
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		Assertions.assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(),
+		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(ServiceError.USER_NOT_FOUND.getErrorMessage(),
+		assertEquals(ServiceError.USER_NOT_FOUND.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 
@@ -228,13 +238,52 @@ class AuthServiceTest {
 				.willReturn(Optional.of(member));
 
 		// when
-		ServiceException exception = Assertions.assertThrows(ServiceException.class,
+		ServiceException exception = assertThrows(ServiceException.class,
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		Assertions.assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getHttpStatus(),
+		assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getErrorMessage(),
+		assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getErrorMessage(),
 				exception.getErrorMessage());
+	}
+
+	@Test
+	@DisplayName("회원 탈퇴 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successDeleteMember() {
+		// given
+		Member member = Member.builder()
+				.id(1L)
+				.name("test")
+				.nickname("테스트")
+				.email("test@gmail.com")
+				.build();
+
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.of(member));
+
+		// when
+		authService.deleteMember("test@gmail.com");
+
+		// then
+		verify(fridgeRepository, times(1)).deleteByMember(any());
+		verify(memberRepository, times(1)).deleteById(anyLong());
+	}
+
+	@Test
+	@DisplayName("회원 탈퇴 실패 - 사용자 정보 없음")
+	@WithMockMember(role = RoleType.USER)
+	void failDeleteMember_UserNotFound() {
+		// given
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.empty());
+
+		// when
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> authService.deleteMember("test@gmail.com"));
+
+		// then
+		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
 	}
 }

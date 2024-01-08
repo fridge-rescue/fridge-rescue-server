@@ -17,6 +17,7 @@ import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
+import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
@@ -34,6 +35,7 @@ public class AuthService implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 	private final FridgeService fridgeService;
 	private final MemberRepository memberRepository;
+	private final FridgeRepository fridgeRepository;
 
 
 	@Override
@@ -143,5 +145,19 @@ public class AuthService implements UserDetailsService {
 		if (memberRepository.existsByEmail(email)) {
 			throw new ServiceException(ServiceError.EMAIL_ALREADY_EXIST);
 		}
+	}
+
+	/**
+	 * 회원 탈퇴
+	 *
+	 * @param email 사용자 이메일
+	 */
+	@Transactional
+	public void deleteMember(String email) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+
+		fridgeRepository.deleteByMember(member);
+		memberRepository.deleteById(member.getId());
 	}
 }
