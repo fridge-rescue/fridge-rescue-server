@@ -1,16 +1,22 @@
 package team.rescue.fridge.service;
 
+import static team.rescue.error.type.AuthError.ACCESS_DENIED;
+import static team.rescue.error.type.ServiceError.FRIDGE_NOT_FOUND;
+import static team.rescue.error.type.ServiceError.INGREDIENT_NOT_FOUND;
+import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team.rescue.error.exception.AuthException;
 import team.rescue.error.exception.ServiceException;
-import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUpdateDto;
 import team.rescue.fridge.entity.Fridge;
 import team.rescue.fridge.entity.FridgeIngredient;
 import team.rescue.fridge.repository.FridgeIngredientRepository;
@@ -49,10 +55,10 @@ public class FridgeService {
 	public FridgeDto getFridgeIngredients(String email) {
 
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(FRIDGE_NOT_FOUND));
 
 		List<FridgeIngredient> fridgeIngredients = fridgeIngredientRepository.findByFridge(fridge);
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoList = fridgeIngredients.stream()
@@ -80,16 +86,17 @@ public class FridgeService {
 	) {
 
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
 		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(FRIDGE_NOT_FOUND));
 
 		for (FridgeIngredientCreateDto fridgeIngredientCreateDto : fridgeIngredientCreateDtoList) {
-			if (!fridgeIngredientRepository.existsByNameAndMemoAndExpiredAt(
+			if (!fridgeIngredientRepository.existsByNameAndMemoAndExpiredAtAndFridge(
 					fridgeIngredientCreateDto.getName(),
 					fridgeIngredientCreateDto.getMemo(),
-					fridgeIngredientCreateDto.getExpiredAt())) {
+					fridgeIngredientCreateDto.getExpiredAt(),
+					fridge)) {
 
 				FridgeIngredient fridgeIngredient = FridgeIngredient.builder()
 						.fridge(fridge)
@@ -107,4 +114,58 @@ public class FridgeService {
 				.collect(Collectors.toList());
 	}
 
+	@Transactional
+	public List<FridgeIngredientInfoDto> modifyIngredient(String email,
+			FridgeIngredientUpdateDto fridgeIngredientUpdateDto) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		Fridge fridge = fridgeRepository.findByMember(member)
+				.orElseThrow(() -> new ServiceException(FRIDGE_NOT_FOUND));
+
+		List<Long> deleteItemList = fridgeIngredientUpdateDto.getDeleteItem();
+		deleteIngredient(deleteItemList, fridge);
+
+		List<FridgeIngredientInfoDto> updateItemList = fridgeIngredientUpdateDto.getUpdateItem();
+		modifyIngredient(updateItemList, fridge);
+
+		List<FridgeIngredient> fridgeIngredientList = fridgeIngredientRepository.findByFridge(
+				fridge);
+
+		return fridgeIngredientList.stream().map(FridgeIngredientInfoDto::of)
+				.collect(Collectors.toList());
+	}
+
+	private void deleteIngredient(List<Long> deleteItemList, Fridge fridge) {
+		for (Long id : deleteItemList) {
+			FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(id)
+					.orElseThrow(() -> new ServiceException(INGREDIENT_NOT_FOUND));
+
+			if (fridgeIngredient.getFridge() != fridge) {
+				throw new AuthException(ACCESS_DENIED);
+			}
+
+			fridgeIngredientRepository.deleteById(id);
+		}
+	}
+
+	private void modifyIngredient(List<FridgeIngredientInfoDto> updateItemList, Fridge
+			fridge) {
+		for (FridgeIngredientInfoDto fridgeIngredientInfoDto : updateItemList) {
+			FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(
+							fridgeIngredientInfoDto.getId())
+					.orElseThrow(() -> new ServiceException(INGREDIENT_NOT_FOUND));
+
+			if (fridgeIngredient.getFridge() != fridge) {
+				throw new AuthException(ACCESS_DENIED);
+			}
+
+			fridgeIngredient.updateFridgeIngredient(
+					fridgeIngredientInfoDto.getName(),
+					fridgeIngredientInfoDto.getMemo(),
+					fridgeIngredientInfoDto.getExpiredAt());
+
+			fridgeIngredientRepository.save(fridgeIngredient);
+		}
+	}
 }

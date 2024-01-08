@@ -4,10 +4,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import team.rescue.error.exception.ValidationException;
 import team.rescue.fridge.dto.FridgeDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUpdateDto;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.validator.ListValidator;
 
@@ -36,6 +39,7 @@ public class FridgeController {
 	 * @return 냉장고 및 포함된 재료 리스트
 	 */
 	@GetMapping
+	@PreAuthorize("hasAuthroize('USER')")
 	public ResponseEntity<ResponseDto<FridgeDto>> getFridge(
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
@@ -53,14 +57,13 @@ public class FridgeController {
 	 * @return 등록한 재료 목록
 	 */
 	@PostMapping("/ingredients")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> addIngredient(
 			@RequestBody List<FridgeIngredientCreateDto> fridgeIngredientCreateDtoList,
 			@AuthenticationPrincipal PrincipalDetails principalDetails,
 			Errors errors
 	) {
 
-		// List<Dto> 형태는 @Valid 어노테이션이 동작하지 않아서
-		// CustomValidator를 생성해서 유효성 검증을 해줘야 함.
 		listValidator.validate(fridgeIngredientCreateDtoList, errors);
 
 		if (errors.hasErrors()) {
@@ -71,10 +74,26 @@ public class FridgeController {
 		}
 
 		String email = principalDetails.getUsername();
+
+
+		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList = fridgeService.addIngredient(email,
+				fridgeIngredientCreateDtoList);
+		return ResponseEntity.ok(
+				new ResponseDto<>(null, fridgeIngredientInfoDtoList));
+	}
+
+	@PutMapping("/ingredients")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> updateIngredient(
+			@RequestBody FridgeIngredientUpdateDto fridgeIngredientUpdateDto,
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+
+		String email = principalDetails.getUsername();
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList =
-				fridgeService.addIngredient(email, fridgeIngredientCreateDtoList);
+				fridgeService.modifyIngredient(email, fridgeIngredientUpdateDto);
 
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientInfoDtoList));
-
 	}
+
 }
