@@ -75,6 +75,7 @@ public class FridgeController {
 
 		String email = principalDetails.getUsername();
 
+
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList = fridgeService.addIngredient(email,
 				fridgeIngredientCreateDtoList);
 		return ResponseEntity.ok(
