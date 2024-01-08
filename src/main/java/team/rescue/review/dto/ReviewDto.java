@@ -29,13 +29,13 @@ public class ReviewDto {
 		private String imageUrl;
 		private MemberInfoDto author;
 
-		public static ReviewInfoDto fromEntity(Review review) {
+		public static ReviewInfoDto of(Review review) {
 
 			ReviewInfoDto reviewInfo = new ReviewInfoDto();
 			reviewInfo.setId(review.getId());
 			reviewInfo.setTitle(review.getTitle());
 			reviewInfo.setImageUrl(review.getImageUrl());
-			reviewInfo.setAuthor(MemberInfoDto.fromEntity(review.getMember()));
+			reviewInfo.setAuthor(MemberInfoDto.of(review.getMember()));
 
 			return reviewInfo;
 		}
@@ -53,15 +53,15 @@ public class ReviewDto {
 		private MemberInfoDto author;
 		private RecipeInfoDto recipe;
 
-		public static ReviewDetailDto fromEntity(Review review) {
+		public static ReviewDetailDto of(Review review) {
 
 			ReviewDetailDto reviewDetail = new ReviewDetailDto();
 			reviewDetail.setId(review.getId());
 			reviewDetail.setTitle(review.getTitle());
 			reviewDetail.setImageUrl(review.getImageUrl());
 			reviewDetail.setContents(review.getContents());
-			reviewDetail.setAuthor(MemberInfoDto.fromEntity(review.getMember()));
-			reviewDetail.setRecipe(RecipeInfoDto.fromEntity(review.getRecipe()));
+			reviewDetail.setAuthor(MemberInfoDto.of(review.getMember()));
+			reviewDetail.setRecipe(RecipeInfoDto.of(review.getRecipe()));
 
 			return reviewDetail;
 		}

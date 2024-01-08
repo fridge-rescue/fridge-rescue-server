@@ -66,11 +66,11 @@ create table notification
 # 레시피 테이블 생성
 CREATE TABLE recipe
 (
-    recipe_id        bigint unique not null not null,
+    recipe_id        bigint unique not null auto_increment,
     member_id        bigint        not null,
     title            varchar(100)  not null,
     summary          varchar(100)  not null,
-    recipe_image_url varchar(100)  not null,
+    recipe_image_url varchar(150)  not null,
     view_count       int           not null,
     review_count     int           not null,
     report_count     int           not null,
@@ -88,7 +88,7 @@ from recipe;
 # 레시피 재료 테이블 생성
 create table recipe_ingredient
 (
-    recipe_ingredient_id bigint not null,
+    recipe_ingredient_id bigint not null auto_increment,
     recipe_id            bigint not null,
     name                 varchar(20),
     amount               varchar(20),
@@ -100,10 +100,10 @@ create table recipe_ingredient
 # 레시피 과정 테이블 생성
 create table recipe_step
 (
-    recipe_step_id   bigint not null,
+    recipe_step_id   bigint not null auto_increment,
     recipe_id        bigint not null,
     step_no          int    not null,
-    step_image_url   varchar(100),
+    step_image_url   varchar(150),
     step_description varchar(100),
     step_tip         varchar(100),
 
@@ -119,7 +119,7 @@ create table review
     recipe_id        bigint        not null,
     cook_id          bigint        not null,
     title            varchar(50)   not null,
-    review_image_url varchar(100),
+    review_image_url varchar(150),
     contents         varchar(1000) not null,
     created_at       timestamp(6)  not null,
     modified_at      timestamp(6),

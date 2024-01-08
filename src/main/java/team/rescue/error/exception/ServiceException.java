@@ -7,14 +7,11 @@ import team.rescue.error.type.ServiceError;
 @Getter
 public class ServiceException extends RuntimeException {
 
-	int code;
 	HttpStatus statusCode;
 	String errorMessage;
 
 	public ServiceException(ServiceError serviceError) {
-		this.code = serviceError.getCode();
 		this.statusCode = serviceError.getHttpStatus();
 		this.errorMessage = serviceError.getErrorMessage();
 	}
-
 }

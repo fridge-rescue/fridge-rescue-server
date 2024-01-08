@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientResDto;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
 
 @Getter
 @Setter
@@ -12,5 +12,5 @@ import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientResDto;
 public class FridgeDto {
 
 	private Long id;
-	private List<FridgeIngredientResDto> fridgeIngredientResDtoList;
+	private List<FridgeIngredientInfoDto> fridgeIngredientInfoList;
 }

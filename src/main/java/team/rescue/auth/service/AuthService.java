@@ -15,8 +15,8 @@ import team.rescue.auth.provider.MailProvider;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.UserError;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
@@ -40,7 +40,7 @@ public class AuthService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 		log.debug("[+] loadUserByUsername start");
 		Member member = memberRepository.findUserByEmail(userEmail)
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		log.debug(member.getEmail());
 		return new PrincipalDetails(member);
@@ -106,7 +106,7 @@ public class AuthService implements UserDetailsService {
 	public MemberInfoDto confirmEmailCode(String email, String code) {
 
 		Member member = memberRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		// Validate Email Code
 		validateEmailCode(member, code);
@@ -117,7 +117,7 @@ public class AuthService implements UserDetailsService {
 		// 냉장고 생성
 		member.registerFridge(fridgeService.createFridge(member));
 
-		return MemberInfoDto.fromEntity(member);
+		return MemberInfoDto.of(member);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class AuthService implements UserDetailsService {
 	 */
 	private void validateEmailCode(Member member, String code) {
 		if (!Objects.equals(member.getEmailCode(), code)) {
-			throw new UserException(UserError.EMAIL_CODE_MIS_MATCH);
+			throw new ServiceException(ServiceError.EMAIL_CODE_MIS_MATCH);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class AuthService implements UserDetailsService {
 	private void validateCreateMember(String email) {
 
 		if (memberRepository.existsByEmail(email)) {
-			throw new UserException(UserError.EMAIL_ALREADY_EXIST);
+			throw new ServiceException(ServiceError.EMAIL_ALREADY_EXIST);
 		}
 	}
 }

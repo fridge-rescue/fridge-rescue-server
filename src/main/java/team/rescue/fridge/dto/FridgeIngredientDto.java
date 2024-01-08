@@ -12,7 +12,7 @@ public class FridgeIngredientDto {
 	@Getter
 	@Setter
 	@Builder
-	public static class FridgeIngredientAddReqDto {
+	public static class FridgeIngredientCreateDto {
 
 		private String name;
 
@@ -25,15 +25,15 @@ public class FridgeIngredientDto {
 	@Getter
 	@Setter
 	@Builder
-	public static class FridgeIngredientResDto {
+	public static class FridgeIngredientInfoDto {
 
 		private Long id;
 		private String name;
 		private String memo;
 		private LocalDateTime expiredAt;
 
-		public static FridgeIngredientResDto of(FridgeIngredient fridgeIngredient) {
-			return FridgeIngredientResDto.builder()
+		public static FridgeIngredientInfoDto of(FridgeIngredient fridgeIngredient) {
+			return FridgeIngredientInfoDto.builder()
 					.id(fridgeIngredient.getId())
 					.name(fridgeIngredient.getName())
 					.memo(fridgeIngredient.getMemo())

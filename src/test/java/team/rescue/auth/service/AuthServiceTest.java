@@ -19,8 +19,8 @@ import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.provider.MailProvider;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.UserError;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.entity.Fridge;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
@@ -95,15 +95,15 @@ class AuthServiceTest {
 				.willReturn(true);
 
 		// when
-		UserException exception = Assertions.assertThrows(UserException.class,
+		ServiceException exception = Assertions.assertThrows(ServiceException.class,
 				() -> authService.createEmailUser(joinReqDto));
 
 		// then
-		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getCode(),
+		Assertions.assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getCode(),
 				exception.getCode());
-		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getHttpStatus(),
+		Assertions.assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(UserError.ALREADY_EXIST_EMAIL.getErrorMessage(),
+		Assertions.assertEquals(ServiceError.EMAIL_ALREADY_EXIST.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 
@@ -197,15 +197,15 @@ class AuthServiceTest {
 				.willReturn(Optional.empty());
 
 		// when
-		UserException exception = Assertions.assertThrows(UserException.class,
+		ServiceException exception = Assertions.assertThrows(ServiceException.class,
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		Assertions.assertEquals(UserError.NOT_FOUND_USER.getCode(),
+		Assertions.assertEquals(ServiceError.USER_NOT_FOUND.getCode(),
 				exception.getCode());
-		Assertions.assertEquals(UserError.NOT_FOUND_USER.getHttpStatus(),
+		Assertions.assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(UserError.NOT_FOUND_USER.getErrorMessage(),
+		Assertions.assertEquals(ServiceError.USER_NOT_FOUND.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 
@@ -232,15 +232,15 @@ class AuthServiceTest {
 				.willReturn(Optional.of(member));
 
 		// when
-		UserException exception = Assertions.assertThrows(UserException.class,
+		ServiceException exception = Assertions.assertThrows(ServiceException.class,
 				() -> authService.confirmEmailCode(email, code));
 
 		// then
-		Assertions.assertEquals(UserError.EMAIL_CODE_MIS_MATCH.getCode(),
+		Assertions.assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getCode(),
 				exception.getCode());
-		Assertions.assertEquals(UserError.EMAIL_CODE_MIS_MATCH.getHttpStatus(),
+		Assertions.assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getHttpStatus(),
 				exception.getStatusCode());
-		Assertions.assertEquals(UserError.EMAIL_CODE_MIS_MATCH.getErrorMessage(),
+		Assertions.assertEquals(ServiceError.EMAIL_CODE_MIS_MATCH.getErrorMessage(),
 				exception.getErrorMessage());
 	}
 }

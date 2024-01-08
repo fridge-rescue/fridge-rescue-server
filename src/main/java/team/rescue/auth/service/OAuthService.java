@@ -16,6 +16,8 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.error.exception.UserException;
 import team.rescue.error.type.UserError;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -55,7 +57,7 @@ public class OAuthService extends DefaultOAuth2UserService {
 		if (findMember.isEmpty()) {
 			if (memberRepository.existsByEmail(email)) {
 				log.error("가입된 이메일이 이미 존재하니 email 로그인을 시도하세요.");
-				throw new UserException(UserError.EMAIL_ALREADY_EXIST);
+				throw new ServiceException(ServiceError.EMAIL_ALREADY_EXIST);
 			}
 
 			Member savedMember = memberRepository.save(Member.builder()

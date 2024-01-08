@@ -12,9 +12,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ReviewError {
 
-	NOT_FOUND_REVIEW(-1, HttpStatus.NOT_FOUND, "이미 삭제된 리뷰입니다.");
+	NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "이미 삭제된 리뷰입니다.");
 
-	private final int code;
 	private final HttpStatus httpStatus;
 	private final String errorMessage;
 }

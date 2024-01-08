@@ -10,9 +10,7 @@ import team.rescue.common.file.FileService;
 import team.rescue.cook.entity.Cook;
 import team.rescue.cook.repository.CookRepository;
 import team.rescue.error.exception.ServiceException;
-import team.rescue.error.exception.UserException;
 import team.rescue.error.type.ServiceError;
-import team.rescue.error.type.UserError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.entity.Recipe;
@@ -53,7 +51,7 @@ public class ReviewService {
 		log.info("[리뷰 생성]");
 
 		Member member = memberRepository.findUserByEmail(details.getMember().getEmail())
-				.orElseThrow(() -> new UserException(UserError.USER_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		Cook cook = cookRepository.getReferenceById(reviewReqDto.getCookId());
 		Recipe recipe = recipeRepository.getReferenceById(reviewReqDto.getRecipeId());
@@ -67,7 +65,7 @@ public class ReviewService {
 				.imageUrl(fileService.uploadImageToS3(image))
 				.build();
 
-		return ReviewInfoDto.fromEntity(reviewRepository.save(review));
+		return ReviewInfoDto.of(reviewRepository.save(review));
 	}
 
 	/**
@@ -83,6 +81,6 @@ public class ReviewService {
 		Review review = reviewRepository.findById(reviewId)
 				.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
 
-		return ReviewDetailDto.fromEntity(review);
+		return ReviewDetailDto.of(review);
 	}
 }
