@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +19,9 @@ import team.rescue.auth.dto.JoinDto;
 import team.rescue.auth.dto.JoinDto.JoinResDto;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.type.ProviderType;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
+import team.rescue.member.dto.MemberDto.MemberInfoDto;
 
 @Slf4j
 @RestController
@@ -34,7 +38,8 @@ public class AuthController {
 	 * @return GUEST 회원 정보
 	 */
 	@PostMapping("/email/join")
-	public ResponseEntity<?> emailJoin(
+	@PreAuthorize("permitAll()")
+	public ResponseEntity<ResponseDto<JoinResDto>> emailJoin(
 			@RequestBody @Valid JoinDto.JoinReqDto joinReqDto
 	) {
 
@@ -43,8 +48,31 @@ public class AuthController {
 		JoinResDto joinResDto = authService.createEmailUser(joinReqDto);
 
 		return new ResponseEntity<>(
-				ResponseDto.builder().data(joinReqDto).build(),
+				new ResponseDto<>("회원 가입이 완료되었습니다. 이메일 코드를 인증해주세요.", joinResDto),
 				HttpStatus.CREATED
+		);
+	}
+
+	/**
+	 * 이메일 인증 코드 확인
+	 *
+	 * @param emailConfirmDto 이메일 인증 요청
+	 * @return 확인 여부 반환
+	 */
+	@PostMapping("/email/confirm")
+	@PreAuthorize("hasAuthority('GUEST')")
+	public ResponseEntity<ResponseDto<MemberInfoDto>> emailConfirm(
+			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
+			@AuthenticationPrincipal PrincipalDetails details
+	) {
+
+		log.info("[이메일 코드 확인] code={}", emailConfirmDto.getCode());
+		MemberInfoDto memberInfoDto = authService
+				.confirmEmailCode(details.getUsername(), emailConfirmDto.getCode());
+
+		return new ResponseEntity<>(
+				new ResponseDto<>(null, memberInfoDto),
+				HttpStatus.OK
 		);
 	}
 
@@ -55,6 +83,7 @@ public class AuthController {
 	 * @param providerType OAuth Provider Type
 	 */
 	@GetMapping("/oauth")
+	@PreAuthorize("permitAll()")
 	public void oAuthLoginOrJoin(
 			HttpServletResponse response,
 			@RequestParam ProviderType providerType

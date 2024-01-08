@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
+import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OAuthService extends DefaultOAuth2UserService {
 
 	private static final String PROVIDER_ID = "sub";
@@ -28,6 +31,8 @@ public class OAuthService extends DefaultOAuth2UserService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
+
+	private final FridgeService fridgeService;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -50,7 +55,7 @@ public class OAuthService extends DefaultOAuth2UserService {
 		if (findMember.isEmpty()) {
 			if (memberRepository.existsByEmail(email)) {
 				log.error("가입된 이메일이 이미 존재하니 email 로그인을 시도하세요.");
-				throw new RuntimeException();
+				throw new ServiceException(ServiceError.EMAIL_ALREADY_EXIST);
 			}
 
 			Member savedMember = memberRepository.save(Member.builder()
@@ -62,6 +67,8 @@ public class OAuthService extends DefaultOAuth2UserService {
 					.provider(provider)
 					.providerId(providerId)
 					.build());
+
+			fridgeService.createFridge(savedMember);
 
 			return new PrincipalDetails(savedMember, oAuth2User.getAttributes());
 		} else {

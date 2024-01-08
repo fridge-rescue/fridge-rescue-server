@@ -43,6 +43,7 @@ public class Fridge {
 	private Member member;
 
 	// 냉장고 재료 조회
+	@Builder.Default
 	@OneToMany(mappedBy = "fridge")
 	private List<FridgeIngredient> ingredientList = new ArrayList<>();
 

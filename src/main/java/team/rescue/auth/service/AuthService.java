@@ -1,5 +1,6 @@
 package team.rescue.auth.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +15,10 @@ import team.rescue.auth.provider.MailProvider;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
-import team.rescue.error.exception.UserException;
-import team.rescue.error.type.UserError;
+import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.service.FridgeService;
+import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 
@@ -38,7 +40,7 @@ public class AuthService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 		log.debug("[+] loadUserByUsername start");
 		Member member = memberRepository.findUserByEmail(userEmail)
-				.orElseThrow(() -> new UserException(UserError.NOT_FOUND_USER));
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
 		log.debug(member.getEmail());
 		return new PrincipalDetails(member);
@@ -94,6 +96,43 @@ public class AuthService implements UserDetailsService {
 	}
 
 	/**
+	 * 이메일 코드 인증
+	 *
+	 * @param email 로그인 유저 이메일
+	 * @param code  유저 입력 이메일 코드
+	 * @return MemberInfo
+	 */
+	@Transactional
+	public MemberInfoDto confirmEmailCode(String email, String code) {
+
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+
+		// Validate Email Code
+		validateEmailCode(member, code);
+
+		// Role Update
+		member.updateRole(RoleType.USER);
+
+		// 냉장고 생성
+		member.registerFridge(fridgeService.createFridge(member));
+
+		return MemberInfoDto.of(member);
+	}
+
+	/**
+	 * 유저 입력 이메일 코드와 실제 이메일 코드 일치 여부 확인
+	 *
+	 * @param member 요청 유저
+	 * @param code   유저 입력 이메일 코드
+	 */
+	private void validateEmailCode(Member member, String code) {
+		if (!Objects.equals(member.getEmailCode(), code)) {
+			throw new ServiceException(ServiceError.EMAIL_CODE_MIS_MATCH);
+		}
+	}
+
+	/**
 	 * 회원 생성 검증
 	 * <p> 이메일 중복 불가
 	 *
@@ -102,7 +141,7 @@ public class AuthService implements UserDetailsService {
 	private void validateCreateMember(String email) {
 
 		if (memberRepository.existsByEmail(email)) {
-			throw new UserException(UserError.ALREADY_EXIST_EMAIL);
+			throw new ServiceException(ServiceError.EMAIL_ALREADY_EXIST);
 		}
 	}
 }

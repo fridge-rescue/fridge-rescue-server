@@ -45,18 +45,18 @@ public class Review {
 	@JoinColumn(name = "recipe_id")
 	private Recipe recipe;
 
-	@Column(name = "title", nullable = false, length = 50)
-	private String title;
-
-	@Column(name = "review_image_url")
-	private String image_url;
-
-	@Column(name = "contents", nullable = false, length = 1000)
-	private String contents;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cook_id")
 	private Cook cook;
+
+	@Column(name = "title", nullable = false, length = 50)
+	private String title;
+
+	@Column(name = "review_image_url", length = 150)
+	private String imageUrl;
+
+	@Column(name = "contents", nullable = false, length = 1000)
+	private String contents;
 
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)

@@ -20,7 +20,7 @@ public class JoinDto {
 		private String name;
 
 		@NotEmpty(message = "사용할 닉네임을 입력해주세요.")
-		@Pattern(regexp = "^[a-zA-Z가-힣]{2,15}", message = "한글 또는 영문으로 이루어진 최소 2글자, 최대 15자의 닉네임을 입력해주세요.")
+		@Pattern(regexp = "^[a-zA-Z가-힣0-9]{2,15}", message = "한글, 영문 또는 숫자를 포함한 최소 2글자, 최대 15자의 닉네임을 입력해주세요.")
 		private String nickname;
 
 		// 최대 30자
@@ -33,6 +33,15 @@ public class JoinDto {
 		@NotEmpty(message = "로그인에 사용할 비밀번호를 입력해주세요.")
 		@Size(min = 8, max = 20, message = "최소 8글자, 최대 20글자의 비밀번호를 입력해주세요.")
 		private String password;
+	}
+
+	@Getter
+	@Setter
+	public static class EmailConfirmDto {
+
+		@NotEmpty(message = "이메일 인증 코드를 입력해주세요.")
+		@Size(min = 6, max = 6, message = "올바른 인증 코드가 아닙니다.")
+		private String code;
 	}
 
 

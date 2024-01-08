@@ -10,7 +10,9 @@ import team.rescue.fridge.entity.FridgeIngredient;
 @Repository
 public interface FridgeIngredientRepository extends JpaRepository<FridgeIngredient, Long> {
 
-	boolean existsByNameAndMemoAndExpiredAt(String name, String memo, LocalDateTime expiredAt);
+	boolean existsByNameAndMemoAndExpiredAtAndFridge(String name, String memo,
+			LocalDateTime expiredAt, Fridge fridge);
 
 	List<FridgeIngredient> findByFridge(Fridge fridge);
+
 }
