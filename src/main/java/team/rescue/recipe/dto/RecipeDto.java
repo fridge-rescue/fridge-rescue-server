@@ -31,6 +31,7 @@ public class RecipeDto {
 					.summary(recipe.getSummary())
 					.build();
 		}
+
 	}
 
 	// 레시피 요약 조회 응답 DTO
@@ -55,6 +56,7 @@ public class RecipeDto {
 	// 레시피 상세 조회 응답 DTO
 	@Getter
 	@Setter
+	@Builder
 	public static class RecipeDetailDto {
 
 		private Long id;
@@ -67,29 +69,8 @@ public class RecipeDto {
 		private Integer bookmarkCount;
 		private LocalDateTime createdAt;
 		private List<RecipeIngredientDto> recipeIngredients;
-		private List<RecipeStepDto> recipeSteps;
+		private List<RecipeStepInfoDto> recipeSteps;
 		private MemberInfoDto author;
-	}
-
-	// TODO: 상세 조회 DTO 사용하도록 변경
-	@Getter
-	@Builder
-	public static class RecipeResDto {
-
-		private Long id;
-		private String title;
-		private String summary;
-		private String recipeImageUrl;
-		private Integer viewCount;
-		private Integer reviewCount;
-		private Integer reportCount;
-		private Integer bookmarkCount;
-		private LocalDateTime createdAt;
-		private List<RecipeIngredientDto> recipeIngredientList;
-		private List<RecipeStepInfoDto> recipeStepList;
-		private Long writerMemberId;
-		private String writerMemberNickName;
-
 	}
 
 }

@@ -9,10 +9,11 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.file.FileService;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
+import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
-import team.rescue.recipe.dto.RecipeDto.RecipeResDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
 import team.rescue.recipe.dto.RecipeIngredientDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
@@ -34,7 +35,7 @@ public class RecipeService {
 	private final MemberRepository memberRepository;
 	private final FileService fileService;
 
-	public RecipeResDto getRecipe(Long id) {
+	public RecipeDetailDto getRecipe(Long id) {
 
 		Recipe recipe = recipesRepository.findById(id)
 				.orElseThrow(() -> {
@@ -52,8 +53,7 @@ public class RecipeService {
 					return new ServiceException(ServiceError.USER_NOT_FOUND);
 				});
 
-		String memberNickName = member.getNickname();
-		log.debug("member Name {}", memberNickName);
+		MemberInfoDto memberInfoDto = MemberInfoDto.of(member);
 
 		List<RecipeIngredient> recipeIngredientList =
 				recipeIngredientRepository.findByRecipe(recipe);
@@ -65,26 +65,24 @@ public class RecipeService {
 		List<RecipeStepInfoDto> recipeStepDtoList =
 				recipeStepList.stream().map(RecipeStepInfoDto::of).toList();
 
-		return RecipeResDto.builder()
+		return RecipeDetailDto.builder()
 				.id(recipe.getId())
 				.title(recipe.getTitle())
 				.summary(recipe.getSummary())
-				.recipeImageUrl(recipe.getRecipeImageUrl())   // #ToDO: s3로부터 이미지 호출
+				.recipeImageUrl(recipe.getRecipeImageUrl())
 				.viewCount(recipe.getViewCount())
 				.reviewCount(recipe.getReviewCount())
 				.reportCount(recipe.getReportCount())
 				.bookmarkCount(recipe.getBookmarkCount())
 				.createdAt(recipe.getCreatedAt())
-				.recipeIngredientList(recipeIngredientDtoList)
-				.recipeStepList(recipeStepDtoList)
-				.writerMemberId(memberId)
-				.writerMemberNickName(memberNickName)
+				.recipeIngredients(recipeIngredientDtoList)
+				.recipeSteps(recipeStepDtoList)
+				.author(memberInfoDto)
 				.build();
 	}
 
 	@Transactional
-	public RecipeCreateDto addRecipe(
-			RecipeCreateDto recipeCreateDto, PrincipalDetails principalDetails) {
+	public RecipeCreateDto addRecipe(RecipeCreateDto recipeCreateDto, PrincipalDetails principalDetails) {
 
 		String memberEmail = principalDetails.getMember().getEmail();
 
@@ -108,20 +106,14 @@ public class RecipeService {
 				.member(member) // 멤버 연결
 				.build();
 
-		log.debug("recipe : {}", recipe);
-
 		recipesRepository.save(recipe); // 먼저 Recipe 저장
 
-		// 레시피 재료 저장
 		for (RecipeIngredientDto recipeIngredientDto : recipeCreateDto.getRecipeIngredients()) {
 			RecipeIngredient ingredient = RecipeIngredient.builder()
 					.name(recipeIngredientDto.getName())
 					.amount(recipeIngredientDto.getAmount())
 					.recipe(recipe) // 재료와 레시피 연결
 					.build();
-
-			log.debug("ingredient : {}", ingredient);
-
 			recipeIngredientRepository.save(ingredient);
 		}
 
@@ -142,12 +134,8 @@ public class RecipeService {
 					.recipe(recipe) // 레시피와 연결
 					.build();
 
-			log.debug("step : {}", step);
-
 			recipeStepRepository.save(step);
 		}
-
-		log.debug("recipe : {}", recipe);
 
 		return RecipeCreateDto.of(recipe);
 	}
