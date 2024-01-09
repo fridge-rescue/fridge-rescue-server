@@ -36,7 +36,6 @@ import team.rescue.util.RedisUtil;
 public class AuthService implements UserDetailsService {
 
 	private final static String ENCODING = "UTF-8";
-	private final static String TOKEN_PREFIX = "Bearer ";
 
 	private final MailProvider mailProvider;
 	private final PasswordEncoder passwordEncoder;
