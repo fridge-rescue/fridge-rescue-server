@@ -29,6 +29,8 @@ public enum ServiceError {
 	// Recipe
 	RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피를 찾을 수 없습니다."),
 
+	RECIPE_STEP_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피 스탭을 찾을 수 없습니다."),
+
 	// Fridge
 	FRIDGE_NOT_FOUND(HttpStatus.NOT_FOUND, "냉장고 정보가 없습니다."),
 

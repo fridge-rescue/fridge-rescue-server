@@ -5,17 +5,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.file.FileService;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeResDto;
 import team.rescue.recipe.dto.RecipeIngredientDto;
-import team.rescue.recipe.dto.RecipeStepDto;
-import team.rescue.recipe.dto.RecipesDto.RecipesReqDto;
-import team.rescue.recipe.dto.RecipesDto.RecipesResDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.entity.RecipeIngredient;
 import team.rescue.recipe.entity.RecipeStep;
@@ -62,8 +62,8 @@ public class RecipeService {
 
 		List<RecipeStep> recipeStepList =
 				recipeStepRepository.findByRecipe(recipe);
-		List<RecipeStepDto> recipeStepDtoList =
-				recipeStepList.stream().map(RecipeStepDto::of).toList();
+		List<RecipeStepInfoDto> recipeStepDtoList =
+				recipeStepList.stream().map(RecipeStepInfoDto::of).toList();
 
 		return RecipeResDto.builder()
 				.id(recipe.getId())
@@ -83,22 +83,23 @@ public class RecipeService {
 	}
 
 	@Transactional
-	public RecipesResDto addRecipe(MultipartFile recipeImageFile,
-			List<MultipartFile> stepImageFileList,
-			RecipesReqDto recipesReqDto, String email) {
+	public RecipeCreateDto addRecipe(
+			RecipeCreateDto recipeCreateDto, PrincipalDetails principalDetails) {
 
-		Member member = memberRepository.findUserByEmail(email)
+		String memberEmail = principalDetails.getMember().getEmail();
+
+		Member member = memberRepository.findUserByEmail(memberEmail)
 				.orElseThrow(() -> {
 					log.error("일치하는 사용자 정보 없음");
 					return new ServiceException(ServiceError.USER_NOT_FOUND);
 				});
 
 		// 레시피 대표 이미지 저장
-		String recipeImageFilePath = fileService.uploadImageToS3(recipeImageFile);
+		String recipeImageFilePath = fileService.uploadImageToS3(recipeCreateDto.getRecipeImageUrl());
 
 		Recipe recipe = Recipe.builder()
-				.title(recipesReqDto.getTitle())
-				.summary(recipesReqDto.getSummary())
+				.title(recipeCreateDto.getTitle())
+				.summary(recipeCreateDto.getSummary())
 				.recipeImageUrl(recipeImageFilePath)
 				.viewCount(0)
 				.reviewCount(0)
@@ -107,41 +108,47 @@ public class RecipeService {
 				.member(member) // 멤버 연결
 				.build();
 
+		log.debug("recipe : {}", recipe);
+
 		recipesRepository.save(recipe); // 먼저 Recipe 저장
 
-		for (RecipeIngredient recipeIngredient : recipesReqDto.getRecipeIngredientList()) {
+		// 레시피 재료 저장
+		for (RecipeIngredientDto recipeIngredientDto : recipeCreateDto.getRecipeIngredients()) {
 			RecipeIngredient ingredient = RecipeIngredient.builder()
-					.name(recipeIngredient.getName())
-					.amount(recipeIngredient.getAmount())
+					.name(recipeIngredientDto.getName())
+					.amount(recipeIngredientDto.getAmount())
 					.recipe(recipe) // 재료와 레시피 연결
 					.build();
+
+			log.debug("ingredient : {}", ingredient);
+
 			recipeIngredientRepository.save(ingredient);
 		}
 
-		for (int i = 0; i < recipesReqDto.getRecipeStepList().size(); i++) {
+		// 레시피 스탭들 저장
+		for (RecipeStepCreateDto recipeStepCreateDto : recipeCreateDto.getRecipeSteps()) {
 
-			RecipeStep recipeStep = recipesReqDto.getRecipeStepList().get(i);
-
-			String stepImageFilePath = null;
-			if (i < stepImageFileList.size()) {
-				MultipartFile stepImageFile = stepImageFileList.get(i);
-				if (!stepImageFile.isEmpty()) {
-					// 스텝 이미지 저장
-					stepImageFilePath = fileService.uploadImageToS3(stepImageFile);
-				}
+			String stepImageFilePath = "";	// 빈 문자열
+			if (!recipeStepCreateDto.getStepImageUrl().isEmpty()) {
+				// 스탭 이미지 저장
+				stepImageFilePath = fileService.uploadImageToS3(recipeStepCreateDto.getStepImageUrl());
 			}
 
 			RecipeStep step = RecipeStep.builder()
-					.stepNo(recipeStep.getStepNo())
+					.stepNo(recipeStepCreateDto.getStepNo())
 					.stepImageUrl(stepImageFilePath) // URL 설정
-					.stepContents(recipeStep.getStepContents())
-					.stepTip(recipeStep.getStepTip())
+					.stepContents(recipeStepCreateDto.getStepContents())
+					.stepTip(recipeStepCreateDto.getStepTip())
 					.recipe(recipe) // 레시피와 연결
 					.build();
+
+			log.debug("step : {}", step);
 
 			recipeStepRepository.save(step);
 		}
 
-		return new RecipesResDto(recipe);
+		log.debug("recipe : {}", recipe);
+
+		return RecipeCreateDto.of(recipe);
 	}
 }
