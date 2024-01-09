@@ -39,6 +39,7 @@ public class FileService {
 
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(image.getContentType());
+		objectMetadata.setContentLength(image.getSize());
 
 		try {
 			PutObjectRequest putObjectRequest = new PutObjectRequest(

@@ -11,16 +11,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.rescue.auth.dto.JoinDto.JoinReqDto;
 import team.rescue.auth.dto.JoinDto.JoinResDto;
+import team.rescue.auth.dto.TokenDto;
+import team.rescue.auth.provider.JwtTokenProvider;
 import team.rescue.auth.provider.MailProvider;
+import team.rescue.auth.type.JwtTokenType;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
+import team.rescue.error.exception.AuthException;
 import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.AuthError;
 import team.rescue.error.type.ServiceError;
+import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.fridge.service.FridgeService;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.util.RedisUtil;
 
 @Slf4j
 @Service
@@ -34,6 +41,8 @@ public class AuthService implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 	private final FridgeService fridgeService;
 	private final MemberRepository memberRepository;
+	private final FridgeRepository fridgeRepository;
+	private final RedisUtil redisUtil;
 
 
 	@Override
@@ -143,5 +152,58 @@ public class AuthService implements UserDetailsService {
 		if (memberRepository.existsByEmail(email)) {
 			throw new ServiceException(ServiceError.EMAIL_ALREADY_EXIST);
 		}
+	}
+
+	/**
+	 * 회원 탈퇴
+	 *
+	 * @param email 사용자 이메일
+	 */
+	@Transactional
+	public void deleteMember(String email) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+
+		fridgeRepository.deleteByMember(member);
+		memberRepository.deleteById(member.getId());
+	}
+
+	/**
+	 * accessToken 재발급
+	 *
+	 * @param refreshToken
+	 * @param principalDetails
+	 */
+	@Transactional
+	public TokenDto reissueToken(String refreshToken, PrincipalDetails principalDetails) {
+		String cachedRefreshToken = (String) redisUtil.get(principalDetails.getUsername());
+
+		String savedToken =
+				cachedRefreshToken == null ? getTokenFromDB(principalDetails) : cachedRefreshToken;
+
+		// refreshToken 만료 -> 다시 로그인 필요 (재로그인을 하면 accessToken, refreshToken 갱신)
+		if (JwtTokenProvider.isExpiredToken(refreshToken)) {
+			throw new AuthException(AuthError.EXPIRED_REFRESH_TOKEN);
+		}
+
+		// refreshToken 불일치 -> 다시 로그인 필요 (재로그인을 하면 accessToken, refreshToken 갱신)
+		if (!Objects.equals(refreshToken, savedToken)) {
+			throw new AuthException(AuthError.ACCESS_DENIED);
+		}
+
+		String accessToken = JwtTokenProvider.createToken(principalDetails, JwtTokenType.ACCESS_TOKEN);
+		return new TokenDto(accessToken, refreshToken);
+	}
+
+	/**
+	 * DB에 있는 refreshToken 값 가져오기 위한 메서드
+	 *
+	 * @param principalDetails 사용자 정보
+	 */
+	private String getTokenFromDB(PrincipalDetails principalDetails) {
+		Member member = memberRepository.findUserByEmail(principalDetails.getUsername())
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+
+		return member.getToken();
 	}
 }

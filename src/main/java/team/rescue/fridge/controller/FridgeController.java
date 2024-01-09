@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,7 +22,6 @@ import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUpdateDto;
 import team.rescue.fridge.service.FridgeService;
-import team.rescue.validator.ListValidator;
 
 @Slf4j
 @RestController
@@ -29,11 +29,10 @@ import team.rescue.validator.ListValidator;
 @RequiredArgsConstructor
 public class FridgeController {
 
-	private final ListValidator listValidator;
 	private final FridgeService fridgeService;
 
 	/**
-	 * 냉장고 조회)
+	 * 냉장고 조회
 	 *
 	 * @param principalDetails 로그인 유저
 	 * @return 냉장고 및 포함된 재료 리스트
@@ -41,10 +40,11 @@ public class FridgeController {
 	@GetMapping
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<FridgeDto>> getFridge(
-			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
 
 		String email = principalDetails.getUsername();
-		FridgeDto fridgeDto = fridgeService.getFridgeIngredients(email);
+		FridgeDto fridgeDto = fridgeService.getFridge(email);
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeDto));
 	}
 
@@ -60,6 +60,7 @@ public class FridgeController {
 	@ListValidation
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> addIngredient(
 			@RequestBody List<FridgeIngredientCreateDto> fridgeIngredientCreateDtoList,
+			BindingResult bindingResult,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
@@ -75,12 +76,13 @@ public class FridgeController {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> updateIngredient(
 			@RequestBody @Valid FridgeIngredientUpdateDto fridgeIngredientUpdateDto,
+			BindingResult bindingResult,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
 		String email = principalDetails.getUsername();
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList =
-				fridgeService.modifyIngredient(email, fridgeIngredientUpdateDto);
+				fridgeService.updateIngredient(email, fridgeIngredientUpdateDto);
 
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientInfoDtoList));
 	}
