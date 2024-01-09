@@ -52,7 +52,7 @@ public class FridgeService {
 	 * @param email 유저 이메일
 	 * @return 해당 유저 냉장고 재료 목록
 	 */
-	public FridgeDto getFridgeIngredients(String email) {
+	public FridgeDto getFridge(String email) {
 
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
@@ -137,16 +137,16 @@ public class FridgeService {
 	}
 
 	private void deleteIngredient(List<Long> deleteItemList, Fridge fridge) {
-		for (Long id : deleteItemList) {
-			FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(id)
-					.orElseThrow(() -> new ServiceException(INGREDIENT_NOT_FOUND));
+			for (Long id : deleteItemList) {
+				FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(id)
+						.orElseThrow(() -> new ServiceException(INGREDIENT_NOT_FOUND));
 
-			if (fridgeIngredient.getFridge() != fridge) {
-				throw new AuthException(ACCESS_DENIED);
+				if (fridgeIngredient.getFridge() != fridge) {
+					throw new AuthException(ACCESS_DENIED);
+				}
+
+				fridgeIngredientRepository.deleteById(id);
 			}
-
-			fridgeIngredientRepository.deleteById(id);
-		}
 	}
 
 	private void modifyIngredient(List<FridgeIngredientInfoDto> updateItemList, Fridge

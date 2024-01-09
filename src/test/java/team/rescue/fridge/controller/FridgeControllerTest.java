@@ -86,7 +86,7 @@ class FridgeControllerTest {
 	void successGetFridge() throws Exception {
 		// given
 
-		given(fridgeService.getFridgeIngredients(anyString()))
+		given(fridgeService.getFridge(anyString()))
 				.willReturn(FridgeDto.builder()
 						.id(1L)
 						.fridgeIngredientInfoList(fridgeIngredientInfoDtoList)

@@ -42,7 +42,7 @@ public class FridgeController {
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
 		String email = principalDetails.getUsername();
-		FridgeDto fridgeDto = fridgeService.getFridgeIngredients(email);
+		FridgeDto fridgeDto = fridgeService.getFridge(email);
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeDto));
 	}
 
