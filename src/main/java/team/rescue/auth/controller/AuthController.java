@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team.rescue.auth.dto.JoinDto;
 import team.rescue.auth.dto.JoinDto.JoinResDto;
+import team.rescue.auth.dto.TokenDto;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.user.PrincipalDetails;
@@ -29,6 +31,8 @@ import team.rescue.member.dto.MemberDto.MemberInfoDto;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
+	private static final String TOKEN_PREFIX = "Bearer ";
 
 	private final AuthService authService;
 
@@ -113,4 +117,22 @@ public class AuthController {
 		return ResponseEntity.ok(new ResponseDto<>("회원 탈퇴가 정상적으로 처리되었습니다.", null));
 	}
 
+	/**
+	 * access token 재발급
+	 *
+	 * @param refreshToken refreshToken
+	 * @param principalDetails 사용자 정보
+	 */
+	@PostMapping("/token/reissue")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<TokenDto>> reissueToken(
+			@RequestHeader("Refresh-Token") String refreshToken,
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+		log.debug("Refresh Token : {}", refreshToken);
+
+		TokenDto tokenDto = authService.reissueToken(refreshToken.substring(TOKEN_PREFIX.length()), principalDetails);
+
+		return ResponseEntity.ok(new ResponseDto<>(null, tokenDto));
+	}
 }
