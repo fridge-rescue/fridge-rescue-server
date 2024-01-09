@@ -21,7 +21,6 @@ import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientCreateDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientInfoDto;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUpdateDto;
 import team.rescue.fridge.service.FridgeService;
-import team.rescue.validator.ListValidator;
 
 @Slf4j
 @RestController
@@ -29,11 +28,10 @@ import team.rescue.validator.ListValidator;
 @RequiredArgsConstructor
 public class FridgeController {
 
-	private final ListValidator listValidator;
 	private final FridgeService fridgeService;
 
 	/**
-	 * 냉장고 조회)
+	 * 냉장고 조회
 	 *
 	 * @param principalDetails 로그인 유저
 	 * @return 냉장고 및 포함된 재료 리스트
@@ -44,7 +42,7 @@ public class FridgeController {
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
 		String email = principalDetails.getUsername();
-		FridgeDto fridgeDto = fridgeService.getFridgeIngredients(email);
+		FridgeDto fridgeDto = fridgeService.getFridge(email);
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeDto));
 	}
 
@@ -80,7 +78,7 @@ public class FridgeController {
 
 		String email = principalDetails.getUsername();
 		List<FridgeIngredientInfoDto> fridgeIngredientInfoDtoList =
-				fridgeService.modifyIngredient(email, fridgeIngredientUpdateDto);
+				fridgeService.updateIngredient(email, fridgeIngredientUpdateDto);
 
 		return ResponseEntity.ok(new ResponseDto<>(null, fridgeIngredientInfoDtoList));
 	}
