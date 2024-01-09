@@ -2,6 +2,7 @@ package team.rescue.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -33,6 +34,7 @@ import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.mock.WithMockMember;
+import team.rescue.util.RedisUtil;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -51,6 +53,9 @@ class AuthServiceTest {
 
 	@Mock
 	MailProvider mailProvider;
+
+	@Mock
+	RedisUtil redisUtil;
 
 	@Spy
 	private PasswordEncoder passwordEncoder;
@@ -282,6 +287,43 @@ class AuthServiceTest {
 		// when
 		ServiceException serviceException = assertThrows(ServiceException.class,
 				() -> authService.deleteMember("test@gmail.com"));
+
+		// then
+		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("로그아웃 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successLogout() {
+		// given
+		Member member = Member.builder()
+				.id(1L)
+				.email("test@gmail.com")
+				.token("asdfasdfasdf")
+				.build();
+
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.of(member));
+		// when
+		authService.logout("test@gmail.com");
+
+		// then
+		assertNull(member.getToken());
+		assertNull(redisUtil.get("test@gmail.com"));
+	}
+
+	@Test
+	@DisplayName("로그아웃 실패 - 사용자 정보 없음")
+	@WithMockMember(role = RoleType.USER)
+	void failLogout() {
+		// given
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.empty());
+
+		// when
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> authService.logout("test@gmail.com"));
 
 		// then
 		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());

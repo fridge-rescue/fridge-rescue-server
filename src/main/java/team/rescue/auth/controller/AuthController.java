@@ -120,7 +120,7 @@ public class AuthController {
 	/**
 	 * access token 재발급
 	 *
-	 * @param refreshToken refreshToken
+	 * @param refreshToken     refreshToken
 	 * @param principalDetails 사용자 정보
 	 */
 	@PostMapping("/token/reissue")
@@ -131,8 +131,19 @@ public class AuthController {
 
 		log.debug("Refresh Token : {}", refreshToken);
 
-		TokenDto tokenDto = authService.reissueToken(refreshToken.substring(TOKEN_PREFIX.length()), principalDetails);
+		TokenDto tokenDto = authService.reissueToken(refreshToken.substring(TOKEN_PREFIX.length()),
+				principalDetails);
 
 		return ResponseEntity.ok(new ResponseDto<>(null, tokenDto));
+	}
+
+	@GetMapping("/logout")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<?>> logout(
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+		authService.logout(principalDetails.getUsername());
+
+		return ResponseEntity.ok(new ResponseDto<>("로그아웃이 완료되었습니다.", null));
 	}
 }
