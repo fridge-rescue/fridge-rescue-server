@@ -28,7 +28,7 @@ public class RecipeStepDto {
   public static class RecipeStepInfoDto {
 
     private int stepNo;
-    private String stepImageUrl;
+    private String  stepImageUrl;
     private String stepContents;
     private String stepTip;
 
@@ -41,6 +41,7 @@ public class RecipeStepDto {
           .build();
     }
   }
+
 
 
 }

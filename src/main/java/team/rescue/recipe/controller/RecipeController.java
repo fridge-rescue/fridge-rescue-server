@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
-import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeResDto;
 import team.rescue.recipe.service.RecipeService;
 
 @Slf4j
@@ -31,10 +31,10 @@ public class RecipeController {
 	 * @return 해당 레시피 상세 데이터
 	 */
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<ResponseDto<RecipeDetailDto>> getRecipe(@PathVariable Long recipeId) {
-    RecipeDetailDto recipeDetailDto = recipeService.getRecipe(recipeId);
+	public ResponseEntity<ResponseDto<RecipeResDto>> getRecipe(@PathVariable Long recipeId) {
+		RecipeResDto recipeResDto = recipeService.getRecipe(recipeId);
 		return new ResponseEntity<>(
-				new ResponseDto<>("레시피 조회에 성공하였습니다.", recipeDetailDto),
+				new ResponseDto<>("레시피 조회에 성공하였습니다.", recipeResDto),
 				HttpStatus.OK
 		);
 	}
@@ -47,12 +47,12 @@ public class RecipeController {
 	 * @return 등록한 레시피 데이터
 	 */
 	@PutMapping("/recipes")
+//	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<RecipeCreateDto>> addRecipe(
 			RecipeCreateDto recipeCreateDto,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-		RecipeCreateDto createDto =
-				recipeService.addRecipe(recipeCreateDto, principalDetails);
+		RecipeCreateDto createDto = recipeService.addRecipe(recipeCreateDto, principalDetails);
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 등록되었습니다.", createDto),
