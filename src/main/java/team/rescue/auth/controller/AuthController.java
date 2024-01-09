@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,6 +94,23 @@ public class AuthController {
 			log.info("[Google 회원 가입]");
 			response.sendRedirect("/oauth2/authorization/google");
 		}
+	}
+
+	/**
+	 * 회원 탈퇴
+	 *
+	 * @param principalDetails 사용자 정보
+	 */
+	@DeleteMapping("/leave")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<?>> deleteMember(
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+		String email = principalDetails.getUsername();
+
+		authService.deleteMember(email);
+
+		return ResponseEntity.ok(new ResponseDto<>("회원 탈퇴가 정상적으로 처리되었습니다.", null));
 	}
 
 }

@@ -3,7 +3,10 @@ package team.rescue.auth.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -131,5 +134,20 @@ class AuthControllerTest extends MockMember {
 		resultActions.andExpect(jsonPath("$.data.nickname").value(existMember.getNickname()));
 		// Role == USER
 		resultActions.andExpect(jsonPath("$.data.role").value(RoleType.USER.name()));
+	}
+
+	@Test
+	@DisplayName("회원 탈퇴 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successDeleteMember() throws Exception {
+		// given
+		doNothing().when(authService).deleteMember("test@gmail.com");
+
+		// when
+		// then
+		mockMvc.perform(delete("/api/auth/leave"))
+				.andExpect(jsonPath("$.message").value("회원 탈퇴가 정상적으로 처리되었습니다."))
+				.andExpect(status().isOk())
+				.andDo(print());
 	}
 }
