@@ -10,10 +10,10 @@ spring:
     multipart:
       max-file-size: 2MB
   datasource:
-    url: jdbc:mysql://localhost:3307/fridgerescue?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: fridgerescue
-    password: fridgerescue
+    username: ${DB_USER_NAME}
+    password: ${DB_PASSWORD}
   jpa:
     open-in-view: false
     hibernate:
