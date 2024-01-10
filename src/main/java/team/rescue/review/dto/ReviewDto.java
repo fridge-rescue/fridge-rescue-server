@@ -1,6 +1,9 @@
 package team.rescue.review.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
@@ -22,6 +25,9 @@ public class ReviewDto {
 
 	@Getter
 	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
 	public static class ReviewInfoDto {
 
 		private Long id;

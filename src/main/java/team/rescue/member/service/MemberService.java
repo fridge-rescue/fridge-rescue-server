@@ -6,9 +6,14 @@ import static team.rescue.error.type.ServiceError.USER_PASSWORD_MISMATCH;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team.rescue.cook.dto.CookDto.CookInfoDto;
+import team.rescue.cook.entity.Cook;
+import team.rescue.cook.repository.CookRepository;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
 import team.rescue.member.dto.MemberDto.MemberDetailDto;
@@ -16,6 +21,7 @@ import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
 import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.review.repository.ReviewRepository;
 
 @Slf4j
 @Service
@@ -25,6 +31,8 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final CookRepository cookRepository;
+	private final ReviewRepository reviewRepository;
 
 	public MemberDetailDto getMemberInfo(String email) {
 		Member member = memberRepository.findUserByEmail(email)
@@ -69,5 +77,14 @@ public class MemberService {
 		Member updatedMember = memberRepository.save(member);
 
 		return MemberDetailDto.of(updatedMember);
+	}
+
+	public Page<CookInfoDto> getCompletedCooks(String email, Pageable pageable) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		Page<Cook> cookPage = cookRepository.findByMember(member, pageable);
+
+		return cookPage.map(CookInfoDto::of);
 	}
 }
