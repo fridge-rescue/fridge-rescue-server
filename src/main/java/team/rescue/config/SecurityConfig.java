@@ -92,7 +92,7 @@ public class SecurityConfig {
 		log.debug("[Bean 등록] CorsConfigurationSource");
 
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("*"));  // 나중에 프론트 출처만 허용해야함
+		configuration.setAllowedOriginPatterns(List.of("*"));  // 나중에 프론트 출처만 허용해야함
 		configuration.setAllowedMethods(List.of("*"));
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setAllowCredentials(true);  //클라이언트가 쿠키나 인증 관련 헤더를 사용하여 요청을 할 수 있도록 허용
