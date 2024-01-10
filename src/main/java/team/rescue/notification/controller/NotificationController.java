@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,5 +50,17 @@ public class NotificationController {
 		notificationService.checkNotifications(notificationCheckDto, principalDetails.getUsername());
 
 		return ResponseEntity.ok(new ResponseDto<>("알림 일괄 처리에 성공하였습니다.", null));
+	}
+
+	@GetMapping("/{notificationId}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<NotificationInfoDto>> checkNotification(
+			@PathVariable Long notificationId,
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		NotificationInfoDto notificationInfoDto = notificationService.checkNotification(notificationId,
+				principalDetails.getUsername());
+
+		return ResponseEntity.ok(new ResponseDto<>("알림 확인 처리에 성공하였습니다.", notificationInfoDto));
 	}
 }

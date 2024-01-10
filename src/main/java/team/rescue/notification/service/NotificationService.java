@@ -56,4 +56,22 @@ public class NotificationService {
 			notificationRepository.save(notification);
 		}
 	}
+
+	@Transactional
+	public NotificationInfoDto checkNotification(Long notificationId, String email) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		Notification notification = notificationRepository.findById(notificationId)
+				.orElseThrow(() -> new ServiceException(NOTIFICATION_NOT_FOUND));
+
+		if (!Objects.equals(notification.getMember().getId(), member.getId())) {
+			throw new AuthException(ACCESS_DENIED);
+		}
+
+		notification.updateCheckedAt(LocalDateTime.now());
+		Notification updateNotification = notificationRepository.save(notification);
+
+		return NotificationInfoDto.of(updateNotification);
+	}
 }
