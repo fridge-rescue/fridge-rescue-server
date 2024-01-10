@@ -1,8 +1,11 @@
 package team.rescue.notification.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.rescue.notification.entity.Notification;
 import team.rescue.notification.entity.NotificationProperty;
@@ -30,6 +33,16 @@ public class NotificationDto {
 					.checkedAt(notification.getCheckedAt())
 					.build();
 		}
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class NotificationCheckDto {
+
+		private List<Long> notificationIds;
 	}
 
 }

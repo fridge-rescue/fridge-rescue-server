@@ -9,10 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
+import team.rescue.notification.dto.NotificationDto.NotificationCheckDto;
 import team.rescue.notification.dto.NotificationDto.NotificationInfoDto;
 import team.rescue.notification.service.NotificationService;
 
@@ -34,5 +37,17 @@ public class NotificationController {
 				principalDetails.getUsername(), pageable);
 
 		return ResponseEntity.ok(new ResponseDto<>("알림 조회 성공", notifications));
+	}
+
+	@PatchMapping
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<?>> checkNotifications(
+			@RequestBody NotificationCheckDto notificationCheckDto,
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+
+		notificationService.checkNotifications(notificationCheckDto, principalDetails.getUsername());
+
+		return ResponseEntity.ok(new ResponseDto<>("알림 일괄 처리에 성공하였습니다.", null));
 	}
 }

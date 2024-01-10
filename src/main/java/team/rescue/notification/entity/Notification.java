@@ -57,4 +57,8 @@ public class Notification {
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
+
+	public void updateCheckedAt(LocalDateTime checkedAt) {
+		this.checkedAt = checkedAt;
+	}
 }
