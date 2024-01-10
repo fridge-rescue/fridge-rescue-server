@@ -91,7 +91,7 @@ public class AuthController {
 	 * @param providerType OAuth Provider Type
 	 */
 	@GetMapping("/oauth")
-	@PreAuthorize("permitAll()")
+	@PreAuthorize("hasAuthority('GUEST')")
 	public void oAuthLoginOrJoin(
 			HttpServletResponse response,
 			@RequestParam ProviderType providerType
