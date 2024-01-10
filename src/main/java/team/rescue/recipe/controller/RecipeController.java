@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,8 @@ import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeUpdateDto;
 import team.rescue.recipe.service.RecipeService;
 
 @Slf4j
@@ -48,7 +53,7 @@ public class RecipeController {
 	 */
 	@PutMapping("/recipes")
 	public ResponseEntity<ResponseDto<RecipeCreateDto>> addRecipe(
-			RecipeCreateDto recipeCreateDto,
+			@ModelAttribute RecipeCreateDto recipeCreateDto,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
 		RecipeCreateDto createDto =
@@ -57,6 +62,37 @@ public class RecipeController {
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 등록되었습니다.", createDto),
 				HttpStatus.CREATED
+		);
+	}
+
+	@PatchMapping("/{recipeId}")
+//	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<RecipeDetailDto>> updateRecipe(
+			@PathVariable Long recipeId,
+			@ModelAttribute RecipeUpdateDto recipeUpdateDto,
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+		RecipeDetailDto recipeDetailDto =
+				recipeService.updateRecipe(recipeId, recipeUpdateDto, principalDetails);
+
+		return new ResponseEntity<>(
+				new ResponseDto<>("레시피가 성공적으로 수정되었습니다.", recipeDetailDto),
+				HttpStatus.ACCEPTED
+		);
+	}
+
+	@DeleteMapping("/{recipeId}")
+//	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<RecipeInfoDto>> deleteRecipe(
+			@PathVariable Long recipeId,
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+		RecipeInfoDto recipeDeleteDto =
+				recipeService.deleteRecipe(recipeId, principalDetails);
+
+		return new ResponseEntity<>(
+				new ResponseDto<>("레시피가 성공적으로 삭제되었습니다.", recipeDeleteDto),
+				HttpStatus.ACCEPTED
 		);
 	}
 }

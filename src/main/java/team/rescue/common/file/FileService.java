@@ -1,9 +1,12 @@
 package team.rescue.common.file;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +56,29 @@ public class FileService {
 		return s3Client.getUrl(bucketName, fileName).toString();
 	}
 
+	public void deleteImages(String  imagePath) {
+		log.info("[S3 이미지 삭제] imagePath={}", imagePath);
+
+		// 파일 이름 추출
+		String fileName = S3_BUCKET_DIR_PREFIX + extractFileName(imagePath);
+
+		try {
+			DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName);
+
+			s3Client.deleteObject(deleteObjectRequest);
+			log.info("S3 이미지 '{}' 삭제 성공", fileName);
+		} catch (Exception e) {
+			log.error("S3 이미지 '{}' 삭제 실패: {}", fileName, e.getMessage());
+			throw new ServiceException(ServiceError.FILE_DELETION_FAILED);
+		}
+	}
+
+	private String extractFileName(String filePath) {
+		if (filePath == null || filePath.isEmpty()) {
+			throw new ServiceException(ServiceError.FILE_PATH_INVALID);
+		}
+		return filePath.substring(filePath.lastIndexOf("/") + 1);
+	}
 
 	private void validateFile(MultipartFile file) {
 		if (file.isEmpty()) {

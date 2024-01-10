@@ -17,6 +17,8 @@ public enum ServiceError {
 	FILE_EXTENSION_INVALID(HttpStatus.BAD_REQUEST, "유효한 파일이 아닙니다."),
 	FILE_RESIZING_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 리사이징에 실패했습니다."),
 	FILE_UPLOAD_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
+	FILE_PATH_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "파일 경로가 타당하지 않습니다."),
+	FILE_DELETION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 삭제를 실패했습니다."),
 
 	// User
 	EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "등록되지 않은 이메일입니다."),
@@ -28,7 +30,8 @@ public enum ServiceError {
 
 	// Recipe
 	RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피를 찾을 수 없습니다."),
-
+	RECIPE_MEMBER_UNMATCHED(HttpStatus.BAD_REQUEST, "레시피를 작성한 회원이 아닙니다."),
+	RECIPE_INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "레시피 재료를 찾을 수 없습니다."),
 	RECIPE_STEP_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피 스탭을 찾을 수 없습니다."),
 
 	// Fridge

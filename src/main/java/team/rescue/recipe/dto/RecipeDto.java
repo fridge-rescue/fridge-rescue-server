@@ -31,29 +31,23 @@ public class RecipeDto {
 					.summary(recipe.getSummary())
 					.build();
 		}
+	}
+
+	// 레시피 수정 요청 DTO
+	@Getter
+	@Setter
+	@Builder
+	public static class RecipeUpdateDto {
+
+		private String title;
+		private String summary;
+		private MultipartFile recipeImageUrl;
+		private List<RecipeIngredientDto> recipeIngredients;
+		private List<RecipeStepCreateDto> recipeSteps;
 
 	}
 
 	// 레시피 요약 조회 응답 DTO
-	@Getter
-	@Builder
-	public static class RecipeResDto {
-
-		private Long id;
-		private String title;
-		private String summary;
-		private String recipeImageUrl;
-		private Integer viewCount;
-		private Integer reviewCount;
-		private Integer reportCount;
-		private Integer bookmarkCount;
-		private LocalDateTime createdAt;
-		private List<RecipeIngredientDto> recipeIngredientList;
-		private List<RecipeStepDto> recipeStepList;
-		private Long writerMemberId;
-		private String writerMemberNickName;
-
-	}
 	@Getter
 	@Setter
 	public static class RecipeInfoDto {

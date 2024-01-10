@@ -67,4 +67,10 @@ public class Recipe {
 	@LastModifiedDate
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
+
+	public void update(String title, String summary, String recipeImageUrl) {
+		this.title = title;
+		this.summary = summary;
+		this.recipeImageUrl = recipeImageUrl;
+	}
 }

@@ -15,6 +15,7 @@ public class RecipeStepDto {
   @Setter
   public static class RecipeStepCreateDto {
 
+    private Long id;
     private int stepNo;
     private MultipartFile stepImageUrl;
     private String stepContents;
