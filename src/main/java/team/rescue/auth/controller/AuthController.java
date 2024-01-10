@@ -67,7 +67,7 @@ public class AuthController {
 	 * @return 확인 여부 반환
 	 */
 	@PostMapping("/email/confirm")
-	@PreAuthorize("permitAll()")
+	@PreAuthorize("hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<MemberInfoDto>> emailConfirm(
 			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
 			BindingResult bindingResult,
@@ -91,7 +91,7 @@ public class AuthController {
 	 * @param providerType OAuth Provider Type
 	 */
 	@GetMapping("/oauth")
-	@PreAuthorize("hasAuthority('GUEST')")
+	@PreAuthorize("permitAll()")
 	public void oAuthLoginOrJoin(
 			HttpServletResponse response,
 			@RequestParam ProviderType providerType
