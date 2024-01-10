@@ -206,4 +206,13 @@ public class AuthService implements UserDetailsService {
 
 		return member.getToken();
 	}
+
+	@Transactional
+	public void logout(String email) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
+
+		member.updateToken(null);
+		redisUtil.delete(email);
+	}
 }

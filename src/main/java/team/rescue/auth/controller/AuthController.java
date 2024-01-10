@@ -139,4 +139,14 @@ public class AuthController {
 
 		return ResponseEntity.ok(new ResponseDto<>(null, tokenDto));
 	}
+
+	@GetMapping("/logout")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<?>> logout(
+			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+		authService.logout(principalDetails.getUsername());
+
+		return ResponseEntity.ok(new ResponseDto<>("로그아웃이 완료되었습니다.", null));
+	}
 }
