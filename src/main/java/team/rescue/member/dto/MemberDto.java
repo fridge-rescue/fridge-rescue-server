@@ -58,7 +58,8 @@ public class MemberDto {
 	@Builder
 	public static class MemberNicknameUpdateDto {
 
-		@Pattern(regexp = "^[a-zA-Z가-힣0-9]{2,15}", message = "한글, 영문 또는 숫자를 포함한 최소 2글자, 최대 15자의 닉네임을 입력해주세요.")
+		@NotEmpty(message = "낙네임을 입력해주세요.")
+		@Size(max = 15, message = "최대 15자의 이름을 입력해주세요.")
 		private String nickname;
 	}
 
@@ -72,7 +73,7 @@ public class MemberDto {
 		private String currentPassword;
 
 		@NotEmpty(message = "변경할 새 비밀번호를 입력해주세요.")
-		@Size(min = 8, max = 20, message = "최소 8글자, 최대 20글자의 비밀번호를 입력해주세요.")
+		@Size(max = 20, message = "최대 20글자의 비밀번호를 입력해주세요.")
 		private String newPassword;
 
 		@NotEmpty(message = "변경할 새 비밀번호를 한 번 더 입력해주세요.")
