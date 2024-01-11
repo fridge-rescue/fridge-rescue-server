@@ -22,7 +22,9 @@ import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
+import team.rescue.recipe.entity.Bookmark;
 import team.rescue.recipe.entity.Recipe;
+import team.rescue.recipe.repository.BookmarkRepository;
 import team.rescue.recipe.repository.RecipeRepository;
 
 @Slf4j
@@ -35,6 +37,7 @@ public class MemberService {
 	private final PasswordEncoder passwordEncoder;
 	private final CookRepository cookRepository;
 	private final RecipeRepository recipeRepository;
+	private final BookmarkRepository bookmarkRepository;
 
 	public MemberDetailDto getMemberInfo(String email) {
 		Member member = memberRepository.findUserByEmail(email)
@@ -97,5 +100,14 @@ public class MemberService {
 		Page<Recipe> recipePage = recipeRepository.findByMember(member, pageable);
 
 		return recipePage.map(RecipeDetailDto::of);
+	}
+
+	public Page<RecipeDetailDto> getMyBookmarks(String email, Pageable pageable) {
+		Member member = memberRepository.findUserByEmail(email)
+				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		Page<Bookmark> bookmarkPage = bookmarkRepository.findByMember(member, pageable);
+
+		return bookmarkPage.map(bookmark -> RecipeDetailDto.of(bookmark.getRecipe()));
 	}
 }

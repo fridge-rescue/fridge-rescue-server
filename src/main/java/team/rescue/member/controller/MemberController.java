@@ -97,4 +97,17 @@ public class MemberController {
 
 		return ResponseEntity.ok(new ResponseDto<>("등록한 레시피 내역을 조회하였습니다.", recipeDetailDtoPage));
 	}
+
+	@GetMapping("/bookmarks")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getMyBookmarks(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@PageableDefault Pageable pageable
+	) {
+		Page<RecipeDetailDto> recipeDetailDtoPage = memberService.getMyBookmarks(
+				principalDetails.getUsername(), pageable
+		);
+
+		return ResponseEntity.ok(new ResponseDto<>("북마크한 레시피 내역을 조회하였습니다.", recipeDetailDtoPage));
+	}
 }
