@@ -59,7 +59,6 @@ public class OAuthService extends DefaultOAuth2UserService {
 			}
 
 			Member savedMember = memberRepository.save(Member.builder()
-					.name(name)
 					.email(email)
 					.nickname(nickname)
 					.password(encryptedPassword)

@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,7 +61,7 @@ class AuthControllerTest extends MockMember {
 	public void setup() {
 		// 기존 유저
 		this.existMember = memberRepository.save(
-				getNewMember("test", "1234567890", ProviderType.EMAIL, RoleType.GUEST)
+				getNewMember("test", ProviderType.EMAIL, RoleType.GUEST)
 		);
 	}
 
@@ -70,7 +71,6 @@ class AuthControllerTest extends MockMember {
 
 		// given
 		JoinReqDto joinReqDto = new JoinReqDto();
-		joinReqDto.setName("member");
 		joinReqDto.setNickname("member");
 		joinReqDto.setEmail("member@gmail.com");
 		joinReqDto.setPassword("1234567890");
@@ -79,8 +79,7 @@ class AuthControllerTest extends MockMember {
 
 		// Stub: 이메일 회원가입 정상 동작
 		Member member = getNewMember(
-				joinReqDto.getName(),
-				joinReqDto.getPassword(),
+				joinReqDto.getNickname(),
 				ProviderType.EMAIL,
 				RoleType.GUEST
 		);
@@ -98,7 +97,6 @@ class AuthControllerTest extends MockMember {
 		// Status == 201 Created
 		resultActions.andExpect(status().isCreated());
 		// Response Body
-		resultActions.andExpect(jsonPath("$.data.name").value(joinReqDto.getName()));
 		resultActions.andExpect(jsonPath("$.data.nickname").value(joinReqDto.getNickname()));
 		resultActions.andExpect(jsonPath("$.data.email").value(joinReqDto.getEmail()));
 		resultActions.andExpect(jsonPath("$.data.role").value(RoleType.GUEST.name()));
@@ -147,6 +145,21 @@ class AuthControllerTest extends MockMember {
 		// then
 		mockMvc.perform(delete("/api/auth/leave"))
 				.andExpect(jsonPath("$.message").value("회원 탈퇴가 정상적으로 처리되었습니다."))
+				.andExpect(status().isOk())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("로그아웃 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successLogout() throws Exception {
+		// given
+		doNothing().when(authService).logout("test@gmail.com");
+
+		// when
+		// then
+		mockMvc.perform(get("/api/auth/logout"))
+				.andExpect(jsonPath("$.message").value("로그아웃이 완료되었습니다."))
 				.andExpect(status().isOk())
 				.andDo(print());
 	}

@@ -38,7 +38,10 @@ public enum ServiceError {
 	FRIDGE_NOT_FOUND(HttpStatus.NOT_FOUND, "냉장고 정보가 없습니다."),
 
 	// FridgeIngredient
-	INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "재료 정보가 없습니다.");
+	INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "재료 정보가 없습니다."),
+
+	// Notification
+	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림 정보가 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String errorMessage;

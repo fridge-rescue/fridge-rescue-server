@@ -3,6 +3,7 @@ package team.rescue.member.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -10,6 +11,9 @@ import static team.rescue.error.type.ServiceError.PASSWORD_AND_PASSWORD_CHECK_MI
 import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.USER_PASSWORD_MISMATCH;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -19,19 +23,32 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import team.rescue.auth.type.RoleType;
+import team.rescue.cook.dto.CookDto.CookInfoDto;
+import team.rescue.cook.entity.Cook;
+import team.rescue.cook.repository.CookRepository;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.member.dto.MemberDto.MemberDetailDto;
 import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
 import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.mock.WithMockMember;
+import team.rescue.recipe.entity.Recipe;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
 	@Mock
 	MemberRepository memberRepository;
+
+	@Mock
+	CookRepository cookRepository;
 
 	@Spy
 	PasswordEncoder passwordEncoder;
@@ -45,7 +62,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -57,7 +73,6 @@ class MemberServiceTest {
 		MemberDetailDto memberDetailDto = memberService.getMemberInfo("test@gmail.com");
 
 		// then
-		assertEquals("test", memberDetailDto.getName());
 		assertEquals("테스트", memberDetailDto.getNickname());
 		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
@@ -83,7 +98,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -96,7 +110,6 @@ class MemberServiceTest {
 		given(memberRepository.save(member))
 				.willReturn(Member.builder()
 						.id(1L)
-						.name("test")
 						.nickname("테스트2")
 						.email("test@gmail.com")
 						.build());
@@ -108,7 +121,6 @@ class MemberServiceTest {
 						.build());
 
 		// then
-		assertEquals("test", memberDetailDto.getName());
 		assertEquals("테스트2", memberDetailDto.getNickname());
 		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
@@ -134,7 +146,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.password("1234567890")
@@ -156,7 +167,6 @@ class MemberServiceTest {
 		given(memberRepository.save(any()))
 				.willReturn(Member.builder()
 						.id(1L)
-						.name("test")
 						.nickname("테스트")
 						.email("test@gmail.com")
 						.password("0987654321")
@@ -167,7 +177,6 @@ class MemberServiceTest {
 				memberPasswordUpdateDto);
 
 		// then
-		assertEquals("test", memberDetailDto.getName());
 		assertEquals("테스트", memberDetailDto.getNickname());
 		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
@@ -193,7 +202,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.password("1234567890")
@@ -226,7 +234,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.password("1234567890")
@@ -254,5 +261,76 @@ class MemberServiceTest {
 				memberPasswordUpdateDto.getNewPasswordCheck())) {
 			throw new ServiceException(PASSWORD_AND_PASSWORD_CHECK_MISMATCH);
 		}
+	}
+
+	@Test
+	@DisplayName("완성된 요리 조회 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successGetCompletedCooks() {
+		// given
+		Member member = Member.builder()
+				.id(1L)
+				.email("test@gmail.com")
+				.build();
+
+		Member m = Member.builder()
+				.id(2L)
+				.email("author@gmail.com")
+				.build();
+
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.of(member));
+
+		Recipe recipe1 = Recipe.builder()
+				.member(m)
+				.title("레시피1")
+				.build();
+		Recipe recipe2 = Recipe.builder()
+				.member(m)
+				.title("레시피2")
+				.build();
+
+		Cook cook1 = Cook.builder()
+				.id(1L)
+				.member(member)
+				.recipe(recipe1)
+				.build();
+
+		Cook cook2 = Cook.builder()
+				.id(2L)
+				.member(member)
+				.recipe(recipe2)
+				.build();
+
+		List<Cook> list = new ArrayList<>(Arrays.asList(cook1, cook2));
+
+		given(cookRepository.findByMember(any(Member.class), any(Pageable.class)))
+				.willReturn(new PageImpl<>(list));
+
+		// when
+		Page<CookInfoDto> cookInfoDtoPage = memberService.getCompletedCooks("test@gmail.com",
+				PageRequest.of(0, 2));
+
+		// then
+		assertEquals(1L, cookInfoDtoPage.getContent().get(0).getId());
+		assertEquals("레시피1", cookInfoDtoPage.getContent().get(0).getRecipeInfoDto().getTitle());
+		assertEquals(2L, cookInfoDtoPage.getContent().get(1).getId());
+		assertEquals("레시피2", cookInfoDtoPage.getContent().get(1).getRecipeInfoDto().getTitle());
+	}
+
+	@Test
+	@DisplayName("완료된 요리 조회 실패 - 사용자 정보 없음")
+	@WithMockMember(role = RoleType.USER)
+	void failGetCompletedCooks_UserNotFound() {
+		// given
+		given(memberRepository.findUserByEmail(anyString()))
+				.willReturn(Optional.empty());
+
+		// when
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> memberService.getCompletedCooks("test@gmail.com", PageRequest.of(0, 2)));
+
+		// then
+		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
 	}
 }

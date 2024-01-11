@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,8 +37,11 @@ public class RecipeController {
 	 * @return 해당 레시피 상세 데이터
 	 */
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<ResponseDto<RecipeDetailDto>> getRecipe(@PathVariable Long recipeId) {
-    RecipeDetailDto recipeDetailDto = recipeService.getRecipe(recipeId);
+	public ResponseEntity<ResponseDto<RecipeDetailDto>> getRecipe(
+			@PathVariable Long recipeId
+	) {
+
+		RecipeDetailDto recipeDetailDto = recipeService.getRecipe(recipeId);
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피 조회에 성공하였습니다.", recipeDetailDto),
 				HttpStatus.OK
@@ -47,13 +51,14 @@ public class RecipeController {
 	/**
 	 * 레시피 등록
 	 *
-	 * @param recipeCreateDto     등록할 레시피 데이터
-	 * @param principalDetails  로그인 유저
+	 * @param recipeCreateDto  등록할 레시피 데이터
+	 * @param principalDetails 로그인 유저
 	 * @return 등록한 레시피 데이터
 	 */
 	@PutMapping("/recipes")
 	public ResponseEntity<ResponseDto<RecipeCreateDto>> addRecipe(
 			@ModelAttribute RecipeCreateDto recipeCreateDto,
+			BindingResult bindingResult,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
 		RecipeCreateDto createDto =

@@ -9,16 +9,6 @@ services:
     ports:
       - '9200:9200'
       - '9300'
-  mysql:
-    container_name: 'fridge-rescue-mysql'
-    image: 'mysql:latest'
-    environment:
-      - 'MYSQL_DATABASE=fridgerescue'
-      - 'MYSQL_PASSWORD=fridgerescue'
-      - 'MYSQL_ROOT_PASSWORD=fridgerescue'
-      - 'MYSQL_USER=fridgerescue'
-    ports:
-      - '3307:3306'
   redis:
     container_name: 'fridge-rescue-redis'
     image: 'redis:latest'

@@ -2,6 +2,7 @@ package team.rescue.auth.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -33,6 +34,7 @@ import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.mock.WithMockMember;
+import team.rescue.util.RedisUtil;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -52,6 +54,9 @@ class AuthServiceTest {
 	@Mock
 	MailProvider mailProvider;
 
+	@Mock
+	RedisUtil redisUtil;
+
 	@Spy
 	private PasswordEncoder passwordEncoder;
 
@@ -61,7 +66,6 @@ class AuthServiceTest {
 
 		// given
 		JoinReqDto joinReqDto = new JoinReqDto();
-		joinReqDto.setName("member");
 		joinReqDto.setNickname("member");
 		joinReqDto.setEmail("member@gmail.com");
 		joinReqDto.setPassword("1234567890");
@@ -72,7 +76,6 @@ class AuthServiceTest {
 
 		// Stub 2: 이메일 코드 생성 및 전송 완료
 		Member member = Member.builder()
-				.name(joinReqDto.getName())
 				.nickname(joinReqDto.getNickname())
 				.email(joinReqDto.getEmail())
 				.password(passwordEncoder.encode(joinReqDto.getPassword()))
@@ -96,7 +99,6 @@ class AuthServiceTest {
 
 		// given
 		JoinReqDto joinReqDto = new JoinReqDto();
-		joinReqDto.setName("member");
 		joinReqDto.setNickname("member");
 		joinReqDto.setEmail("member@gmail.com");
 		joinReqDto.setPassword("1234567890");
@@ -122,7 +124,6 @@ class AuthServiceTest {
 
 		// given
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -156,7 +157,6 @@ class AuthServiceTest {
 		String email = "test@gmail.com";
 		String code = "123456";
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -191,7 +191,6 @@ class AuthServiceTest {
 		String email = "test@gmail.com";
 		String code = "123456";
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -226,7 +225,6 @@ class AuthServiceTest {
 		// Stub 1: 해당 이메일로 가입한 유저 있음
 		// Stub 2: 저장된 이메일 코드와 확인 요청한 코드가 다름
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -255,7 +253,6 @@ class AuthServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -282,6 +279,43 @@ class AuthServiceTest {
 		// when
 		ServiceException serviceException = assertThrows(ServiceException.class,
 				() -> authService.deleteMember("test@gmail.com"));
+
+		// then
+		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("로그아웃 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successLogout() {
+		// given
+		Member member = Member.builder()
+				.id(1L)
+				.email("test@gmail.com")
+				.token("asdfasdfasdf")
+				.build();
+
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.of(member));
+		// when
+		authService.logout("test@gmail.com");
+
+		// then
+		assertNull(member.getToken());
+		assertNull(redisUtil.get("test@gmail.com"));
+	}
+
+	@Test
+	@DisplayName("로그아웃 실패 - 사용자 정보 없음")
+	@WithMockMember(role = RoleType.USER)
+	void failLogout() {
+		// given
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.empty());
+
+		// when
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> authService.logout("test@gmail.com"));
 
 		// then
 		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());

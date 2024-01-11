@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,6 +16,7 @@ import org.springframework.validation.FieldError;
 import team.rescue.error.exception.ValidationException;
 import team.rescue.validator.ListValidator;
 
+@Slf4j
 @Component
 @Aspect
 @RequiredArgsConstructor
@@ -26,21 +28,21 @@ public class RequestValidAop {
 	public void postMapping() {
 	}
 
-	@Pointcut("@annotation(org.springframework.web.bind.annotation.PutMapping)")
-	public void putMapping() {
+	@Pointcut("execution(* team.rescue..controller.*.*(..))")
+	public void pointCut() {
 	}
 
 	/**
 	 * Request Body 데이터 유효성 체크
 	 * <p>POST, PUT Request 전후 핸들링
 	 */
-	@Around("postMapping() || putMapping() || @annotation(ListValidation)")
+	@Around("pointCut() || @annotation(ListValidation)")
 	public Object requestValidationAdvice(ProceedingJoinPoint pjp) throws Throwable {
 
 		Object[] args = pjp.getArgs();
 		for (Object arg : args) {
 
-			if(arg instanceof List<?> list) {
+			if (arg instanceof List<?> list) {
 				BindingResult bindingResult = new BeanPropertyBindingResult(list, "list");
 				listValidator.validate(list, bindingResult);
 
