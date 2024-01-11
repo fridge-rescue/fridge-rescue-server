@@ -30,7 +30,7 @@ public enum ServiceError {
 
 	// Recipe
 	RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피를 찾을 수 없습니다."),
-	RECIPE_MEMBER_UNMATCHED(HttpStatus.BAD_REQUEST, "레시피를 작성한 회원이 아닙니다."),
+	RECIPE_MEMBER_UNMATCHED(HttpStatus.UNAUTHORIZED, "레시피를 작성한 회원이 아닙니다."),
 	RECIPE_INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "레시피 재료를 찾을 수 없습니다."),
 	RECIPE_STEP_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피 스탭을 찾을 수 없습니다."),
 
@@ -42,6 +42,10 @@ public enum ServiceError {
 
 	// Notification
 	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림 정보가 없습니다."),
+
+	// Review
+	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰 정보가 없습니다."),
+	REVIEW_MEMBER_UNMATCHED(HttpStatus.UNAUTHORIZED, "리뷰를 작성한 회원이 아닙니다"),
 
 	// Lock
 	LOCK_ACQUISITION_FAIL(HttpStatus.BAD_REQUEST, "잠시 후 다시 시도해주세요."),

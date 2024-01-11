@@ -1,5 +1,6 @@
 package team.rescue.review.service;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -79,8 +80,41 @@ public class ReviewService {
 
 		log.info("[리뷰 상세 조회]");
 		Review review = reviewRepository.findById(reviewId)
-				.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
+				.orElseThrow(() -> new ServiceException(ServiceError.REVIEW_NOT_FOUND));
 
 		return ReviewDetailDto.of(review);
+	}
+
+	@Transactional
+	public ReviewInfoDto deleteReview(String email, Long reviewId) {
+
+		log.info("[리뷰 삭제] reviewId={}", reviewId);
+		Review review = reviewRepository.findById(reviewId)
+				.orElseThrow(() -> new ServiceException(ServiceError.REVIEW_NOT_FOUND));
+
+		// 요청 유저와 삭제할 리뷰 작성자가 동일인인지 검증
+		validateReviewAuthor(email, review);
+
+		// 레시피 리뷰 수 감소
+		Recipe recipe = review.getRecipe();
+		recipe.decreaseReviewCount();
+
+		// 리뷰 데이터 삭제
+		reviewRepository.delete(review);
+		recipeRepository.save(recipe);
+
+		return ReviewInfoDto.of(review);
+	}
+
+	/**
+	 * 요청 유저와 리뷰 실제 작성 유저 동일성 검증
+	 *
+	 * @param email  요청 유저 email
+	 * @param review 검증하려는 리뷰 객체
+	 */
+	private void validateReviewAuthor(String email, Review review) {
+		if (!Objects.equals(review.getMember().getEmail(), email)) {
+			throw new ServiceException(ServiceError.REVIEW_MEMBER_UNMATCHED);
+		}
 	}
 }
