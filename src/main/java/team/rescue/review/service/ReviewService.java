@@ -19,6 +19,7 @@ import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.review.dto.ReviewDto.ReviewDetailDto;
 import team.rescue.review.dto.ReviewDto.ReviewInfoDto;
 import team.rescue.review.dto.ReviewDto.ReviewReqDto;
+import team.rescue.review.dto.ReviewDto.ReviewUpdateDto;
 import team.rescue.review.entity.Review;
 import team.rescue.review.repository.ReviewRepository;
 
@@ -85,6 +86,49 @@ public class ReviewService {
 		return ReviewDetailDto.of(review);
 	}
 
+	/**
+	 * 리뷰 내용 수정
+	 *
+	 * @param email           리뷰 수정 요정 유저 이메일
+	 * @param reviewId        수정할 리뷰 아이디
+	 * @param reviewUpdateDto 수정할 내용
+	 * @return 수정된 리뷰 데이터
+	 */
+	@Transactional
+	public ReviewInfoDto updateReview(
+			String email,
+			Long reviewId,
+			ReviewUpdateDto reviewUpdateDto
+	) {
+
+		log.info("[리뷰 수정] reviewId={}", reviewId);
+		Review review = reviewRepository.findById(reviewId)
+				.orElseThrow(() -> new ServiceException(ServiceError.REVIEW_NOT_FOUND));
+
+		// 리뷰 수정 요청 유저와 리뷰 작성 유저 동일인 검증
+		validateReviewAuthor(email, review);
+
+		// S3 이미지 수정
+		String imageUrl = fileService.uploadImageToS3(reviewUpdateDto.getImage());
+
+		// 기존 이미지 있는 경우 삭제
+		if (review.getImageUrl() != null) {
+			fileService.deleteImages(review.getImageUrl());
+		}
+
+		// 리뷰 업데이트
+		review.update(reviewUpdateDto.getTitle(), imageUrl, reviewUpdateDto.getContents());
+
+		return ReviewInfoDto.of(reviewRepository.save(review));
+	}
+
+	/**
+	 * 리뷰 삭제
+	 *
+	 * @param email    리뷰 삭제 요청 유저 이메일
+	 * @param reviewId 삭제할 리뷰 아이디
+	 * @return 삭제된 리뷰 데이터
+	 */
 	@Transactional
 	public ReviewInfoDto deleteReview(String email, Long reviewId) {
 
