@@ -60,7 +60,6 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 
@@ -125,7 +124,6 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 
@@ -178,7 +176,6 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 
@@ -206,13 +203,11 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 
 		Member member2 = Member.builder()
 				.id(2L)
-				.name("test2")
 				.email("test2@gmail.com")
 				.build();
 
@@ -247,7 +242,6 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 
@@ -302,7 +296,6 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 
@@ -327,7 +320,6 @@ class NotificationServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.email("test@gmail.com")
 				.build();
 

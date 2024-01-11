@@ -45,7 +45,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -57,7 +56,6 @@ class MemberServiceTest {
 		MemberDetailDto memberDetailDto = memberService.getMemberInfo("test@gmail.com");
 
 		// then
-		assertEquals("test", memberDetailDto.getName());
 		assertEquals("테스트", memberDetailDto.getNickname());
 		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
@@ -83,7 +81,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -96,7 +93,6 @@ class MemberServiceTest {
 		given(memberRepository.save(member))
 				.willReturn(Member.builder()
 						.id(1L)
-						.name("test")
 						.nickname("테스트2")
 						.email("test@gmail.com")
 						.build());
@@ -108,7 +104,6 @@ class MemberServiceTest {
 						.build());
 
 		// then
-		assertEquals("test", memberDetailDto.getName());
 		assertEquals("테스트2", memberDetailDto.getNickname());
 		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
@@ -134,7 +129,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.password("1234567890")
@@ -156,7 +150,6 @@ class MemberServiceTest {
 		given(memberRepository.save(any()))
 				.willReturn(Member.builder()
 						.id(1L)
-						.name("test")
 						.nickname("테스트")
 						.email("test@gmail.com")
 						.password("0987654321")
@@ -167,7 +160,6 @@ class MemberServiceTest {
 				memberPasswordUpdateDto);
 
 		// then
-		assertEquals("test", memberDetailDto.getName());
 		assertEquals("테스트", memberDetailDto.getNickname());
 		assertEquals("test@gmail.com", memberDetailDto.getEmail());
 	}
@@ -193,7 +185,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.password("1234567890")
@@ -226,7 +217,6 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.password("1234567890")

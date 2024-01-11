@@ -80,7 +80,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -145,7 +144,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -171,7 +169,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -234,7 +231,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -260,7 +256,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -348,7 +343,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -374,7 +368,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -419,7 +412,6 @@ class FridgeServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();

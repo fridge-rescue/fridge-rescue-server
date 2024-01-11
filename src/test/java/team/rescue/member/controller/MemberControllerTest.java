@@ -57,7 +57,6 @@ class MemberControllerTest extends MockMember {
 		// given
 		MemberDetailDto memberDetailDto = MemberDetailDto.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();
@@ -70,7 +69,6 @@ class MemberControllerTest extends MockMember {
 		mockMvc.perform(get("/api/members/info"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.id").value(1L))
-				.andExpect(jsonPath("$.data.name").value("test"))
 				.andExpect(jsonPath("$.data.nickname").value("테스트"))
 				.andExpect(jsonPath("$.data.email").value("test@gmail.com"))
 				.andDo(print());
@@ -87,7 +85,6 @@ class MemberControllerTest extends MockMember {
 
 		MemberDetailDto memberDetailDto = MemberDetailDto.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트2")
 				.email("test@gmail.com")
 				.build();
@@ -104,7 +101,6 @@ class MemberControllerTest extends MockMember {
 						)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data.id").value(1L))
-				.andExpect(jsonPath("$.data.name").value("test"))
 				.andExpect(jsonPath("$.data.nickname").value("테스트2"))
 				.andExpect(jsonPath("$.data.email").value("test@gmail.com"))
 				.andDo(print());
@@ -124,7 +120,6 @@ class MemberControllerTest extends MockMember {
 		given(memberService.updateMemberPassword("test@gmail.com", memberPasswordUpdateDto))
 				.willReturn(MemberDetailDto.builder()
 						.id(1L)
-						.name("test")
 						.nickname("테스트")
 						.email("test@gmail.com")
 						.build());
@@ -139,7 +134,6 @@ class MemberControllerTest extends MockMember {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.message").value("회원 비밀번호 변경에 성공하였습니다."))
 				.andExpect(jsonPath("$.data.id").value(1L))
-				.andExpect(jsonPath("$.data.name").value("test"))
 				.andExpect(jsonPath("$.data.nickname").value("테스트"))
 				.andExpect(jsonPath("$.data.email").value("test@gmail.com"))
 				.andDo(print());

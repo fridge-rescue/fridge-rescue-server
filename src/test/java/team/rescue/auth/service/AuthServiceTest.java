@@ -66,7 +66,6 @@ class AuthServiceTest {
 
 		// given
 		JoinReqDto joinReqDto = new JoinReqDto();
-		joinReqDto.setName("member");
 		joinReqDto.setNickname("member");
 		joinReqDto.setEmail("member@gmail.com");
 		joinReqDto.setPassword("1234567890");
@@ -77,7 +76,6 @@ class AuthServiceTest {
 
 		// Stub 2: 이메일 코드 생성 및 전송 완료
 		Member member = Member.builder()
-				.name(joinReqDto.getName())
 				.nickname(joinReqDto.getNickname())
 				.email(joinReqDto.getEmail())
 				.password(passwordEncoder.encode(joinReqDto.getPassword()))
@@ -101,7 +99,6 @@ class AuthServiceTest {
 
 		// given
 		JoinReqDto joinReqDto = new JoinReqDto();
-		joinReqDto.setName("member");
 		joinReqDto.setNickname("member");
 		joinReqDto.setEmail("member@gmail.com");
 		joinReqDto.setPassword("1234567890");
@@ -127,7 +124,6 @@ class AuthServiceTest {
 
 		// given
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -161,7 +157,6 @@ class AuthServiceTest {
 		String email = "test@gmail.com";
 		String code = "123456";
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -196,7 +191,6 @@ class AuthServiceTest {
 		String email = "test@gmail.com";
 		String code = "123456";
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -231,7 +225,6 @@ class AuthServiceTest {
 		// Stub 1: 해당 이메일로 가입한 유저 있음
 		// Stub 2: 저장된 이메일 코드와 확인 요청한 코드가 다름
 		Member member = Member.builder()
-				.name("test")
 				.nickname("nickname")
 				.email("test@gmail.com")
 				.password(passwordEncoder.encode("1234567890"))
@@ -260,7 +253,6 @@ class AuthServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("test")
 				.nickname("테스트")
 				.email("test@gmail.com")
 				.build();

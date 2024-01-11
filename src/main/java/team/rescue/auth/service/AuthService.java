@@ -73,7 +73,6 @@ public class AuthService implements UserDetailsService {
 		validateCreateMember(joinReqDto.getEmail());
 
 		Member member = Member.builder()
-				.name(joinReqDto.getName())
 				.nickname(joinReqDto.getNickname())
 				.email(joinReqDto.getEmail())
 				.password(passwordEncoder.encode(joinReqDto.getPassword()))
