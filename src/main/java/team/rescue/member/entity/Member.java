@@ -43,9 +43,6 @@ public class Member {
 	@Column(name = "member_id")
 	private Long id;
 
-	@Column(name = "name", nullable = false, length = 15)
-	private String name;
-
 	@Column(name = "nickname", nullable = false, length = 15)
 	private String nickname;
 

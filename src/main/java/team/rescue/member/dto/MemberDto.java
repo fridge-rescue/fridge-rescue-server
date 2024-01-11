@@ -1,7 +1,6 @@
 package team.rescue.member.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +15,9 @@ public class MemberDto {
 
 	@Getter
 	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
 	public static class MemberInfoDto {
 
 		private Long id;
@@ -38,14 +40,12 @@ public class MemberDto {
 	public static class MemberDetailDto {
 
 		private Long id;
-		private String name;
 		private String nickname;
 		private String email;
 
 		public static MemberDetailDto of(Member member) {
 			return MemberDetailDto.builder()
 					.id(member.getId())
-					.name(member.getName())
 					.nickname(member.getNickname())
 					.email(member.getEmail())
 					.build();

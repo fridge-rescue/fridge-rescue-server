@@ -1,7 +1,6 @@
 package team.rescue.auth.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -15,12 +14,8 @@ public class JoinDto {
 	@Setter
 	public static class JoinReqDto {
 
-		@NotEmpty(message = "이름을 입력해주세요.")
-		@Size(max = 15, message = "최대 15자의 이름을 입력해주세요.")
-		private String name;
-
 		@NotEmpty(message = "사용할 닉네임을 입력해주세요.")
-		@Size( max = 15, message = "최대 15자의 닉네임을 입력해주세요.")
+		@Size(max = 15, message = "최대 15자의 닉네임을 입력해주세요.")
 		private String nickname;
 
 		// 최대 30자
@@ -49,7 +44,6 @@ public class JoinDto {
 	public static class JoinResDto {
 
 		private Long id;
-		private String name;
 		private String nickname;
 		private String email;
 		private RoleType role;
@@ -58,7 +52,6 @@ public class JoinDto {
 		public JoinResDto(Member member) {
 
 			this.id = member.getId();
-			this.name = member.getName();
 			this.nickname = member.getNickname();
 			this.email = member.getEmail();
 			this.role = member.getRole();

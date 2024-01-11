@@ -10,23 +10,21 @@ public class MockMember {
 	/**
 	 * For Test: 새 이메일 회원 가입 유저(이메일 미인증)
 	 *
-	 * @param name 테스트 유저 이름
+	 * @param nickname 테스트 유저 닉네임
 	 * @return 유저
 	 */
 	protected Member getNewMember(
-			String name,
-			String password,
+			String nickname,
 			ProviderType provider,
 			RoleType role
 	) {
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String encodedPassword = passwordEncoder.encode(password);
+		String encodedPassword = passwordEncoder.encode(nickname + nickname + nickname);
 
 		return Member.builder()
-				.name(name)
-				.nickname(name)
-				.email(name + "@gmail.com")
+				.nickname(nickname)
+				.email(nickname + "@gmail.com")
 				.password(encodedPassword)
 				.emailCode("123456")
 				.role(role)
@@ -39,27 +37,24 @@ public class MockMember {
 	 * For Test: 저장된 유저
 	 *
 	 * @param id       테스트 유저 ID
-	 * @param name     테스트 유저 이름
 	 * @param nickname 테스트 유저 닉네임
 	 * @param provider 가입 방식
 	 * @return 저장된 유저
 	 */
 	protected Member savedMember(
 			Long id,
-			String name,
 			String nickname,
 			ProviderType provider,
 			RoleType role
 	) {
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String encodedPassword = passwordEncoder.encode(name + name + name);
+		String encodedPassword = passwordEncoder.encode(nickname + nickname + nickname);
 
 		return Member.builder()
 				.id(id)
-				.name(name)
-				.nickname(name)
-				.email(name + "@gmail.com")
+				.nickname(nickname)
+				.email(nickname + "@gmail.com")
 				.password(encodedPassword)
 				.role(role)
 				.provider(provider)

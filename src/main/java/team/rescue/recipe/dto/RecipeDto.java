@@ -2,8 +2,10 @@ package team.rescue.recipe.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
@@ -37,6 +39,9 @@ public class RecipeDto {
 	// 레시피 요약 조회 응답 DTO
 	@Getter
 	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
 	public static class RecipeInfoDto {
 
 		private Long id;
