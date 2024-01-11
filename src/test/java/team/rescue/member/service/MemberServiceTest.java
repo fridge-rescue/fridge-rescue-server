@@ -39,7 +39,11 @@ import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.mock.WithMockMember;
+import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
+import team.rescue.recipe.entity.Bookmark;
 import team.rescue.recipe.entity.Recipe;
+import team.rescue.recipe.repository.BookmarkRepository;
+import team.rescue.recipe.repository.RecipeRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -49,6 +53,12 @@ class MemberServiceTest {
 
 	@Mock
 	CookRepository cookRepository;
+
+	@Mock
+	RecipeRepository recipeRepository;
+
+	@Mock
+	BookmarkRepository bookmarkRepository;
 
 	@Spy
 	PasswordEncoder passwordEncoder;
@@ -329,6 +339,142 @@ class MemberServiceTest {
 		// when
 		ServiceException serviceException = assertThrows(ServiceException.class,
 				() -> memberService.getCompletedCooks("test@gmail.com", PageRequest.of(0, 2)));
+
+		// then
+		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("등록한 레시피 내역 조회 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successGetMyRecipes() {
+		// given
+		Member member = Member.builder()
+				.id(1L)
+				.nickname("테스트1")
+				.email("test@gmail.com")
+				.build();
+
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.of(member));
+
+		Recipe recipe1 = Recipe.builder()
+				.id(1L)
+				.member(member)
+				.title("레시피1")
+				.summary("레시피1 요약")
+				.build();
+
+		Recipe recipe2 = Recipe.builder()
+				.id(2L)
+				.member(member)
+				.title("레시피2")
+				.summary("레시피2 요약")
+				.build();
+
+		List<Recipe> list = new ArrayList<>(Arrays.asList(recipe1, recipe2));
+
+		given(recipeRepository.findByMember(member, PageRequest.of(0, 2)))
+				.willReturn(new PageImpl<>(list));
+
+		// when
+		Page<RecipeDetailDto> myRecipes = memberService.getMyRecipes("test@gmail.com",
+				PageRequest.of(0, 2));
+
+		// then
+		assertEquals(1L, myRecipes.getContent().get(0).getId());
+		assertEquals("레시피1", myRecipes.getContent().get(0).getTitle());
+		assertEquals("레시피1 요약", myRecipes.getContent().get(0).getSummary());
+		assertEquals(2L, myRecipes.getContent().get(1).getId());
+		assertEquals("레시피2", myRecipes.getContent().get(1).getTitle());
+		assertEquals("레시피2 요약", myRecipes.getContent().get(1).getSummary());
+	}
+
+	@Test
+	@DisplayName("등록한 레시피 내역 조회 실패 - 사용자 정보 없음")
+	@WithMockMember(role = RoleType.USER)
+	void failGetMyRecipes_UserNotFound() {
+		// given
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.empty());
+
+		// when
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> memberService.getMyRecipes("test@gmail.com", PageRequest.of(0, 2)));
+
+		// then
+		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("북마크한 레시피 내역 조회 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successGetMyBookmarks() {
+		// given
+		Member member = Member.builder()
+				.id(1L)
+				.nickname("테스트1")
+				.email("test@gmail.com")
+				.build();
+
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.of(member));
+
+		Recipe recipe1 = Recipe.builder()
+				.id(1L)
+				.member(member)
+				.title("레시피1")
+				.summary("레시피1 요약")
+				.build();
+
+		Recipe recipe2 = Recipe.builder()
+				.id(2L)
+				.member(member)
+				.title("레시피2")
+				.summary("레시피2 요약")
+				.build();
+
+		Bookmark bookmark1 = Bookmark.builder()
+				.member(member)
+				.id(1L)
+				.recipe(recipe1)
+				.build();
+
+		Bookmark bookmark2 = Bookmark.builder()
+				.member(member)
+				.id(1L)
+				.recipe(recipe2)
+				.build();
+
+		List<Bookmark> list = new ArrayList<>(Arrays.asList(bookmark1, bookmark2));
+
+		given(bookmarkRepository.findByMember(member, PageRequest.of(0, 2)))
+				.willReturn(new PageImpl<>(list));
+
+		// when
+		Page<RecipeDetailDto> myBookmarks = memberService.getMyBookmarks("test@gmail.com",
+				PageRequest.of(0, 2));
+
+		// then
+		assertEquals(1L, myBookmarks.getContent().get(0).getId());
+		assertEquals("레시피1", myBookmarks.getContent().get(0).getTitle());
+		assertEquals("레시피1 요약", myBookmarks.getContent().get(0).getSummary());
+		assertEquals(2L, myBookmarks.getContent().get(1).getId());
+		assertEquals("레시피2", myBookmarks.getContent().get(1).getTitle());
+		assertEquals("레시피2 요약", myBookmarks.getContent().get(1).getSummary());
+	}
+
+	@Test
+	@DisplayName("북마크한 레시피 내역 조회 실패 - 사용자 정보 없음")
+	@WithMockMember(role = RoleType.USER)
+	void failGetMyBookmarks_UserNotFound() {
+		// given
+		given(memberRepository.findUserByEmail("test@gmail.com"))
+				.willReturn(Optional.empty());
+
+		// when
+		ServiceException serviceException = assertThrows(ServiceException.class,
+				() -> memberService.getMyBookmarks("test@gmail.com", PageRequest.of(0, 2)));
 
 		// then
 		assertEquals(USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());

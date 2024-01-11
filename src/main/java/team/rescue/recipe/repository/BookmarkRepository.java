@@ -5,10 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import team.rescue.member.entity.Member;
-import team.rescue.recipe.entity.Recipe;
+import team.rescue.recipe.entity.Bookmark;
 
 @Repository
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
-	Page<Recipe> findByMember(Member member, Pageable pageable);
+	Page<Bookmark> findByMember(Member member, Pageable pageable);
 }
