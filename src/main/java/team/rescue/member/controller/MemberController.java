@@ -21,6 +21,7 @@ import team.rescue.cook.dto.CookDto.CookInfoDto;
 import team.rescue.member.dto.MemberDto;
 import team.rescue.member.dto.MemberDto.MemberDetailDto;
 import team.rescue.member.service.MemberService;
+import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
 
 @Slf4j
 @RestController
@@ -73,6 +74,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/cooks")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<Page<CookInfoDto>>> getCompletedCooks(
 			@AuthenticationPrincipal PrincipalDetails principalDetails,
 			@PageableDefault Pageable pageable
@@ -82,5 +84,17 @@ public class MemberController {
 				principalDetails.getUsername(), pageable);
 
 		return ResponseEntity.ok(new ResponseDto<>("완료된 요리를 조회하였습니다.", cookInfoDtoPage));
+	}
+
+	@GetMapping("/recipes")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getMyRecipes(
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@PageableDefault Pageable pageable
+	) {
+		Page<RecipeDetailDto> recipeDetailDtoPage = memberService.getMyRecipes(
+				principalDetails.getUsername(), pageable);
+
+		return ResponseEntity.ok(new ResponseDto<>("등록한 레시피 내역을 조회하였습니다.", recipeDetailDtoPage));
 	}
 }
