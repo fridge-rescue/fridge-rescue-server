@@ -270,13 +270,11 @@ class MemberServiceTest {
 		// given
 		Member member = Member.builder()
 				.id(1L)
-				.name("테스트")
 				.email("test@gmail.com")
 				.build();
 
 		Member m = Member.builder()
 				.id(2L)
-				.name("작성자")
 				.email("author@gmail.com")
 				.build();
 
