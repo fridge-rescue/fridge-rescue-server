@@ -13,8 +13,10 @@ public class RecipeStepDto {
   // 레시피 스탭 생성 DTO
   @Getter
   @Setter
+  @Builder
   public static class RecipeStepCreateDto {
 
+    private Long id;
     private int stepNo;
     private MultipartFile stepImageUrl;
     private String stepContents;

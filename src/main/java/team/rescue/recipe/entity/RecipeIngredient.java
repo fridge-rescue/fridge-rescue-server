@@ -38,4 +38,8 @@ public class RecipeIngredient {
 	@Column(name = "amount", nullable = false, length = 20)
 	private String amount;
 
+	public void updateRecipeIngredient(String name, String amount) {
+		this.name = name;
+		this.amount = amount;
+	}
 }

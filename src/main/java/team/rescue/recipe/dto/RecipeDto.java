@@ -33,6 +33,19 @@ public class RecipeDto {
 					.summary(recipe.getSummary())
 					.build();
 		}
+	}
+
+	// 레시피 수정 요청 DTO
+	@Getter
+	@Setter
+	@Builder
+	public static class RecipeUpdateDto {
+
+		private String title;
+		private String summary;
+		private MultipartFile recipeImageUrl;
+		private List<RecipeIngredientDto> recipeIngredients;
+		private List<RecipeStepCreateDto> recipeSteps;
 
 	}
 
