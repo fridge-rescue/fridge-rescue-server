@@ -86,7 +86,7 @@ public class RecipeService {
   }
 
   @Transactional
-  public RecipeCreateDto addRecipe(RecipeCreateDto recipeCreateDto,
+  public RecipeInfoDto addRecipe(RecipeCreateDto recipeCreateDto,
       PrincipalDetails principalDetails) {
 
     String memberEmail = principalDetails.getMember().getEmail();
@@ -142,7 +142,7 @@ public class RecipeService {
       recipeStepRepository.save(step);
     }
 
-    return RecipeCreateDto.of(recipe);
+    return RecipeInfoDto.of(recipe);
   }
 
 

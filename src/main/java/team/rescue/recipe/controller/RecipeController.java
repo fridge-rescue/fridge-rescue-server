@@ -56,12 +56,12 @@ public class RecipeController {
 	 * @return 등록한 레시피 데이터
 	 */
 	@PutMapping("/recipes")
-	public ResponseEntity<ResponseDto<RecipeCreateDto>> addRecipe(
+	public ResponseEntity<ResponseDto<RecipeInfoDto>> addRecipe(
 			@ModelAttribute RecipeCreateDto recipeCreateDto,
 			BindingResult bindingResult,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-		RecipeCreateDto createDto =
+		RecipeInfoDto createDto =
 				recipeService.addRecipe(recipeCreateDto, principalDetails);
 
 		return new ResponseEntity<>(
@@ -82,7 +82,7 @@ public class RecipeController {
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 수정되었습니다.", recipeDetailDto),
-				HttpStatus.ACCEPTED
+				HttpStatus.OK
 		);
 	}
 
@@ -97,7 +97,7 @@ public class RecipeController {
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 삭제되었습니다.", recipeDeleteDto),
-				HttpStatus.ACCEPTED
+				HttpStatus.OK
 		);
 	}
 }
