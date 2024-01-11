@@ -44,4 +44,10 @@ public class RecipeStep {
 	@Column(name = "step_tip", nullable = false, length = 100)
 	private String stepTip;
 
+	public void updateRecipeStep(int stepNo, String stepImageUrl, String stepContents, String stepTip) {
+		this.stepNo = stepNo;
+		this.stepImageUrl = stepImageUrl;
+		this.stepContents = stepContents;
+		this.stepTip = stepTip;
+	}
 }
