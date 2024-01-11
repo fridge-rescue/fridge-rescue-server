@@ -15,6 +15,9 @@ public class MemberDto {
 
 	@Getter
 	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
 	public static class MemberInfoDto {
 
 		private Long id;
