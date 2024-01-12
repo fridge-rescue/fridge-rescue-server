@@ -56,4 +56,13 @@ public class FridgeIngredientDto {
 		private List<FridgeIngredientInfoDto> updateItem;
 	}
 
+	@Getter
+	@Setter
+	@Builder
+	public static class FridgeIngredientUseDto {
+
+		private Long id;
+		private String memo;
+	}
+
 }

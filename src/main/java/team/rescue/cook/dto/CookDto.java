@@ -1,10 +1,12 @@
 package team.rescue.cook.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import team.rescue.cook.entity.Cook;
+import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUseDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 
 public class CookDto {
@@ -25,6 +27,15 @@ public class CookDto {
 					.recipeInfoDto(RecipeInfoDto.of(cook.getRecipe()))
 					.build();
 		}
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class CookCreateDto {
+
+		private Long recipeId;
+		private List<FridgeIngredientUseDto> fridgeIngredientUseDtoList;
 	}
 
 }
