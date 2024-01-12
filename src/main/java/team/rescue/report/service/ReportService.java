@@ -56,6 +56,6 @@ public class ReportService {
 				.reportedRecipe(recipe)
 				.build();
 
-		return ReportInfoDto.of(report);
+		return ReportInfoDto.of(reportRepository.save(report));
 	}
 }
