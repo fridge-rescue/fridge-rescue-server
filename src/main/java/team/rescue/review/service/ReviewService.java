@@ -160,11 +160,9 @@ public class ReviewService {
 		log.info("[레시피 리뷰 목록 조회] recipeId={}", recipeId);
 
 		// 해당 레시피 아이디로 리뷰 조회
-		Slice<Review> reviewList =
-				reviewRepository.findByRecipeId(recipeId, pageRequest);
+		Slice<Review> reviewList = reviewRepository.findReviewsByRecipeId(recipeId, pageRequest);
 
 		return reviewList.map(ReviewInfoDto::of);
-
 	}
 
 	/**
