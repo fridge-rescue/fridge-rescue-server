@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team.rescue.aop.DistributedLock;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.file.FileService;
 import team.rescue.error.exception.ServiceException;
@@ -14,6 +15,7 @@ import team.rescue.error.type.ServiceError;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.recipe.dto.BookmarkDto.BookmarkInfoDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
@@ -21,9 +23,11 @@ import team.rescue.recipe.dto.RecipeDto.RecipeUpdateDto;
 import team.rescue.recipe.dto.RecipeIngredientDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
+import team.rescue.recipe.entity.Bookmark;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.entity.RecipeIngredient;
 import team.rescue.recipe.entity.RecipeStep;
+import team.rescue.recipe.repository.BookmarkRepository;
 import team.rescue.recipe.repository.RecipeIngredientRepository;
 import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.recipe.repository.RecipeStepRepository;
@@ -341,4 +345,5 @@ public class RecipeService {
 
     return RecipeInfoDto.of(recipe);
   }
+
 }

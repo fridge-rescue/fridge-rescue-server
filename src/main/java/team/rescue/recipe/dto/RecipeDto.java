@@ -89,6 +89,20 @@ public class RecipeDto {
 		private List<RecipeIngredientDto> recipeIngredients;
 		private List<RecipeStepInfoDto> recipeSteps;
 		private MemberInfoDto author;
+
+		public static RecipeDetailDto of(Recipe recipe) {
+			return RecipeDetailDto.builder()
+					.id(recipe.getId())
+					.title(recipe.getTitle())
+					.summary(recipe.getSummary())
+					.recipeImageUrl(recipe.getRecipeImageUrl())
+					.viewCount(recipe.getViewCount())
+					.reviewCount(recipe.getReviewCount())
+					.reportCount(recipe.getReportCount())
+					.bookmarkCount(recipe.getBookmarkCount())
+					.createdAt(recipe.getCreatedAt())
+					.build();
+		}
 	}
 
 }
