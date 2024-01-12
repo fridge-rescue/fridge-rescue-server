@@ -65,4 +65,10 @@ public class Review {
 	@LastModifiedDate
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
+
+	public void update(String title, String imageUrl, String contents) {
+		this.title = title;
+		this.imageUrl = imageUrl;
+		this.contents = contents;
+	}
 }

@@ -4,18 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
+import team.rescue.recipe.dto.BookmarkDto.BookmarkInfoDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeCreateDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
@@ -56,12 +59,12 @@ public class RecipeController {
 	 * @return 등록한 레시피 데이터
 	 */
 	@PutMapping("/recipes")
-	public ResponseEntity<ResponseDto<RecipeCreateDto>> addRecipe(
+	public ResponseEntity<ResponseDto<RecipeInfoDto>> addRecipe(
 			@ModelAttribute RecipeCreateDto recipeCreateDto,
 			BindingResult bindingResult,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-		RecipeCreateDto createDto =
+		RecipeInfoDto createDto =
 				recipeService.addRecipe(recipeCreateDto, principalDetails);
 
 		return new ResponseEntity<>(
@@ -82,7 +85,7 @@ public class RecipeController {
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 수정되었습니다.", recipeDetailDto),
-				HttpStatus.ACCEPTED
+				HttpStatus.OK
 		);
 	}
 
@@ -97,7 +100,23 @@ public class RecipeController {
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 삭제되었습니다.", recipeDeleteDto),
-				HttpStatus.ACCEPTED
+				HttpStatus.OK
 		);
+	}
+
+	@PostMapping("/{recipeId}/bookmark")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<?>> bookmarkRecipe(
+			@PathVariable Long recipeId,
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		BookmarkInfoDto bookmarkInfoDto = recipeService.bookmarkRecipe(recipeId,
+				principalDetails.getUsername());
+
+		if (bookmarkInfoDto.getIsBookmarked()) {
+			return ResponseEntity.ok(new ResponseDto<>("레시피를 북마크하였습니다.", bookmarkInfoDto));
+		} else {
+			return ResponseEntity.ok(new ResponseDto<>("레시피 북마크를 취소하였습니다.", bookmarkInfoDto));
+		}
 	}
 }

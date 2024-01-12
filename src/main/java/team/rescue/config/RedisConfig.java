@@ -1,6 +1,9 @@
 package team.rescue.config;
 
 import lombok.RequiredArgsConstructor;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -37,5 +40,13 @@ public class RedisConfig {
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 
 		return redisTemplate;
+	}
+
+	@Bean
+	public RedissonClient redissonClient() {
+		Config config = new Config();
+		config.useSingleServer().setAddress("redis://" + host + ":" + port);
+
+		return Redisson.create(config);
 	}
 }

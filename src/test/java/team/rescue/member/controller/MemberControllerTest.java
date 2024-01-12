@@ -35,6 +35,7 @@ import team.rescue.member.repository.MemberRepository;
 import team.rescue.member.service.MemberService;
 import team.rescue.mock.MockMember;
 import team.rescue.mock.WithMockMember;
+import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
@@ -182,6 +183,75 @@ class MemberControllerTest extends MockMember {
 				.andExpect(jsonPath("$.data.content[1].id").value(2L))
 				.andExpect(jsonPath("$.data.content[1].recipeInfoDto.id").value(2L))
 				.andExpect(jsonPath("$.data.content[1].recipeInfoDto.title").value("레시피2"))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("등록한 레시피 내역 조회 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successGetMyRecipes() throws Exception {
+		// given
+		RecipeDetailDto recipeDetailDto1 = RecipeDetailDto.builder()
+				.id(1L)
+				.title("레시피1")
+				.summary("레시피1 요약")
+				.build();
+
+		RecipeDetailDto recipeDetailDto2 = RecipeDetailDto.builder()
+				.id(2L)
+				.title("레시피2")
+				.summary("레시피2 요약")
+				.build();
+
+		List<RecipeDetailDto> list = new ArrayList<>(Arrays.asList(recipeDetailDto1, recipeDetailDto2));
+
+		given(memberService.getMyRecipes(anyString(), any()))
+				.willReturn(new PageImpl<>(list));
+
+		// when
+		// then
+		mockMvc.perform(get("/api/members/recipes"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.content[0].id").value(1L))
+				.andExpect(jsonPath("$.data.content[0].title").value("레시피1"))
+				.andExpect(jsonPath("$.data.content[0].summary").value("레시피1 요약"))
+				.andExpect(jsonPath("$.data.content[1].id").value(2L))
+				.andExpect(jsonPath("$.data.content[1].title").value("레시피2"))
+				.andExpect(jsonPath("$.data.content[1].summary").value("레시피2 요약"))
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("북마크한 레시피 내역 조회 성공")
+	@WithMockMember(role = RoleType.USER)
+	void successGetMyBookmarks() throws Exception {
+		// given
+		RecipeDetailDto recipeDetailDto1 = RecipeDetailDto.builder()
+				.id(1L)
+				.title("레시피1")
+				.summary("레시피1 요약")
+				.build();
+
+		RecipeDetailDto recipeDetailDto2 = RecipeDetailDto.builder()
+				.id(2L)
+				.title("레시피2")
+				.summary("레시피2 요약")
+				.build();
+
+		List<RecipeDetailDto> list = new ArrayList<>(Arrays.asList(recipeDetailDto1, recipeDetailDto2));
+		given(memberService.getMyBookmarks(anyString(), any()))
+				.willReturn(new PageImpl<>(list));
+
+		// when
+		// then
+		mockMvc.perform(get("/api/members/bookmarks"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.content[0].id").value(1L))
+				.andExpect(jsonPath("$.data.content[0].title").value("레시피1"))
+				.andExpect(jsonPath("$.data.content[0].summary").value("레시피1 요약"))
+				.andExpect(jsonPath("$.data.content[1].id").value(2L))
+				.andExpect(jsonPath("$.data.content[1].title").value("레시피2"))
+				.andExpect(jsonPath("$.data.content[1].summary").value("레시피2 요약"))
 				.andDo(print());
 	}
 }
