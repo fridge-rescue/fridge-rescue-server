@@ -1,5 +1,7 @@
 package team.rescue.report.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +15,11 @@ public class ReportDto {
 	@Setter
 	public static class ReportCreateDto {
 
+		@NotEmpty(message = "신고 대상 레시피 아이디는 필수값입니다.")
 		private Long recipeId;
+
+		@NotEmpty(message = "신고 이유를 입력해주세요.")
+		@Size(max = 200, message = "200자 미만으로 입력해주세요.")
 		private String reason;
 	}
 
