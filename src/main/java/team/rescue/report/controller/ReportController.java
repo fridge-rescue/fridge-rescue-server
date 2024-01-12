@@ -46,7 +46,11 @@ public class ReportController {
 		);
 
 		ReportInfoDto reportInfoDto =
-				reportService.createReport(details.getMember().getId(), reportCreateDto);
+				reportService.createReport(
+						reportCreateDto.getRecipeId(),
+						details.getMember().getId(),
+						reportCreateDto.getReason()
+				);
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("신고 처리되었습니다.", reportInfoDto),
