@@ -1,6 +1,5 @@
 package team.rescue.cook.service;
 
-import static team.rescue.error.type.ServiceError.FRIDGE_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.INGREDIENT_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.RECIPE_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
@@ -16,7 +15,6 @@ import team.rescue.cook.entity.Cook;
 import team.rescue.cook.repository.CookRepository;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUseDto;
-import team.rescue.fridge.entity.Fridge;
 import team.rescue.fridge.entity.FridgeIngredient;
 import team.rescue.fridge.repository.FridgeIngredientRepository;
 import team.rescue.fridge.repository.FridgeRepository;
@@ -41,9 +39,6 @@ public class CookService {
 	public CookInfoDto completeCook(CookCreateDto cookCreateDto, String email) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
-
-		Fridge fridge = fridgeRepository.findByMember(member)
-				.orElseThrow(() -> new ServiceException(FRIDGE_NOT_FOUND));
 
 		List<FridgeIngredientUseDto> fridgeIngredientUseDtoList = cookCreateDto.getFridgeIngredientUseDtoList();
 

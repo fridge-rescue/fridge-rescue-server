@@ -1,6 +1,5 @@
 package team.rescue.recipe.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
-import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
@@ -211,8 +209,8 @@ class RecipeControllerTest extends MockMember {
         .recipeSteps(recipeStepCreateList)
         .build();
 
-    given(recipeService.addRecipe(any(RecipeCreateDto.class), any(PrincipalDetails.class)))
-        .willReturn(recipeCreateDto);
+//    given(recipeService.addRecipe(any(RecipeCreateDto.class), any(PrincipalDetails.class)))
+//        .willReturn(recipeCreateDto);
 
     objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
