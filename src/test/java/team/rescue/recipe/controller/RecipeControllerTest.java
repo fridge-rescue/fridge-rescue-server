@@ -4,16 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.web.servlet.function.RequestPredicates.contentType;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.time.LocalDateTime;
@@ -31,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
@@ -71,7 +65,7 @@ class RecipeControllerTest extends MockMember {
   @BeforeEach
   public void setMember() {
     this.existMember = memberRepository.save(
-        getNewMember("test", "1234567890", ProviderType.EMAIL, RoleType.USER)
+        getNewMember("test", ProviderType.EMAIL, RoleType.USER)
     );
   }
 
@@ -217,8 +211,8 @@ class RecipeControllerTest extends MockMember {
         .recipeSteps(recipeStepCreateList)
         .build();
 
-    given(recipeService.addRecipe(any(RecipeCreateDto.class), any(PrincipalDetails.class)))
-        .willReturn(recipeCreateDto);
+//    given(recipeService.addRecipe(any(RecipeCreateDto.class), any(PrincipalDetails.class)))
+//        .willReturn(recipeCreateDto);
 
     objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 

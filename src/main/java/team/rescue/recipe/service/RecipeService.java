@@ -25,15 +25,15 @@ import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.entity.RecipeIngredient;
 import team.rescue.recipe.entity.RecipeStep;
 import team.rescue.recipe.repository.RecipeIngredientRepository;
+import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.recipe.repository.RecipeStepRepository;
-import team.rescue.recipe.repository.RecipesRepository;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
 
-  private final RecipesRepository recipesRepository;
+  private final RecipeRepository recipeRepository;
   private final RecipeIngredientRepository recipeIngredientRepository;
   private final RecipeStepRepository recipeStepRepository;
   private final MemberRepository memberRepository;
@@ -41,7 +41,7 @@ public class RecipeService {
 
   public RecipeDetailDto getRecipe(Long id) {
 
-    Recipe recipe = recipesRepository.findById(id)
+    Recipe recipe = recipeRepository.findById(id)
         .orElseThrow(() -> {
           log.error("레시피 없음");
           return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
@@ -111,7 +111,7 @@ public class RecipeService {
         .member(member) // 멤버 연결
         .build();
 
-    recipesRepository.save(recipe); // 먼저 Recipe 저장
+    recipeRepository.save(recipe); // 먼저 Recipe 저장
 
     for (RecipeIngredientDto recipeIngredientDto : recipeCreateDto.getRecipeIngredients()) {
       RecipeIngredient ingredient = RecipeIngredient.builder()
@@ -159,7 +159,7 @@ public class RecipeService {
           return new ServiceException(ServiceError.USER_NOT_FOUND);
         });
 
-    Recipe recipe = recipesRepository.findById(recipeId)
+    Recipe recipe = recipeRepository.findById(recipeId)
         .orElseThrow(() -> {
           log.error("레시피 없음");
           return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
@@ -174,13 +174,6 @@ public class RecipeService {
     fileService.deleteImages(recipe.getRecipeImageUrl());
     String recipeImageFilePath = fileService.uploadImageToS3(recipeUpdateDto.getRecipeImageUrl());
 
-    recipe.update(
-            recipeUpdateDto.getTitle(),
-            recipeUpdateDto.getSummary(),
-            recipeImageFilePath
-				);
-
-    recipesRepository.save(recipe);
 
     // 레시피 ingredient 수정
     List<RecipeIngredient> existingRecipeIngredientList =
@@ -282,6 +275,15 @@ public class RecipeService {
 
     recipeStepRepository.deleteAll(stepToDelete);
 
+
+    recipe.update(
+        recipeUpdateDto.getTitle(),
+        recipeUpdateDto.getSummary(),
+        recipeImageFilePath
+    );
+
+    recipeRepository.save(recipe);
+
     return RecipeDetailDto.builder()
         .title(recipe.getTitle())
         .summary(recipe.getSummary())
@@ -304,7 +306,7 @@ public class RecipeService {
           return new ServiceException(ServiceError.USER_NOT_FOUND);
         });
 
-    Recipe recipe = recipesRepository.findById(recipeId)
+    Recipe recipe = recipeRepository.findById(recipeId)
         .orElseThrow(() -> {
           log.error("레시피 없음");
           return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
@@ -335,7 +337,7 @@ public class RecipeService {
     }
     recipeStepRepository.deleteAll(existingRecipeStepList);
 
-    recipesRepository.delete(recipe);
+    recipeRepository.delete(recipe);
 
     return RecipeInfoDto.of(recipe);
   }
