@@ -2,6 +2,10 @@ package team.rescue.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -134,4 +139,31 @@ public class ReviewController {
 		);
 	}
 
+	/**
+	 * 특정 레시피의 리뷰 목록 조회
+	 *
+	 * @param recipeId 조회할 레시피 아이디
+	 * @param page     리뷰 목록 페이지 번호
+	 * @return 리뷰 목록
+	 */
+	@GetMapping("/{recipeId}/reviews")
+	@PreAuthorize("permitAll()")
+	public ResponseEntity<ResponseDto<Slice<ReviewInfoDto>>> getRecipeReviews(
+			@PathVariable Long recipeId,
+			@RequestParam(defaultValue = "0") Integer page
+	) {
+
+		// TODO: 이 부분 pageSize는 10으로 고정값인데 다르게 처리할 수 있을지?
+		PageRequest pageRequest = PageRequest.of(
+				page, 10, Sort.by(Direction.DESC, "createdAt")
+		);
+
+		Slice<ReviewInfoDto> recipeReviewList =
+				reviewService.getRecipeReviews(recipeId, pageRequest);
+
+		return new ResponseEntity<>(
+				new ResponseDto<>(null, recipeReviewList),
+				HttpStatus.OK
+		);
+	}
 }
