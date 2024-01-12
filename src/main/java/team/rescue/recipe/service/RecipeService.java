@@ -42,6 +42,7 @@ public class RecipeService {
   private final RecipeStepRepository recipeStepRepository;
   private final MemberRepository memberRepository;
   private final FileService fileService;
+  private final BookmarkRepository bookmarkRepository;
 
   public RecipeDetailDto getRecipe(Long id) {
 
@@ -345,5 +346,41 @@ public class RecipeService {
 
     return RecipeInfoDto.of(recipe);
   }
+  @Transactional
+  @DistributedLock(prefix = "bookmark_recipe")
+  public BookmarkInfoDto bookmarkRecipe(Long recipeId, String email) {
+    Member member = memberRepository.findUserByEmail(email)
+        .orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
+    Recipe recipe = recipeRepository.findById(recipeId)
+        .orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
+
+    Optional<Bookmark> bookmarkOptional = bookmarkRepository.findByRecipeAndMember(recipe, member);
+
+    // 이미 사용자가 해당 레시피를 북마크 한 경우
+    if (bookmarkOptional.isPresent()) {
+      bookmarkRepository.deleteByRecipeAndMember(recipe, member);
+      recipe.decreaseBookmarkCount();
+      recipeRepository.save(recipe);
+
+      return BookmarkInfoDto.builder()
+          .bookmarkCount(recipe.getBookmarkCount())
+          .isBookmarked(false)
+          .build();
+    } else { // 사용자가 해당 레시피를 북마크 하지 않은 경우
+      Bookmark bookmark = Bookmark.builder()
+          .recipe(recipe)
+          .member(member)
+          .build();
+
+      bookmarkRepository.save(bookmark);
+      recipe.increaseBookmarkCount();
+      recipeRepository.save(recipe);
+
+      return BookmarkInfoDto.builder()
+          .bookmarkCount(recipe.getBookmarkCount())
+          .isBookmarked(true)
+          .build();
+    }
+  }
 }
