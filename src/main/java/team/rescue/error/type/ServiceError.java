@@ -41,7 +41,11 @@ public enum ServiceError {
 	INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "재료 정보가 없습니다."),
 
 	// Notification
-	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림 정보가 없습니다.");
+	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림 정보가 없습니다."),
+
+	// Lock
+	LOCK_ACQUISITION_FAIL(HttpStatus.BAD_REQUEST, "잠시 후 다시 시도해주세요."),
+	LOCK_ALREADY_ASSIGNED(HttpStatus.BAD_REQUEST, "잠시 후 다시 시도해주세요.");
 
 	private final HttpStatus httpStatus;
 	private final String errorMessage;

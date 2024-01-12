@@ -73,4 +73,12 @@ public class Recipe {
 		this.summary = summary;
 		this.recipeImageUrl = recipeImageUrl;
 	}
+
+	public void decreaseBookmarkCount() {
+		this.bookmarkCount--;
+	}
+
+	public void increaseBookmarkCount() {
+		this.bookmarkCount++;
+	}
 }

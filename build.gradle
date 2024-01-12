@@ -45,6 +45,9 @@ dependencies {
     implementation 'net.coobird:thumbnailator:0.4.20'
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 
+    // redis distributed lock
+    implementation 'org.redisson:redisson-spring-boot-starter:3.16.3'
+
     implementation 'com.auth0:java-jwt:4.4.0'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
