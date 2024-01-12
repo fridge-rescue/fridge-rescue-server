@@ -7,7 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import team.rescue.common.dto.ResponseDto;
 import team.rescue.review.dto.ReviewDto.ReviewDetailDto;
 import team.rescue.review.dto.ReviewDto.ReviewInfoDto;
 import team.rescue.review.dto.ReviewDto.ReviewReqDto;
+import team.rescue.review.dto.ReviewDto.ReviewUpdateDto;
 import team.rescue.review.service.ReviewService;
 
 @Slf4j
@@ -75,6 +79,58 @@ public class ReviewController {
 		return new ResponseEntity<>(
 				new ResponseDto<>(null, reviewDetailDto),
 				HttpStatus.CREATED
+		);
+	}
+
+	/**
+	 * 리뷰 수정
+	 *
+	 * @param reviewId        수정할 리뷰 아이디
+	 * @param reviewUpdateDto 수정 내용
+	 * @param bindingResult   유효성 검증 오류
+	 * @param details         로그인 유저 Principal
+	 * @return 수정된 리뷰 데이터
+	 */
+	@PatchMapping("/{reviewId}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<ReviewInfoDto>> updateReview(
+			@PathVariable Long reviewId,
+			@ModelAttribute ReviewUpdateDto reviewUpdateDto,
+			BindingResult bindingResult,
+			@AuthenticationPrincipal PrincipalDetails details
+	) {
+
+		ReviewInfoDto reviewInfoDto = reviewService.updateReview(
+				details.getUsername(),
+				reviewId,
+				reviewUpdateDto
+		);
+
+		return new ResponseEntity<>(
+				new ResponseDto<>("리뷰를 수정했습니다.", reviewInfoDto),
+				HttpStatus.OK
+		);
+	}
+
+	/**
+	 * 특정 리뷰 삭제
+	 *
+	 * @param reviewId 삭제할 리뷰 아이디
+	 * @return 삭제한 리뷰 정보 반환
+	 */
+	@DeleteMapping("/{reviewId}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<ResponseDto<ReviewInfoDto>> deleteReview(
+			@PathVariable Long reviewId,
+			@AuthenticationPrincipal PrincipalDetails details
+	) {
+
+		ReviewInfoDto reviewInfoDto =
+				reviewService.deleteReview(details.getUsername(), reviewId);
+
+		return new ResponseEntity<>(
+				new ResponseDto<>("리뷰를 삭제했습니다.", reviewInfoDto),
+				HttpStatus.OK
 		);
 	}
 

@@ -74,6 +74,9 @@ public class Recipe {
 		this.recipeImageUrl = recipeImageUrl;
 	}
 
+	public void decreaseReviewCount() {
+		this.reviewCount--;
+	}
 	public void decreaseBookmarkCount() {
 		this.bookmarkCount--;
 	}
