@@ -78,7 +78,7 @@ public class ReviewController {
 
 		return new ResponseEntity<>(
 				new ResponseDto<>(null, reviewDetailDto),
-				HttpStatus.CREATED
+				HttpStatus.OK
 		);
 	}
 
@@ -133,5 +133,4 @@ public class ReviewController {
 				HttpStatus.OK
 		);
 	}
-
 }
