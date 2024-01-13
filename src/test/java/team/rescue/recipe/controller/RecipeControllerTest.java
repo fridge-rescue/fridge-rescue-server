@@ -279,6 +279,5 @@ class RecipeControllerTest extends MockMember {
 				.andExpect(jsonPath("$.data.isBookmarked").value(false))
 				.andDo(print());
 	}
->>>>>>> develop
 
 }

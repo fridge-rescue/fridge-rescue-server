@@ -106,7 +106,7 @@ public class RecipeController {
 
 	@PostMapping("/{recipeId}/bookmark")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<ResponseDto<?>> bookmarkRecipe(
+	public ResponseEntity<ResponseDto<BookmarkInfoDto>> bookmarkRecipe(
 			@PathVariable Long recipeId,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
