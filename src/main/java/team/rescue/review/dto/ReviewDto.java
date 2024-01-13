@@ -42,6 +42,7 @@ public class ReviewDto {
 
 		private Long id;
 		private String title;
+		private String contents;
 		private String imageUrl;
 		private MemberInfoDto author;
 
@@ -50,6 +51,7 @@ public class ReviewDto {
 			ReviewInfoDto reviewInfo = new ReviewInfoDto();
 			reviewInfo.setId(review.getId());
 			reviewInfo.setTitle(review.getTitle());
+			reviewInfo.setContents(review.getContents());
 			reviewInfo.setImageUrl(review.getImageUrl());
 			reviewInfo.setAuthor(MemberInfoDto.of(review.getMember()));
 

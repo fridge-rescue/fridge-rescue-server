@@ -3,6 +3,8 @@ package team.rescue.review.service;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -148,6 +150,19 @@ public class ReviewService {
 		recipeRepository.save(recipe);
 
 		return ReviewInfoDto.of(review);
+	}
+
+	public Slice<ReviewInfoDto> getRecipeReviews(
+			Long recipeId,
+			PageRequest pageRequest
+	) {
+
+		log.info("[레시피 리뷰 목록 조회] recipeId={}", recipeId);
+
+		// 해당 레시피 아이디로 리뷰 조회
+		Slice<Review> reviewList = reviewRepository.findReviewsByRecipeId(recipeId, pageRequest);
+
+		return reviewList.map(ReviewInfoDto::of);
 	}
 
 	/**
