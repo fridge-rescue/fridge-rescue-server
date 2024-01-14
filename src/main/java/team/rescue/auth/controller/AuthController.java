@@ -87,17 +87,17 @@ public class AuthController {
 	/**
 	 * OAuth 회원 가입/로그인
 	 *
-	 * @param response     OAuth Type 별 리다이렉트
-	 * @param providerType OAuth Provider Type
+	 * @param response OAuth Type 별 리다이렉트
+	 * @param provider OAuth Provider Type
 	 */
 	@GetMapping("/oauth")
 	@PreAuthorize("permitAll()")
 	public void oAuthLoginOrJoin(
 			HttpServletResponse response,
-			@RequestParam ProviderType providerType
+			@RequestParam ProviderType provider
 	) throws IOException {
 
-		if (providerType == ProviderType.GOOGLE) {
+		if (provider == ProviderType.GOOGLE) {
 			log.info("[Google 회원 가입]");
 			response.sendRedirect("/oauth2/authorization/google");
 		}
