@@ -10,39 +10,39 @@ import team.rescue.recipe.entity.RecipeStep;
 @Builder
 public class RecipeStepDto {
 
-  // 레시피 스탭 생성 DTO
-  @Getter
-  @Setter
-  @Builder
-  public static class RecipeStepCreateDto {
+	// 레시피 스탭 생성 DTO
+	@Getter
+	@Setter
+	@Builder
+	public static class RecipeStepCreateDto {
 
-    private Long id;
-    private int stepNo;
-    private MultipartFile stepImageUrl;
-    private String stepContents;
-    private String stepTip;
+		private Long id;
+		private int stepNo;
+		private MultipartFile stepImage;
+		private String stepDescription;
+		private String stepTip;
 
-  }
+	}
 
-  // 레시피 스탭 조회 DTO
-  @Getter
-  @Builder
-  public static class RecipeStepInfoDto {
+	// 레시피 스탭 조회 DTO
+	@Getter
+	@Builder
+	public static class RecipeStepInfoDto {
 
-    private int stepNo;
-    private String stepImageUrl;
-    private String stepContents;
-    private String stepTip;
+		private int stepNo;
+		private String stepImageUrl;
+		private String stepDescription;
+		private String stepTip;
 
-    public static RecipeStepInfoDto of(RecipeStep recipeStep) {
-      return RecipeStepInfoDto.builder()
-          .stepNo(recipeStep.getStepNo())
-          .stepImageUrl(recipeStep.getStepImageUrl())
-          .stepContents(recipeStep.getStepDescription())
-          .stepTip(recipeStep.getStepTip())
-          .build();
-    }
-  }
+		public static RecipeStepInfoDto of(RecipeStep recipeStep) {
+			return RecipeStepInfoDto.builder()
+					.stepNo(recipeStep.getStepNo())
+					.stepImageUrl(recipeStep.getStepImageUrl())
+					.stepDescription(recipeStep.getStepDescription())
+					.stepTip(recipeStep.getStepTip())
+					.build();
+		}
+	}
 
 
 }
