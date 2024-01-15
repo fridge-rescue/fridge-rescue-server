@@ -65,4 +65,20 @@ public class GlobalExceptionHandler {
 
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
+
+	/**
+	 * 서버 에러 핸들링
+	 *
+	 * @param e ServiceException
+	 * @return Error Response with custom RuntimeException Status Code(500)
+	 */
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ResponseDto<Object>> runtimeException(RuntimeException e) {
+
+		log.error(e.getMessage());
+
+		ResponseDto<Object> response = new ResponseDto<>(e.getMessage(), null);
+
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }

@@ -5,16 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static team.rescue.error.type.ServiceError.PASSWORD_AND_PASSWORD_CHECK_MISMATCH;
 import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.USER_PASSWORD_MISMATCH;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -164,7 +160,6 @@ class MemberServiceTest {
 		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("1234567890")
 				.newPassword("0987654321")
-				.newPasswordCheck("0987654321")
 				.build();
 
 		given(memberRepository.findUserByEmail("test@gmail.com"))
@@ -220,7 +215,6 @@ class MemberServiceTest {
 		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("1234567890")
 				.newPassword("0987654321")
-				.newPasswordCheck("0987654321")
 				.build();
 
 		given(memberRepository.findUserByEmail("test@gmail.com"))
@@ -236,41 +230,6 @@ class MemberServiceTest {
 
 		// then
 		assertEquals(USER_PASSWORD_MISMATCH.getHttpStatus(), serviceException.getStatusCode());
-	}
-
-	@Test
-	@DisplayName("회원 비밀번호 변경 실패 - 새 비밀번호와 비밀번호 확인 불일치")
-	void failUpdateMemberPassword_PasswordAndPasswordCheckMismatch() {
-		// given
-		Member member = Member.builder()
-				.id(1L)
-				.nickname("테스트")
-				.email("test@gmail.com")
-				.password("1234567890")
-				.build();
-
-		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
-				.currentPassword("1234567890")
-				.newPassword("0987654321")
-				.newPasswordCheck("123124124")
-				.build();
-
-		// when
-		ServiceException serviceException = assertThrows(ServiceException.class,
-				() -> passwordAndPasswordCheckMismatch(memberPasswordUpdateDto));
-
-		// then
-		assertEquals(PASSWORD_AND_PASSWORD_CHECK_MISMATCH.getHttpStatus(),
-				serviceException.getStatusCode());
-		verify(memberRepository, never()).save(any());
-	}
-
-	private void passwordAndPasswordCheckMismatch(
-			MemberPasswordUpdateDto memberPasswordUpdateDto) {
-		if (!Objects.equals(memberPasswordUpdateDto.getNewPassword(),
-				memberPasswordUpdateDto.getNewPasswordCheck())) {
-			throw new ServiceException(PASSWORD_AND_PASSWORD_CHECK_MISMATCH);
-		}
 	}
 
 	@Test
