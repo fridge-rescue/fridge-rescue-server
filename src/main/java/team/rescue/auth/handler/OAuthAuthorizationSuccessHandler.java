@@ -62,7 +62,7 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		// refresh token을 Header에 담아서 클라이언트에게 전달
-		response.setHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + refreshToken);
+		response.setHeader(HEADER_REFRESH_TOKEN, refreshToken);
 
 		new ObjectMapper().writeValue(response.getOutputStream(), loginResponse);
 	}
