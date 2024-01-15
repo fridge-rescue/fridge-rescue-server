@@ -1,0 +1,12 @@
+instances:
+  - name: elastic01
+    dns:
+      - elastic01
+      - localhost
+    ip:
+      - 127.0.0.1
+
+  - name: 'kibana01'
+    dns:
+      - kibana01
+      - localhost

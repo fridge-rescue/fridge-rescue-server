@@ -1,16 +1,74 @@
 services:
-  elasticsearch:
-    container_name: 'fridge-rescue-es'
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.10'
+  elastic01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.16
+    container_name: elastic01
     environment:
-      - 'ELASTIC_PASSWORD=fridgerescue'
-      - 'discovery.type=single-node'
-      - 'xpack.security.enabled=false'
+      - node.name=elastic01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=trial
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/elastic01/elastic01.key
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/elastic01/elastic01.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/elastic01/elastic01.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/elastic01/elastic01.key
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - certs:/usr/share/elasticsearch/config/certificates
     ports:
-      - '9200:9200'
-      - '9300'
+      - 9200:9200
+    networks:
+      - elastic
+    healthcheck:
+      test: curl --cacert /usr/share/elasticsearch/config/certificates/ca/ca.crt -s https://localhost:9200 > /dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  kibana01:
+    container_name: kibana01
+    image: docker.elastic.co/kibana/kibana:7.17.16
+    depends_on: { "elastic01": { "condition": "service_healthy" } }
+    ports:
+      - 5601:5601
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_URL: https://elastic01:9200
+      ELASTICSEARCH_HOSTS: https://elastic01:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: CHANGEME
+      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: /usr/share/elasticsearch/config/certificates/ca/ca.crt
+      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_KEY: /usr/share/elasticsearch/config/certificates/kibana01/kibana01.key
+      SERVER_SSL_CERTIFICATE: /usr/share/elasticsearch/config/certificates/kibana01/kibana01.crt
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certificates
+    networks:
+      - elastic
+
   redis:
-    container_name: 'fridge-rescue-redis'
-    image: 'redis:latest'
+    container_name: fridge-rescue-redis
+    image: redis:latest
     ports:
-      - '6380:6379'
+      - 6380:6379
+
+volumes:
+  data01:
+    driver: local
+  certs:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
