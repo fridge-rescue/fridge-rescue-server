@@ -3,7 +3,6 @@ package team.rescue.member.service;
 import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.USER_PASSWORD_MISMATCH;
 
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import team.rescue.cook.dto.CookDto.CookInfoDto;
 import team.rescue.cook.entity.Cook;
 import team.rescue.cook.repository.CookRepository;
 import team.rescue.error.exception.ServiceException;
-import team.rescue.error.type.ServiceError;
 import team.rescue.member.dto.MemberDto.MemberDetailDto;
 import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
 import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
@@ -70,11 +68,6 @@ public class MemberService {
 
 		if (!passwordMatch) {
 			throw new ServiceException(USER_PASSWORD_MISMATCH);
-		}
-
-		if (!Objects.equals(memberPasswordUpdateDto.getNewPassword(),
-				memberPasswordUpdateDto.getNewPasswordCheck())) {
-			throw new ServiceException(ServiceError.PASSWORD_AND_PASSWORD_CHECK_MISMATCH);
 		}
 
 		member.updatePassword(passwordEncoder.encode(memberPasswordUpdateDto.getNewPassword()));

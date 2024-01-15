@@ -25,8 +25,7 @@ public enum ServiceError {
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
 	EMAIL_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
 	EMAIL_CODE_MIS_MATCH(HttpStatus.BAD_REQUEST, "이메일 인증 코드가 일치하지 않습니다."),
-	USER_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
-	PASSWORD_AND_PASSWORD_CHECK_MISMATCH(HttpStatus.BAD_REQUEST, "새 비밀번호와 비밀번호 확인 값이 일치하지 않습니다."),
+	USER_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "현재 비밀번호를 확인해주세요."),
 
 	// Recipe
 	RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 레시피를 찾을 수 없습니다."),
