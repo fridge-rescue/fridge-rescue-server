@@ -139,7 +139,7 @@ public class RecipeService {
       RecipeStep step = RecipeStep.builder()
           .stepNo(recipeStepCreateDto.getStepNo())
           .stepImageUrl(stepImageFilePath) // URL 설정
-          .stepContents(recipeStepCreateDto.getStepContents())
+          .stepDescription(recipeStepCreateDto.getStepContents())
           .stepTip(recipeStepCreateDto.getStepTip())
           .recipe(recipe) // 레시피와 연결
           .build();
@@ -263,7 +263,7 @@ public class RecipeService {
         RecipeStep newStep = RecipeStep.builder()
             .stepNo(recipeStepCreateDto.getStepNo())
             .stepImageUrl(stepImageFilePath) // URL 설정
-            .stepContents(recipeStepCreateDto.getStepContents())
+            .stepDescription(recipeStepCreateDto.getStepContents())
             .stepTip(recipeStepCreateDto.getStepTip())
             .recipe(recipe) // 레시피와 연결
             .build();

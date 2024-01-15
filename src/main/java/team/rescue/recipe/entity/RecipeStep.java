@@ -39,7 +39,7 @@ public class RecipeStep {
 	private String stepImageUrl;
 
 	@Column(name = "step_description", nullable = false, length = 100)
-	private String stepContents;
+	private String stepDescription;
 
 	@Column(name = "step_tip", nullable = false, length = 100)
 	private String stepTip;
@@ -47,7 +47,7 @@ public class RecipeStep {
 	public void updateRecipeStep(int stepNo, String stepImageUrl, String stepContents, String stepTip) {
 		this.stepNo = stepNo;
 		this.stepImageUrl = stepImageUrl;
-		this.stepContents = stepContents;
+		this.stepDescription = stepContents;
 		this.stepTip = stepTip;
 	}
 }

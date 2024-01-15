@@ -128,7 +128,7 @@ public class RecipeServiceTest {
         .recipe(recipe)
         .stepNo(1)
         .stepImageUrl("stepImageUrl1")
-        .stepContents("testStepContents1")
+        .stepDescription("testStepContents1")
         .stepTip("testStepTip1")
         .build();
     RecipeStep recipeStep2 = RecipeStep.builder()
@@ -136,7 +136,7 @@ public class RecipeServiceTest {
         .recipe(recipe)
         .stepNo(2)
         .stepImageUrl("stepImageUrl2")
-        .stepContents("testStepContents2")
+        .stepDescription("testStepContents2")
         .stepTip("testStepTip2")
         .build();
     List<RecipeStep> recipeStepList = new ArrayList<>(
@@ -383,14 +383,14 @@ public class RecipeServiceTest {
         .id(1L)
         .stepNo(1)
         .stepImageUrl("mockStepImageUrl1")
-        .stepContents("기존 레시피 스탭1")
+        .stepDescription("기존 레시피 스탭1")
         .stepTip("기존 레시피 팁 1")
         .build();
     RecipeStep recipeStep2 = RecipeStep.builder()
         .id(2L)
         .stepNo(2)
         .stepImageUrl("mockStepImageUrl2")
-        .stepContents("기존 레시피 스탭2")
+        .stepDescription("기존 레시피 스탭2")
         .stepTip("기존 레시피 팁 2")
         .build();
     List<RecipeStep> recipeStepList = new ArrayList<>(
@@ -566,14 +566,14 @@ public class RecipeServiceTest {
         .id(1L)
         .stepNo(1)
         .stepImageUrl("mockStepImageUrl1")
-        .stepContents("기존 레시피 스탭1")
+        .stepDescription("기존 레시피 스탭1")
         .stepTip("기존 레시피 팁 1")
         .build();
     RecipeStep recipeStep2 = RecipeStep.builder()
         .id(2L)
         .stepNo(2)
         .stepImageUrl("mockStepImageUrl2")
-        .stepContents("기존 레시피 스탭2")
+        .stepDescription("기존 레시피 스탭2")
         .stepTip("기존 레시피 팁 2")
         .build();
     List<RecipeStep> recipeStepList = new ArrayList<>(

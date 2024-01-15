@@ -38,7 +38,7 @@ public class RecipeStepDto {
       return RecipeStepInfoDto.builder()
           .stepNo(recipeStep.getStepNo())
           .stepImageUrl(recipeStep.getStepImageUrl())
-          .stepContents(recipeStep.getStepContents())
+          .stepContents(recipeStep.getStepDescription())
           .stepTip(recipeStep.getStepTip())
           .build();
     }
