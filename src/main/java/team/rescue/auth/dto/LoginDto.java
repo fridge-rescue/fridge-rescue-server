@@ -21,11 +21,13 @@ public class LoginDto {
 		private final Long id;
 		private final String nickname;
 		private final RoleType roleType;
+		private final String token;
 
-		public LoginResDto(Member user) {
+		public LoginResDto(Member user, String token) {
 			this.id = user.getId();
 			this.nickname = user.getNickname();
 			this.roleType = user.getRole();
+			this.token = token;
 		}
 	}
 }

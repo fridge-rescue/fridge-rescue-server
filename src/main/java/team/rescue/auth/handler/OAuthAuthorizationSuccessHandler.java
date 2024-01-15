@@ -55,7 +55,7 @@ public class OAuthAuthorizationSuccessHandler implements AuthenticationSuccessHa
 
 		redisUtil.put(principalDetails.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
-		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember());
+		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember(), accessToken);
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
