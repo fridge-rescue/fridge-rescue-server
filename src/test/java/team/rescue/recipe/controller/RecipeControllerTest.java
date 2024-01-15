@@ -99,13 +99,13 @@ class RecipeControllerTest extends MockMember {
 		RecipeStepInfoDto recipeStepInfoDto1 = RecipeStepInfoDto.builder()
 				.stepNo(1)
 				.stepImageUrl("http://testRecipeSTEP1.com/image.jpg")
-				.stepContents("레시피 스탭1")
+				.stepDescription("레시피 스탭1")
 				.stepTip("레시피 팁 1")
 				.build();
 		RecipeStepInfoDto recipeStepInfoDto2 = RecipeStepInfoDto.builder()
 				.stepNo(1)
 				.stepImageUrl("http://testRecipeSTEP2.com/image.jpg")
-				.stepContents("레시피 스탭2")
+				.stepDescription("레시피 스탭2")
 				.stepTip("레시피 팁 2")
 				.build();
 
@@ -134,15 +134,15 @@ class RecipeControllerTest extends MockMember {
 
 		RecipeStepCreateDto recipeStepDto1 = RecipeStepCreateDto.builder()
 				.stepNo(1)
-				.stepImageUrl(mockImageFile1)
-				.stepContents("레시피 스탭1")
+				.stepImage(mockImageFile1)
+				.stepDescription("레시피 스탭1")
 				.stepTip("레시피 팁 1")
 				.build();
 
 		RecipeStepCreateDto recipeStepDto2 = RecipeStepCreateDto.builder()
 				.stepNo(2)
-				.stepImageUrl(mockImageFile2)
-				.stepContents("레시피 스탭2")
+				.stepImage(mockImageFile2)
+				.stepDescription("레시피 스탭2")
 				.stepTip("레시피 팁 2")
 				.build();
 
@@ -206,7 +206,7 @@ class RecipeControllerTest extends MockMember {
 		RecipeCreateDto recipeCreateDto = RecipeCreateDto.builder()
 				.title("새로운 레시피")
 				.summary("레시피 요약")
-				.recipeImageUrl(mockRecipeImageFile)
+				.recipeImage(mockRecipeImageFile)
 				.recipeIngredients(recipeIngredientList)
 				.recipeSteps(recipeStepCreateList)
 				.build();

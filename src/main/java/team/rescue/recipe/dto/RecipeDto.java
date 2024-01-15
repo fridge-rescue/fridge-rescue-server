@@ -23,7 +23,7 @@ public class RecipeDto {
 
 		private String title;
 		private String summary;
-		private MultipartFile recipeImageUrl;
+		private MultipartFile recipeImage;
 		private List<RecipeIngredientDto> recipeIngredients;
 		private List<RecipeStepCreateDto> recipeSteps;
 
@@ -43,7 +43,7 @@ public class RecipeDto {
 
 		private String title;
 		private String summary;
-		private MultipartFile recipeImageUrl;
+		private MultipartFile recipeImage;
 		private List<RecipeIngredientDto> recipeIngredients;
 		private List<RecipeStepCreateDto> recipeSteps;
 
