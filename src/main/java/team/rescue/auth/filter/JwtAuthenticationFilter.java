@@ -103,14 +103,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// redis 저장
 		redisUtil.put(principalDetails.getUsername(), refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
 
-		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember());
+		LoginResDto loginResponse = new LoginResDto(principalDetails.getMember(), accessToken);
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		// access token, refresh token을 Header에 담아서 클라이언트에게 전달
-		response.setHeader(HEADER_ACCESS_TOKEN, TOKEN_PREFIX + accessToken);
-		response.setHeader(HEADER_REFRESH_TOKEN, TOKEN_PREFIX + refreshToken);
+		response.setHeader(HEADER_REFRESH_TOKEN, refreshToken);
 
 		new ObjectMapper().writeValue(response.getOutputStream(), loginResponse);
 
