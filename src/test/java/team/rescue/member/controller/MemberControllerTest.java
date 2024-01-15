@@ -123,7 +123,6 @@ class MemberControllerTest extends MockMember {
 		MemberPasswordUpdateDto memberPasswordUpdateDto = MemberPasswordUpdateDto.builder()
 				.currentPassword("asdfasdfasdf")
 				.newPassword("qwerqwerqwer")
-				.newPasswordCheck("qwerqwerqwer")
 				.build();
 
 		given(memberService.updateMemberPassword("test@gmail.com", memberPasswordUpdateDto))

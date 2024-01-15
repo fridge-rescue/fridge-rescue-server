@@ -75,8 +75,5 @@ public class MemberDto {
 		@NotEmpty(message = "변경할 새 비밀번호를 입력해주세요.")
 		@Size(max = 20, message = "최대 20글자의 비밀번호를 입력해주세요.")
 		private String newPassword;
-
-		@NotEmpty(message = "변경할 새 비밀번호를 한 번 더 입력해주세요.")
-		private String newPasswordCheck;
 	}
 }
