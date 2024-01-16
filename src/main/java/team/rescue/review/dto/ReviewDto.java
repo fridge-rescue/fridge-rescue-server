@@ -1,5 +1,6 @@
 package team.rescue.review.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +46,7 @@ public class ReviewDto {
 		private String contents;
 		private String imageUrl;
 		private MemberInfoDto author;
+		private LocalDateTime createdAt;
 
 		public static ReviewInfoDto of(Review review) {
 
@@ -54,6 +56,7 @@ public class ReviewDto {
 			reviewInfo.setContents(review.getContents());
 			reviewInfo.setImageUrl(review.getImageUrl());
 			reviewInfo.setAuthor(MemberInfoDto.of(review.getMember()));
+			reviewInfo.setCreatedAt(review.getCreatedAt());
 
 			return reviewInfo;
 		}
@@ -70,6 +73,7 @@ public class ReviewDto {
 		private String contents;
 		private MemberInfoDto author;
 		private RecipeInfoDto recipe;
+		private LocalDateTime createdAt;
 
 		public static ReviewDetailDto of(Review review) {
 
@@ -80,6 +84,7 @@ public class ReviewDto {
 			reviewDetail.setContents(review.getContents());
 			reviewDetail.setAuthor(MemberInfoDto.of(review.getMember()));
 			reviewDetail.setRecipe(RecipeInfoDto.of(review.getRecipe()));
+			reviewDetail.setCreatedAt(review.getCreatedAt());
 
 			return reviewDetail;
 		}

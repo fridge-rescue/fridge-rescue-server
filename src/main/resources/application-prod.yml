@@ -52,6 +52,8 @@ spring:
 
   elasticsearch:
     uris: ${es.url}
+    username: ${es.username}
+    password: ${es.password}
 
 cloud:
   aws:
