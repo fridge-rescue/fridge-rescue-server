@@ -94,7 +94,12 @@ public class RecipeService {
 	public RecipeInfoDto addRecipe(RecipeCreateDto recipeCreateDto,
 			PrincipalDetails principalDetails) {
 
+		log.info("[레시피 생성] title={}, image={}, steps={}, ingredients={}", recipeCreateDto.getTitle(),
+				recipeCreateDto.getRecipeImage(), recipeCreateDto.getRecipeSteps(),
+				recipeCreateDto.getRecipeIngredients());
+
 		String memberEmail = principalDetails.getMember().getEmail();
+		log.info("[레시피 생성] userEmail={}", memberEmail);
 
 		Member member = memberRepository.findUserByEmail(memberEmail)
 				.orElseThrow(() -> {
