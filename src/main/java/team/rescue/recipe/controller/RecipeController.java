@@ -70,7 +70,13 @@ public class RecipeController {
 	public ResponseEntity<ResponseDto<RecipeInfoDto>> addRecipe(
 			@ModelAttribute RecipeCreateDto recipeCreateDto,
 			BindingResult bindingResult,
-			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+
+		log.info("[레시피 생성 컨트롤러] email={}, title={}, image={}, steps={}, ingredients={}",
+				principalDetails.getMember().getEmail(), recipeCreateDto.getTitle(),
+				recipeCreateDto.getRecipeImage(), recipeCreateDto.getRecipeSteps(),
+				recipeCreateDto.getRecipeIngredients());
 
 		RecipeInfoDto createDto =
 				recipeService.addRecipe(recipeCreateDto, principalDetails);
