@@ -19,10 +19,11 @@ public class SearchService {
   private final RecipeIngredientRepository recipeIngredientRepository;
 
   public List<String> getIngredient(String keyword) {
+    String redisKey = "ingredient:" + keyword;
     log.debug("키워드 = {}", keyword);
 
     // redis에서 key값을 확인
-    List<String> ingredientList = listRedisTemplate.opsForValue().get(keyword);
+    List<String> ingredientList = listRedisTemplate.opsForValue().get(redisKey);
 
     if (ingredientList != null) {
       log.debug("ingredientList : {}", ingredientList);
@@ -44,7 +45,7 @@ public class SearchService {
           (ingredientsFromDb.size() > 10) ? ingredientsFromDb.subList(0, 10) : ingredientsFromDb;
 
       // Redis에 데이터 저장
-      listRedisTemplate.opsForValue().set(keyword, topIngredients, Duration.ofDays(1));
+      listRedisTemplate.opsForValue().set(redisKey, topIngredients, Duration.ofDays(1));
 
       return topIngredients;
     }

@@ -24,16 +24,13 @@ public class SearchController {
    *
    */
   @GetMapping("/ingredient/{keyword}")
-  public ResponseEntity<ResponseDto<List<String>>> getIngredient(
+  public List<String> getIngredient(
       @PathVariable String keyword
   ) {
 
     List<String> ingredients = searchService.getIngredient(keyword);
 
-    return new ResponseEntity<>(
-        new ResponseDto<>("재료 조회에 성공하였습니다.", ingredients),
-        HttpStatus.OK
-    );
+    return ingredients;
   }
 
 }
