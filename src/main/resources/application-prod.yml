@@ -67,4 +67,4 @@ cloud:
 
 logging:
   level:
-    '[team.rescue]': INFO
+    '[team.rescue]': DEBUG
