@@ -35,7 +35,8 @@ public class CookDto {
 	public static class CookCreateDto {
 
 		private Long recipeId;
-		private List<FridgeIngredientUseDto> fridgeIngredientUseDtoList;
+		private List<Long> delete;
+		private List<FridgeIngredientUseDto> update;
 	}
 
 }

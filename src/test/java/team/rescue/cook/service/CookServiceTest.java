@@ -125,7 +125,8 @@ class CookServiceTest {
 		// when
 		CookCreateDto cookCreateDto = CookCreateDto.builder()
 				.recipeId(1L)
-				.fridgeIngredientUseDtoList(list)
+				.delete(new ArrayList<>())
+				.update(list)
 				.build();
 
 		CookInfoDto cookInfoDto = cookService.completeCook(cookCreateDto, "test@gmail.com");
@@ -145,7 +146,7 @@ class CookServiceTest {
 
 		CookCreateDto cookCreateDto = CookCreateDto.builder()
 				.recipeId(1L)
-				.fridgeIngredientUseDtoList(null)
+				.update(null)
 				.build();
 
 		// when
@@ -182,7 +183,8 @@ class CookServiceTest {
 
 		CookCreateDto cookCreateDto = CookCreateDto.builder()
 				.recipeId(1L)
-				.fridgeIngredientUseDtoList(list)
+				.delete(new ArrayList<>())
+				.update(list)
 				.build();
 
 		// when
@@ -224,7 +226,8 @@ class CookServiceTest {
 
 		CookCreateDto cookCreateDto = CookCreateDto.builder()
 				.recipeId(1L)
-				.fridgeIngredientUseDtoList(list)
+				.delete(new ArrayList<>())
+				.update(list)
 				.build();
 
 		FridgeIngredient fridgeIngredient = FridgeIngredient.builder()
