@@ -66,8 +66,14 @@ public class RecipeController {
 	/**
 	 * 레시피 등록
 	 *
+	 * @param title            레시피 제목
+	 * @param summary          레시피 요약
+	 * @param recipeImage      레시피 이미지 파일
+	 * @param steps            조리 단계
+	 * @param ingredients      레시피 재료 목록
+	 * @param stepImages       단계 별 사진
 	 * @param principalDetails 로그인 유저
-	 * @return 등록한 레시피 데이터
+	 * @return 등록한 레시피 요약 정보
 	 */
 	@PostMapping
 	@PreAuthorize("hasAuthority('USER')")
