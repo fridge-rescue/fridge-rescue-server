@@ -129,9 +129,9 @@ public class AuthController {
 	 * @param principalDetails 사용자 정보
 	 */
 	@PostMapping("/token/reissue")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER') or hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<String>> reissueToken(
-			@RequestHeader(HEADER_REFRESH_TOKEN) String refreshToken,
+			@RequestHeader("Authorization") String refreshToken,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
 		log.debug("Refresh Token : {}", refreshToken);
