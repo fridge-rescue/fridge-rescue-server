@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,9 +40,9 @@ public class FridgeIngredient {
 	private String memo;
 
 	@Column(name = "expired_at")
-	private LocalDateTime expiredAt;
+	private LocalDate expiredAt;
 
-	public void updateFridgeIngredient(String name, String memo, LocalDateTime expiredAt) {
+	public void updateFridgeIngredient(String name, String memo, LocalDate expiredAt) {
 		this.name = name;
 		this.memo = memo;
 		this.expiredAt = expiredAt;
