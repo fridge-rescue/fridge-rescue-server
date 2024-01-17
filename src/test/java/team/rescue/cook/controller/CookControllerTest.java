@@ -67,6 +67,8 @@ class CookControllerTest {
 				.memo("당근 반개")
 				.build();
 
+		List<Long> deleteList = new ArrayList<>(1);
+
 		List<FridgeIngredientUseDto> list = new ArrayList<>(
 				Arrays.asList(fridgeIngredientUseDto1, fridgeIngredientUseDto2));
 
@@ -77,7 +79,8 @@ class CookControllerTest {
 						.content(objectMapper.writeValueAsString(
 								CookCreateDto.builder()
 										.recipeId(1L)
-										.fridgeIngredientUseDtoList(list)
+										.delete(deleteList)
+										.update(list)
 										.build()
 						)))
 				.andExpect(status().isOk())

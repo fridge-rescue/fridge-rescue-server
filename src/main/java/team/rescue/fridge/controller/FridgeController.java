@@ -9,8 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,7 +72,7 @@ public class FridgeController {
 				new ResponseDto<>(null, fridgeIngredientInfoDtoList));
 	}
 
-	@PutMapping("/ingredients")
+	@PatchMapping("/ingredients")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<List<FridgeIngredientInfoDto>>> updateIngredient(
 			@RequestBody @Valid FridgeIngredientUpdateDto fridgeIngredientUpdateDto,

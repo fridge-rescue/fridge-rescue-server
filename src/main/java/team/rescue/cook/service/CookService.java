@@ -17,7 +17,6 @@ import team.rescue.error.exception.ServiceException;
 import team.rescue.fridge.dto.FridgeIngredientDto.FridgeIngredientUseDto;
 import team.rescue.fridge.entity.FridgeIngredient;
 import team.rescue.fridge.repository.FridgeIngredientRepository;
-import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.entity.Recipe;
@@ -33,14 +32,19 @@ public class CookService {
 	private final RecipeRepository recipeRepository;
 	private final CookRepository cookRepository;
 	private final FridgeIngredientRepository fridgeIngredientRepository;
-	private final FridgeRepository fridgeRepository;
 
 	@Transactional
 	public CookInfoDto completeCook(CookCreateDto cookCreateDto, String email) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
-		List<FridgeIngredientUseDto> fridgeIngredientUseDtoList = cookCreateDto.getFridgeIngredientUseDtoList();
+		List<Long> deleteList = cookCreateDto.getDelete();
+
+		for (Long id : deleteList) {
+			fridgeIngredientRepository.deleteById(id);
+		}
+
+		List<FridgeIngredientUseDto> fridgeIngredientUseDtoList = cookCreateDto.getUpdate();
 
 		for (FridgeIngredientUseDto fridgeIngredientUseDto : fridgeIngredientUseDtoList) {
 			FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(

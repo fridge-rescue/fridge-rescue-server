@@ -66,7 +66,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 //      body.put("code", AuthError.EXPIRED_ACCESS_TOKEN.getHttpStatus());
 //      body.put("error", AuthError.EXPIRED_ACCESS_TOKEN.getErrorMessage());
 			body.put("code", "401 Unauthorized");
-			body.put("error", "만료된 액세스 토큰");
+			body.put("error", "만료된 토큰");
 
 			// JSON으로 변환하여 응답 스트림에 작성
 			new ObjectMapper().writeValue(response.getOutputStream(), body);

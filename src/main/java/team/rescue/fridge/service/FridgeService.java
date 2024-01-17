@@ -123,10 +123,10 @@ public class FridgeService {
 		Fridge fridge = fridgeRepository.findByMember(member)
 				.orElseThrow(() -> new ServiceException(FRIDGE_NOT_FOUND));
 
-		List<Long> deleteItemList = fridgeIngredientUpdateDto.getDeleteItem();
+		List<Long> deleteItemList = fridgeIngredientUpdateDto.getDelete();
 		deleteIngredient(deleteItemList, fridge);
 
-		List<FridgeIngredientInfoDto> updateItemList = fridgeIngredientUpdateDto.getUpdateItem();
+		List<FridgeIngredientInfoDto> updateItemList = fridgeIngredientUpdateDto.getUpdate();
 		modifyIngredient(updateItemList, fridge);
 
 		List<FridgeIngredient> fridgeIngredientList = fridgeIngredientRepository.findByFridge(
