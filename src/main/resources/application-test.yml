@@ -25,11 +25,15 @@ spring:
   output:
     ansi:
       enabled: always
-
   data:
     redis:
       host: localhost
       port: 6380
+
+  elasticsearch:
+    uris: localhost:9200
+    username:
+    password:
 
 logging:
   level:

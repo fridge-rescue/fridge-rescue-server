@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,19 +59,19 @@ class FridgeControllerTest {
 				.id(1L)
 				.name("양파")
 				.memo("하얀 양파")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 		FridgeIngredientInfoDto fridgeIngredientInfoDto2 = FridgeIngredientInfoDto.builder()
 				.id(2L)
 				.name("오이")
 				.memo("초록 오이")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 		FridgeIngredientInfoDto fridgeIngredientInfoDto3 = FridgeIngredientInfoDto.builder()
 				.id(3L)
 				.name("당근")
 				.memo("주황 당근")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 
 		fridgeIngredientInfoDtoList.add(fridgeIngredientInfoDto1);
@@ -114,18 +114,18 @@ class FridgeControllerTest {
 		FridgeIngredientCreateDto fridgeIngredientCreateDto1 = FridgeIngredientCreateDto.builder()
 				.name("양파")
 				.memo("하얀 양파")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 
 		FridgeIngredientCreateDto fridgeIngredientCreateDto2 = FridgeIngredientCreateDto.builder()
 				.name("오이")
 				.memo("초록 오이")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 		FridgeIngredientCreateDto fridgeIngredientCreateDto3 = FridgeIngredientCreateDto.builder()
 				.name("당근")
 				.memo("주황 당근")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 
 		List<FridgeIngredientCreateDto> fridgeIngredientCreateDtoList = new ArrayList<>(
@@ -161,13 +161,13 @@ class FridgeControllerTest {
 				.id(2L)
 				.name("오이")
 				.memo("초록 오이")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 		FridgeIngredientInfoDto fridgeIngredientInfoDto3 = FridgeIngredientInfoDto.builder()
 				.id(3L)
 				.name("당근")
 				.memo("주황 당근")
-				.expiredAt(LocalDateTime.of(2024, 1, 30, 0, 0, 0))
+				.expiredAt(LocalDate.of(2024, 1, 30))
 				.build();
 
 		List<FridgeIngredientInfoDto> result = new ArrayList<>(

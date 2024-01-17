@@ -2,7 +2,7 @@ package team.rescue.fridge.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class FridgeIngredientDto {
 		private String memo;
 
 		@Future(message = "유통기한이 이미 지난 재료입니다.")
-		private LocalDateTime expiredAt;
+		private LocalDate expiredAt;
 	}
 
 	@Getter
@@ -34,7 +34,7 @@ public class FridgeIngredientDto {
 		private String memo;
 
 		@Future(message = "유통기한이 이미 지난 재료입니다.")
-		private LocalDateTime expiredAt;
+		private LocalDate expiredAt;
 
 		public static FridgeIngredientInfoDto of(FridgeIngredient fridgeIngredient) {
 			return FridgeIngredientInfoDto.builder()
