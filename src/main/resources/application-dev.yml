@@ -34,7 +34,10 @@ spring:
       host: localhost
       port: 6380
 
-
+  elasticsearch:
+    uris: ${ES_URL}
+    username: ${ES_USERNAME}
+    password: ${ES_PASSWORD}
 
 logging:
   level:
