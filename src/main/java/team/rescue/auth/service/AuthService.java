@@ -180,11 +180,6 @@ public class AuthService implements UserDetailsService {
 		String savedToken =
 				cachedRefreshToken == null ? getTokenFromDB(principalDetails) : cachedRefreshToken;
 
-		// refreshToken 만료 -> 다시 로그인 필요 (재로그인을 하면 accessToken, refreshToken 갱신)
-		if (JwtTokenProvider.isExpiredToken(refreshToken)) {
-			throw new AuthException(AuthError.EXPIRED_REFRESH_TOKEN);
-		}
-
 		// refreshToken 불일치 -> 다시 로그인 필요 (재로그인을 하면 accessToken, refreshToken 갱신)
 		if (!Objects.equals(refreshToken, savedToken)) {
 			throw new AuthException(AuthError.ACCESS_DENIED);
