@@ -24,15 +24,9 @@ public class RecipeDto {
 		private String title;
 		private String summary;
 		private MultipartFile recipeImage;
-		private List<RecipeIngredientDto> recipeIngredients;
-		private List<RecipeStepCreateDto> recipeSteps;
-
-		public static RecipeCreateDto of(Recipe recipe) {
-			return RecipeCreateDto.builder()
-					.title(recipe.getTitle())
-					.summary(recipe.getSummary())
-					.build();
-		}
+		private List<RecipeIngredientDto> ingredients;
+		private List<RecipeStepCreateDto> steps;
+		private List<MultipartFile> stepImages;
 	}
 
 	// 레시피 수정 요청 DTO
