@@ -51,9 +51,9 @@ public class FridgeIngredientDto {
 	@Builder
 	public static class FridgeIngredientUpdateDto {
 
-		private List<Long> deleteItem;
+		private List<Long> delete;
 		@Valid
-		private List<FridgeIngredientInfoDto> updateItem;
+		private List<FridgeIngredientInfoDto> update;
 	}
 
 	@Getter
