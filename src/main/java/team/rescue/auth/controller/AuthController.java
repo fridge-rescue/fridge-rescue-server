@@ -69,7 +69,7 @@ public class AuthController {
 	 * @return 확인 여부 반환
 	 */
 	@PostMapping("/email/confirm")
-	@PreAuthorize("permitAll()")
+	@PreAuthorize("hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<MemberInfoDto>> emailConfirm(
 			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
 			BindingResult bindingResult,
