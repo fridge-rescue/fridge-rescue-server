@@ -69,7 +69,7 @@ public class AuthController {
 	 * @return 확인 여부 반환
 	 */
 	@PostMapping("/email/confirm")
-	@PreAuthorize("hasAuthority('GUEST')")
+	@PreAuthorize("permitAll()")
 	public ResponseEntity<ResponseDto<MemberInfoDto>> emailConfirm(
 			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
 			BindingResult bindingResult,
@@ -77,12 +77,18 @@ public class AuthController {
 	) {
 
 		log.info("[이메일 코드 확인] code={}", emailConfirmDto.getCode());
-		MemberInfoDto memberInfoDto = authService
-				.confirmEmailCode(details.getUsername(), emailConfirmDto.getCode());
 
+		MemberInfoDto memberInfoDto = null;
+
+		if (details == null) {
+			memberInfoDto = authService.confirmEmailCode(emailConfirmDto.getEmail(),
+					emailConfirmDto.getCode());
+		} else {
+			memberInfoDto = authService
+					.confirmEmailCode(details.getUsername(), emailConfirmDto.getCode());
+		}
 		return new ResponseEntity<>(
-				new ResponseDto<>(null, memberInfoDto),
-				HttpStatus.OK
+				new ResponseDto<>(null, memberInfoDto), HttpStatus.OK
 		);
 	}
 
