@@ -4,19 +4,40 @@ import lombok.Getter;
 import lombok.Setter;
 import team.rescue.recipe.entity.RecipeIngredient;
 
-@Getter
-@Setter
 public class RecipeIngredientDto {
 
-	private String name;
-	private String amount;
+	@Getter
+	@Setter
+	public static class RecipeIngredientCreateDto {
 
-	public static RecipeIngredientDto of(RecipeIngredient recipeIngredient) {
-		RecipeIngredientDto recipeIngredientDto = new RecipeIngredientDto();
-		recipeIngredientDto.setName(recipeIngredient.getName());
-		recipeIngredientDto.setAmount(recipeIngredient.getAmount());
+		private String name;
+		private String amount;
 
-		return recipeIngredientDto;
+		public static RecipeIngredientCreateDto of(RecipeIngredient recipeIngredient) {
+			RecipeIngredientCreateDto recipeIngredientCreateDto = new RecipeIngredientCreateDto();
+			recipeIngredientCreateDto.setName(recipeIngredient.getName());
+			recipeIngredientCreateDto.setAmount(recipeIngredient.getAmount());
+
+			return recipeIngredientCreateDto;
+		}
+	}
+
+	@Getter
+	@Setter
+	public static class RecipeIngredientInfoDto {
+
+		private Long id;
+		private String name;
+		private String amount;
+
+		public static RecipeIngredientInfoDto of(RecipeIngredient recipeIngredient) {
+			RecipeIngredientInfoDto recipeIngredientInfoDto = new RecipeIngredientInfoDto();
+			recipeIngredientInfoDto.setId(recipeIngredient.getId());
+			recipeIngredientInfoDto.setName(recipeIngredient.getName());
+			recipeIngredientInfoDto.setAmount(recipeIngredient.getAmount());
+
+			return recipeIngredientInfoDto;
+		}
 	}
 
 }

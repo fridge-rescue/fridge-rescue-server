@@ -7,8 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientCreateDto;
+import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientInfoDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
 import team.rescue.recipe.entity.Recipe;
@@ -23,10 +24,8 @@ public class RecipeDto {
 
 		private String title;
 		private String summary;
-		private MultipartFile recipeImage;
-		private List<RecipeIngredientDto> ingredients;
+		private List<RecipeIngredientCreateDto> ingredients;
 		private List<RecipeStepCreateDto> steps;
-		private List<MultipartFile> stepImages;
 	}
 
 	// 레시피 수정 요청 DTO
@@ -37,8 +36,7 @@ public class RecipeDto {
 
 		private String title;
 		private String summary;
-		private MultipartFile recipeImage;
-		private List<RecipeIngredientDto> recipeIngredients;
+		private List<RecipeIngredientCreateDto> recipeIngredients;
 		private List<RecipeStepCreateDto> recipeSteps;
 
 	}
@@ -80,7 +78,7 @@ public class RecipeDto {
 		private Integer reportCount;
 		private Integer bookmarkCount;
 		private LocalDateTime createdAt;
-		private List<RecipeIngredientDto> recipeIngredients;
+		private List<RecipeIngredientInfoDto> recipeIngredients;
 		private List<RecipeStepInfoDto> recipeSteps;
 		private MemberInfoDto author;
 
