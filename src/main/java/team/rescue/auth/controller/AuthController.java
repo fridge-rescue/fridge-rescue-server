@@ -117,7 +117,7 @@ public class AuthController {
 	 * @param principalDetails 사용자 정보
 	 */
 	@DeleteMapping("/leave")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER') or hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<?>> deleteMember(
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
@@ -156,7 +156,7 @@ public class AuthController {
 	}
 
 	@GetMapping("/logout")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER') or hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<?>> logout(
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
