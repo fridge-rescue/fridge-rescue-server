@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import team.rescue.auth.type.RoleType;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.file.FileService;
@@ -242,20 +243,32 @@ public class RecipeServiceTest {
 				.member(member)
 				.build();
 
-		RecipeIngredientDto recipeIngredientDto1 = RecipeIngredientDto.builder()
-				.name("테스트 재료1")
-				.amount("테스트 양1")
-				.build();
+		RecipeIngredientDto recipeIngredientDto1 = new RecipeIngredientDto();
+		recipeIngredientDto1.setName("테스트 재료1");
+		recipeIngredientDto1.setAmount("테스트 양1");
 
-		RecipeIngredientDto recipeIngredientDto2 = RecipeIngredientDto.builder()
-				.name("테스트 재료2")
-				.amount("테스트 양2")
-				.build();
+		RecipeIngredientDto recipeIngredientDto2 = new RecipeIngredientDto();
+		recipeIngredientDto2.setName("테스트 재료2");
+		recipeIngredientDto2.setAmount("테스트 양2");
 
 		recipeIngredientDtoList.add(recipeIngredientDto1);
 		recipeIngredientDtoList.add(recipeIngredientDto2);
 
+		RecipeStepCreateDto recipeStepDto1 = RecipeStepCreateDto.builder()
+				.description("레시피 스탭1")
+				.tip("레시피 팁 1")
+				.build();
+
+		RecipeStepCreateDto recipeStepDto2 = RecipeStepCreateDto.builder()
+				.description("레시피 스탭2")
+				.tip("레시피 팁 2")
+				.build();
+
+		recipeStepCreateList.add(recipeStepDto1);
+		recipeStepCreateList.add(recipeStepDto2);
+
 		// 모의 이미지 파일 생성
+		List<MultipartFile> stepImageList = new ArrayList<>();
 		MockMultipartFile mockStepImageFile1 = new MockMultipartFile(
 				"file",
 				"test1.jpg",
@@ -268,32 +281,16 @@ public class RecipeServiceTest {
 				MediaType.IMAGE_JPEG_VALUE,
 				"recipe step test 2".getBytes()
 		);
-
-		RecipeStepCreateDto recipeStepDto1 = RecipeStepCreateDto.builder()
-				.id(1L)
-				.stepNo(1)
-				.stepImage(mockStepImageFile1)
-				.stepDescription("레시피 스탭1")
-				.stepTip("레시피 팁 1")
-				.build();
-
-		RecipeStepCreateDto recipeStepDto2 = RecipeStepCreateDto.builder()
-				.id(2L)
-				.stepNo(2)
-				.stepImage(mockStepImageFile2)
-				.stepDescription("레시피 스탭2")
-				.stepTip("레시피 팁 2")
-				.build();
-
-		recipeStepCreateList.add(recipeStepDto1);
-		recipeStepCreateList.add(recipeStepDto2);
+		stepImageList.add(mockStepImageFile1);
+		stepImageList.add(mockStepImageFile2);
 
 		RecipeCreateDto recipeCreateDto = RecipeCreateDto.builder()
 				.title("testTitle")
 				.summary("testSummary")
 				.recipeImage(mockRecipeImageFile)
-				.recipeIngredients(recipeIngredientDtoList)
-				.recipeSteps(recipeStepCreateList)
+				.ingredients(recipeIngredientDtoList)
+				.steps(recipeStepCreateList)
+				.stepImages(stepImageList)
 				.build();
 
 		// when
@@ -389,15 +386,14 @@ public class RecipeServiceTest {
 				Arrays.asList(recipeStep1, recipeStep2));
 		given(recipeStepRepository.findByRecipe(recipe)).willReturn(recipeStepList);
 
-		RecipeIngredientDto updatingRecipeIngredient1 = RecipeIngredientDto.builder()
-				.name("테스트 재료1")
-				.amount("테스트 양1")
-				.build();
+		RecipeIngredientDto updatingRecipeIngredient1 = new RecipeIngredientDto();
+		updatingRecipeIngredient1.setName("테스트 재료1");
+		updatingRecipeIngredient1.setAmount("테스트 양1");
 
-		RecipeIngredientDto updatingRecipeIngredient2 = RecipeIngredientDto.builder()
-				.name("테스트 재료2")
-				.amount("테스트 양2")
-				.build();
+		RecipeIngredientDto updatingRecipeIngredient2 = new RecipeIngredientDto();
+		updatingRecipeIngredient2.setName("테스트 재료2");
+		updatingRecipeIngredient2.setAmount("테스트 양2");
+
 		List<RecipeIngredientDto> updateRecipeIngredientDtoList = new ArrayList<>(
 				Arrays.asList(updatingRecipeIngredient1, updatingRecipeIngredient2));
 
@@ -415,18 +411,12 @@ public class RecipeServiceTest {
 				"recipe step test 2".getBytes()
 		);
 		RecipeStepCreateDto updatingRecipeStep1 = RecipeStepCreateDto.builder()
-				.id(3L)
-				.stepNo(3)
-				.stepImage(mockStepImageFile1)
-				.stepDescription("레시피 스탭1")
-				.stepTip("레시피 팁 1")
+				.description("레시피 스탭1")
+				.tip("레시피 팁 1")
 				.build();
 		RecipeStepCreateDto updatingRecipeStep2 = RecipeStepCreateDto.builder()
-				.id(4L)
-				.stepNo(4)
-				.stepImage(mockStepImageFile2)
-				.stepDescription("레시피 스탭2")
-				.stepTip("레시피 팁 2")
+				.description("레시피 스탭2")
+				.tip("레시피 팁 2")
 				.build();
 		List<RecipeStepCreateDto> updateRecipeStepDtoList = new ArrayList<>(
 				Arrays.asList(updatingRecipeStep1, updatingRecipeStep2));
@@ -438,6 +428,7 @@ public class RecipeServiceTest {
 				"recipe Image test".getBytes()
 		);
 
+		// TODO: 이미지 파일 받는 부분 DTO 변경 예정이므로 테스트 수정되어야 함
 		RecipeUpdateDto recipeUpdateDto = RecipeUpdateDto.builder()
 				.title("업데이트 타이틀")
 				.summary("업데이트 서머리")

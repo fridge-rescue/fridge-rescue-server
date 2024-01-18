@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories
+@EnableElasticsearchRepositories(basePackages = "team.rescue.search.repository")
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 
 	@Value("${spring.elasticsearch.uris}")

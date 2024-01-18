@@ -1,27 +1,43 @@
 package team.rescue.recipe.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.rescue.recipe.entity.RecipeIngredient;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RecipeIngredientDto {
 
-  private String name;
-  private String amount;
+	@Getter
+	@Setter
+	public static class RecipeIngredientCreateDto {
 
-  public static RecipeIngredientDto of (RecipeIngredient recipeIngredient) {
-    return RecipeIngredientDto.builder()
-        .name(recipeIngredient.getName())
-        .amount(recipeIngredient.getAmount())
-        .build();
-  }
+		private String name;
+		private String amount;
+
+		public static RecipeIngredientCreateDto of(RecipeIngredient recipeIngredient) {
+			RecipeIngredientCreateDto recipeIngredientCreateDto = new RecipeIngredientCreateDto();
+			recipeIngredientCreateDto.setName(recipeIngredient.getName());
+			recipeIngredientCreateDto.setAmount(recipeIngredient.getAmount());
+
+			return recipeIngredientCreateDto;
+		}
+	}
+
+	@Getter
+	@Setter
+	public static class RecipeIngredientInfoDto {
+
+		private Long id;
+		private String name;
+		private String amount;
+
+		public static RecipeIngredientInfoDto of(RecipeIngredient recipeIngredient) {
+			RecipeIngredientInfoDto recipeIngredientInfoDto = new RecipeIngredientInfoDto();
+			recipeIngredientInfoDto.setId(recipeIngredient.getId());
+			recipeIngredientInfoDto.setName(recipeIngredient.getName());
+			recipeIngredientInfoDto.setAmount(recipeIngredient.getAmount());
+
+			return recipeIngredientInfoDto;
+		}
+	}
 
 }
