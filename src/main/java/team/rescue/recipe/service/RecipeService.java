@@ -32,17 +32,20 @@ import team.rescue.recipe.repository.BookmarkRepository;
 import team.rescue.recipe.repository.RecipeIngredientRepository;
 import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.recipe.repository.RecipeStepRepository;
+import team.rescue.search.entity.RecipeDoc;
+import team.rescue.search.repository.RecipeSearchRepository;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
 
+	private final FileService fileService;
 	private final RecipeRepository recipeRepository;
 	private final RecipeIngredientRepository recipeIngredientRepository;
 	private final RecipeStepRepository recipeStepRepository;
+	private final RecipeSearchRepository recipeSearchRepository;
 	private final MemberRepository memberRepository;
-	private final FileService fileService;
 	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional(readOnly = true)
@@ -124,14 +127,20 @@ public class RecipeService {
 		recipeRepository.save(recipe); // 먼저 Recipe 저장
 
 		// 재료 저장
+		List<RecipeIngredient> ingredients = new ArrayList<>();
 		for (RecipeIngredientDto ingredientDto : recipeCreateDto.getIngredients()) {
 			RecipeIngredient ingredient = RecipeIngredient.builder()
 					.name(ingredientDto.getName())
 					.amount(ingredientDto.getAmount())
 					.recipe(recipe) // 재료와 레시피 연결
 					.build();
-			recipeIngredientRepository.save(ingredient);
+			ingredients.add(ingredient);
 		}
+		recipeIngredientRepository.saveAll(ingredients);
+
+		// Recipe Document 저장
+		RecipeDoc recipeDoc = RecipeDoc.of(recipe, ingredients);
+		recipeSearchRepository.save(recipeDoc);
 
 		// 레시피 스탭들 저장
 		for (int i = 0; i < recipeCreateDto.getSteps().size(); i++) {

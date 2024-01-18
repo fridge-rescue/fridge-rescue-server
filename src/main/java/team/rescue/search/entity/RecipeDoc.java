@@ -44,7 +44,7 @@ public class RecipeDoc {
 				.reviewCount(recipe.getReviewCount())
 				.ingredients(ingredients.stream()
 						.map(RecipeIngredient::getName)
-						.collect(Collectors.joining()))
+						.collect(Collectors.joining(" ")))
 				.build();
 	}
 }

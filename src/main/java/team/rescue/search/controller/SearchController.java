@@ -9,10 +9,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.elasticsearch.core.SearchPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 import team.rescue.search.service.RecipeSearchService;
@@ -50,6 +52,25 @@ public class SearchController {
 		);
 	}
 
+	@GetMapping("/recipe/fridge")
+	public ResponseEntity<ResponseDto<SearchPage<RecipeInfoDto>>> searchRecipesByFridge(
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "createdAt") SortType sortType,
+			@AuthenticationPrincipal PrincipalDetails details
+	) {
+
+		log.info("[레시피 유저 재료 기반 검색] memberId={}, sortType={}", details.getMember().getId(),
+				sortType.name());
+
+		PageRequest pageRequest = PageRequest.of(
+				page, 10, Sort.by(Direction.DESC, sortType.getSortBy())
+		);
+
+		SearchPage<RecipeInfoDto> searchHits =
+				recipeSearchService.searchRecipeByFridge(details.getMember().getId(), pageRequest);
+
+		return null;
+	}
 
 	/**
 	 * 재료 자동완성
