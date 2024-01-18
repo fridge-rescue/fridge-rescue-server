@@ -1,7 +1,7 @@
 package team.rescue.fridge.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
@@ -20,7 +20,7 @@ public class FridgeIngredientDto {
 
 		private String memo;
 
-		@Future(message = "유통기한이 이미 지난 재료입니다.")
+		@FutureOrPresent(message = "유통기한이 이미 지난 재료입니다.")
 		private LocalDate expiredAt;
 	}
 
@@ -33,7 +33,7 @@ public class FridgeIngredientDto {
 		private String name;
 		private String memo;
 
-		@Future(message = "유통기한이 이미 지난 재료입니다.")
+		@FutureOrPresent(message = "유통기한이 이미 지난 재료입니다.")
 		private LocalDate expiredAt;
 
 		public static FridgeIngredientInfoDto of(FridgeIngredient fridgeIngredient) {
