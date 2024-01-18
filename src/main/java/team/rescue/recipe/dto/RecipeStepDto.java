@@ -3,7 +3,6 @@ package team.rescue.recipe.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import team.rescue.recipe.entity.RecipeStep;
 
 @Getter
@@ -16,11 +15,8 @@ public class RecipeStepDto {
 	@Builder
 	public static class RecipeStepCreateDto {
 
-		private Long id;
-		private int stepNo;
-		private MultipartFile stepImage;
-		private String stepDescription;
-		private String stepTip;
+		private String description;
+		private String tip;
 
 	}
 

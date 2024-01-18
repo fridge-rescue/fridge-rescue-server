@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 import team.rescue.review.entity.Review;
@@ -30,7 +29,6 @@ public class ReviewDto {
 	public static class ReviewUpdateDto {
 
 		private String title;
-		private MultipartFile image;
 		private String contents;
 	}
 

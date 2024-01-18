@@ -1,5 +1,6 @@
 package team.rescue.recipe.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -13,14 +14,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
 import team.rescue.recipe.dto.BookmarkDto.BookmarkInfoDto;
@@ -62,40 +63,46 @@ public class RecipeController {
 	/**
 	 * 레시피 등록
 	 *
-	 * @param recipeCreateDto  등록할 레시피 데이터
+	 * @param request          레시피 정보
+	 * @param recipeImage      레시피 이미지 파일
+	 * @param stepImages       단계 별 사진
 	 * @param principalDetails 로그인 유저
-	 * @return 등록한 레시피 데이터
+	 * @return 등록한 레시피 요약 정보
 	 */
-	@PutMapping("/recipes")
+	@PostMapping
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<RecipeInfoDto>> addRecipe(
-			@ModelAttribute RecipeCreateDto recipeCreateDto,
-			BindingResult bindingResult,
-			@AuthenticationPrincipal PrincipalDetails principalDetails
+			@RequestPart RecipeCreateDto request,
+			@RequestPart MultipartFile recipeImage,
+			@RequestPart List<MultipartFile> stepImages,
+			@AuthenticationPrincipal PrincipalDetails principalDetails,
+			BindingResult bindingResult
 	) {
 
-		log.info("[레시피 생성 컨트롤러] email={}, title={}, image={}, steps={}, ingredients={}",
-				principalDetails.getMember().getEmail(), recipeCreateDto.getTitle(),
-				recipeCreateDto.getRecipeImage(), recipeCreateDto.getRecipeSteps(),
-				recipeCreateDto.getRecipeIngredients());
+		log.info("[레시피 생성 컨트롤러] email={}, title={}", principalDetails.getMember().getEmail(),
+				request.getTitle());
 
-		RecipeInfoDto createDto =
-				recipeService.addRecipe(recipeCreateDto, principalDetails);
+		RecipeInfoDto recipeInfo =
+				recipeService.addRecipe(request, recipeImage, stepImages, principalDetails);
 
 		return new ResponseEntity<>(
-				new ResponseDto<>("레시피가 성공적으로 등록되었습니다.", createDto),
+				new ResponseDto<>("레시피가 성공적으로 등록되었습니다.", recipeInfo),
 				HttpStatus.CREATED
 		);
 	}
 
 	@PatchMapping("/{recipeId}")
-//	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<RecipeDetailDto>> updateRecipe(
 			@PathVariable Long recipeId,
-			@ModelAttribute RecipeUpdateDto recipeUpdateDto,
-			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+			@RequestPart RecipeUpdateDto request,
+			@RequestPart MultipartFile recipeImage,
+			@RequestPart List<MultipartFile> stepImages,
+			@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
 
 		RecipeDetailDto recipeDetailDto =
-				recipeService.updateRecipe(recipeId, recipeUpdateDto, principalDetails);
+				recipeService.updateRecipe(recipeId, request, recipeImage, stepImages, principalDetails);
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피가 성공적으로 수정되었습니다.", recipeDetailDto),

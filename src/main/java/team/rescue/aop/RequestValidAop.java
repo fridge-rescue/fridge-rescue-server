@@ -50,6 +50,8 @@ public class RequestValidAop {
 					Map<String, String> errorMap = new HashMap<>();
 
 					for (FieldError fieldError : bindingResult.getFieldErrors()) {
+						log.info("[유효성 리스트 실패] field={}, message={}", fieldError.getField(),
+								fieldError.getDefaultMessage());
 						errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
 					}
 
@@ -63,6 +65,7 @@ public class RequestValidAop {
 					Map<String, String> errorMap = new HashMap<>();
 
 					for (FieldError error : bindingResult.getFieldErrors()) {
+						log.info("[유효성 실패] field={}, message={}", error.getField(), error.getDefaultMessage());
 						errorMap.put(error.getField(), error.getDefaultMessage());
 					}
 

@@ -27,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.type.RoleType;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
@@ -73,18 +74,17 @@ class RecipeControllerTest extends MockMember {
 
 	@BeforeEach
 	public void setRecipeIngredientInfoDtoList() {
-		RecipeIngredientDto recipeIngredientDto1 = RecipeIngredientDto.builder()
-				.name("마늘")
-				.amount("3쫑")
-				.build();
-		RecipeIngredientDto recipeIngredientDto2 = RecipeIngredientDto.builder()
-				.name("양파")
-				.amount("2개")
-				.build();
-		RecipeIngredientDto recipeIngredientDto3 = RecipeIngredientDto.builder()
-				.name("쪽파")
-				.amount("2단")
-				.build();
+		RecipeIngredientDto recipeIngredientDto1 = new RecipeIngredientDto();
+		recipeIngredientDto1.setName("마늘");
+		recipeIngredientDto1.setAmount("3쫑");
+
+		RecipeIngredientDto recipeIngredientDto2 = new RecipeIngredientDto();
+		recipeIngredientDto1.setName("양파");
+		recipeIngredientDto1.setAmount("2개");
+
+		RecipeIngredientDto recipeIngredientDto3 = new RecipeIngredientDto();
+		recipeIngredientDto1.setName("쪽파");
+		recipeIngredientDto1.setAmount("2단");
 
 		recipeIngredientList.add(recipeIngredientDto1);
 		recipeIngredientList.add(recipeIngredientDto2);
@@ -92,7 +92,7 @@ class RecipeControllerTest extends MockMember {
 
 	}
 
-	List<RecipeStepInfoDto> recipeStepInfoDto = new ArrayList<>();
+	List<RecipeStepInfoDto> recipeStepInfoList = new ArrayList<>();
 
 	@BeforeEach
 	public void setRecipeStepInfoDtoList() {
@@ -109,8 +109,8 @@ class RecipeControllerTest extends MockMember {
 				.stepTip("레시피 팁 2")
 				.build();
 
-		recipeStepInfoDto.add(recipeStepInfoDto1);
-		recipeStepInfoDto.add(recipeStepInfoDto2);
+		recipeStepInfoList.add(recipeStepInfoDto1);
+		recipeStepInfoList.add(recipeStepInfoDto2);
 	}
 
 
@@ -118,6 +118,25 @@ class RecipeControllerTest extends MockMember {
 
 	@BeforeEach
 	public void setRecipeStepCreateDtoList() {
+		RecipeStepCreateDto recipeStepDto1 = RecipeStepCreateDto.builder()
+				.description("레시피 스탭1")
+				.tip("레시피 팁 1")
+				.build();
+
+		RecipeStepCreateDto recipeStepDto2 = RecipeStepCreateDto.builder()
+				.description("레시피 스탭2")
+				.tip("레시피 팁 2")
+				.build();
+
+		recipeStepCreateList.add(recipeStepDto1);
+		recipeStepCreateList.add(recipeStepDto2);
+
+	}
+
+	List<MultipartFile> stepImageList = new ArrayList<>();
+
+	@BeforeEach
+	public void setStepImageDtoList() {
 		// 모의 이미지 파일 생성
 		MockMultipartFile mockImageFile1 = new MockMultipartFile(
 				"file",
@@ -132,23 +151,8 @@ class RecipeControllerTest extends MockMember {
 				"recipe step test 2".getBytes()
 		);
 
-		RecipeStepCreateDto recipeStepDto1 = RecipeStepCreateDto.builder()
-				.stepNo(1)
-				.stepImage(mockImageFile1)
-				.stepDescription("레시피 스탭1")
-				.stepTip("레시피 팁 1")
-				.build();
-
-		RecipeStepCreateDto recipeStepDto2 = RecipeStepCreateDto.builder()
-				.stepNo(2)
-				.stepImage(mockImageFile2)
-				.stepDescription("레시피 스탭2")
-				.stepTip("레시피 팁 2")
-				.build();
-
-		recipeStepCreateList.add(recipeStepDto1);
-		recipeStepCreateList.add(recipeStepDto2);
-
+		stepImageList.add(mockImageFile1);
+		stepImageList.add(mockImageFile2);
 	}
 
 	@Test
@@ -172,7 +176,7 @@ class RecipeControllerTest extends MockMember {
 						.bookmarkCount(10)
 						.createdAt(LocalDateTime.now())
 						.recipeIngredients(recipeIngredientList)
-						.recipeSteps(recipeStepInfoDto)
+						.recipeSteps(recipeStepInfoList)
 						.author(mockAuthor)
 						.build());
 
@@ -207,8 +211,9 @@ class RecipeControllerTest extends MockMember {
 				.title("새로운 레시피")
 				.summary("레시피 요약")
 				.recipeImage(mockRecipeImageFile)
-				.recipeIngredients(recipeIngredientList)
-				.recipeSteps(recipeStepCreateList)
+				.ingredients(recipeIngredientList)
+				.steps(recipeStepCreateList)
+				.stepImages(stepImageList)
 				.build();
 
 //    given(recipeService.addRecipe(any(RecipeCreateDto.class), any(PrincipalDetails.class)))
@@ -219,7 +224,7 @@ class RecipeControllerTest extends MockMember {
 		// when
 		// then
 		mockMvc.perform(
-						post("/api/recipes/recipes")
+						post("/api/recipes")
 								.contentType(MediaType.MULTIPART_FORM_DATA)
 								.content(objectMapper.writeValueAsString(
 										recipeCreateDto

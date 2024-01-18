@@ -91,16 +91,17 @@ public class ReviewService {
 	/**
 	 * 리뷰 내용 수정
 	 *
-	 * @param email           리뷰 수정 요정 유저 이메일
-	 * @param reviewId        수정할 리뷰 아이디
-	 * @param reviewUpdateDto 수정할 내용
+	 * @param email    리뷰 수정 요정 유저 이메일
+	 * @param reviewId 수정할 리뷰 아이디
+	 * @param request  수정할 내용
 	 * @return 수정된 리뷰 데이터
 	 */
 	@Transactional
 	public ReviewInfoDto updateReview(
 			String email,
 			Long reviewId,
-			ReviewUpdateDto reviewUpdateDto
+			ReviewUpdateDto request,
+			MultipartFile image
 	) {
 
 		log.info("[리뷰 수정] reviewId={}", reviewId);
@@ -111,7 +112,7 @@ public class ReviewService {
 		validateReviewAuthor(email, review);
 
 		// S3 이미지 수정
-		String imageUrl = fileService.uploadImageToS3(reviewUpdateDto.getImage());
+		String imageUrl = fileService.uploadImageToS3(image);
 
 		// 기존 이미지 있는 경우 삭제
 		if (review.getImageUrl() != null) {
@@ -119,7 +120,7 @@ public class ReviewService {
 		}
 
 		// 리뷰 업데이트
-		review.update(reviewUpdateDto.getTitle(), imageUrl, reviewUpdateDto.getContents());
+		review.update(request.getTitle(), imageUrl, request.getContents());
 
 		return ReviewInfoDto.of(reviewRepository.save(review));
 	}
