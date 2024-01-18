@@ -181,146 +181,104 @@ public class RecipeService {
 			PrincipalDetails principalDetails
 	) {
 
-//		Long memberId = principalDetails.getMember().getId();
-//
-//		Member member = memberRepository.findById(memberId)
-//				.orElseThrow(() -> {
-//					log.error("일치하는 사용자 정보 없음");
-//					return new ServiceException(ServiceError.USER_NOT_FOUND);
-//				});
-//
-//		Recipe recipe = recipeRepository.findById(recipeId)
-//				.orElseThrow(() -> {
-//					log.error("레시피 없음");
-//					return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
-//				});
-//
-//		if (!recipe.getMember().equals(member)) {
-//			log.error("레시피를 작성한 회원이 아님");
-//			throw new ServiceException(ServiceError.RECIPE_MEMBER_UNMATCHED);
-//		}
-//
-//		// 레시피 대표 이미지 업데이트
-//		fileService.deleteImages(recipe.getRecipeImageUrl());
-//		String recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
-//
-//		// 레시피 ingredient 수정
-//		List<RecipeIngredient> existingRecipeIngredientList =
-//				recipeIngredientRepository.findByRecipe(recipe);
-//		List<RecipeIngredientCreateDto> updatedRecipeIngredients = new ArrayList<>();
-//		for (RecipeIngredientCreateDto recipeIngredientDto : info.getRecipeIngredients()) {
-//
-//			log.debug("레세피 재료 아이디: {}", recipeIngredientDto.getName());
-//
-//			// 기존 재료가 있는지 확인
-//			Optional<RecipeIngredient> existingIngredient = existingRecipeIngredientList.stream()
-//					.filter(ingredient -> ingredient.getName().equals(recipeIngredientDto.getName()))
-//					.findFirst();
-//
-//			if (existingIngredient.isPresent()) {
-//				// 기존 재료 수정
-//				RecipeIngredient updatedIngredient = existingIngredient.get();
-//
-//				updatedIngredient.updateRecipeIngredient(
-//						recipeIngredientDto.getName(), recipeIngredientDto.getAmount());
-//
-//				recipeIngredientRepository.save(updatedIngredient);
-//
-//				updatedRecipeIngredients.add(RecipeIngredientCreateDto.of(updatedIngredient));
-//			}
-//			// 새로운 재료라면 추가
-//			else {
-//				RecipeIngredient newIngredient = RecipeIngredient.builder()
-//						.name(recipeIngredientDto.getName())
-//						.amount(recipeIngredientDto.getAmount())
-//						.recipe(recipe)
-//						.build();
-//				recipeIngredientRepository.save(newIngredient);
-//
-//				updatedRecipeIngredients.add(RecipeIngredientCreateDto.of(newIngredient));
-//			}
-//		}
-//
-//		// 재료 삭제 처리
-//		List<RecipeIngredient> ingredientsToDelete = existingRecipeIngredientList.stream()
-//				.filter(ingredient -> info.getRecipeIngredients().stream()
-//						.noneMatch(dto -> dto.getName().equals(ingredient.getName()))).toList();
-//
-//		recipeIngredientRepository.deleteAll(ingredientsToDelete);
-//
-//		// 레시피 step 수정
-//		List<RecipeStep> existingRecipeStepList = recipeStepRepository.findByRecipe(recipe);
-//		List<RecipeStepInfoDto> updatedRecipeStep = new ArrayList<>();
-//		for (RecipeStepCreateDto recipeStepCreateDto : info.getRecipeSteps()) {
-//
-//			Optional<RecipeStep> existingStep = existingRecipeStepList.stream()
-//					.filter(ingredient -> ingredient.getStepNo() == (recipeStepCreateDto.getStepNo()))
-//					.findFirst();
-//
-//			if (existingStep.isPresent()) {
-//				// 기존 스텝의 이미지 삭제
-//				fileService.deleteImages(existingStep.get().getStepImageUrl());
-//
-//				// 새 이미지 파일 경로 얻기
-//				String newStepImageFilePath = fileService.uploadImageToS3(
-//						recipeStepCreateDto.getStepImage());
-//
-//				RecipeStep updatedStep = existingStep.get();
-//
-//				// 스텝 업데이트
-//				updatedStep.updateRecipeStep(
-//						recipeStepCreateDto.getStepNo(),
-//						newStepImageFilePath,
-//						recipeStepCreateDto.getStepDescription(),
-//						recipeStepCreateDto.getStepTip()
-//				);
-//				recipeStepRepository.save(updatedStep);
-//
-//				updatedRecipeStep.add(RecipeStepInfoDto.of(updatedStep));
-//			} else {
-//				String stepImageFilePath = "";  // 빈 문자열
-//				if (!recipeStepCreateDto.getStepImage().isEmpty()) {
-//					// 스탭 이미지 저장
-//					stepImageFilePath = fileService.uploadImageToS3(recipeStepCreateDto.getStepImage());
-//				}
-//
-//				RecipeStep newStep = RecipeStep.builder()
-//						.stepNo(recipeStepCreateDto.getStepNo())
-//						.stepImageUrl(stepImageFilePath) // URL 설정
-//						.stepDescription(recipeStepCreateDto.getStepDescription())
-//						.stepTip(recipeStepCreateDto.getStepTip())
-//						.recipe(recipe) // 레시피와 연결
-//						.build();
-//
-//				updatedRecipeStep.add(RecipeStepInfoDto.of(newStep));
-//
-//				recipeStepRepository.save(newStep);
-//			}
-//		}
-////		 스탭 삭제 처리
-//		List<RecipeStep> stepToDelete = existingRecipeStepList.stream()
-//				.filter(ingredient -> recipeUpdateDto.getRecipeSteps().stream()
-//						.noneMatch(dto -> dto.getStepNo() == (ingredient.getStepNo()))).toList();
-//
-//		recipeStepRepository.deleteAll(stepToDelete);
-//
-//		recipe.update(
-//				recipeUpdateDto.getTitle(),
-//				recipeUpdateDto.getSummary(),
-//				recipeImageFilePath
-//		);
-//
-//		recipeRepository.save(recipe);
-//
-//		return RecipeDetailDto.builder()
-//				.title(recipe.getTitle())
-//				.summary(recipe.getSummary())
-//				.recipeImageUrl(recipeImageFilePath)
-//				.recipeIngredients(updatedRecipeIngredients)
-//				.recipeSteps(updatedRecipeStep)
-//				.build();
+		Long memberId = principalDetails.getMember().getId();
 
-		return null;
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> {
+					log.error("일치하는 사용자 정보 없음");
+					return new ServiceException(ServiceError.USER_NOT_FOUND);
+				});
+
+		Recipe recipe = recipeRepository.findById(recipeId)
+		.orElseThrow(() -> {
+			log.error("레시피 없음");
+			return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
+		});
+
+		if (!recipe.getMember().equals(member)) {
+			log.error("레시피를 작성한 회원이 아님");
+			throw new ServiceException(ServiceError.RECIPE_MEMBER_UNMATCHED);
+		}
+
+		MemberInfoDto memberInfoDto = MemberInfoDto.of(member);
+
+		// 레시피 대표 이미지 업데이트
+		fileService.deleteImages(recipe.getRecipeImageUrl());
+		String recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
+
+
+		// 레시피 재료 수정 작업
+		// 기존 레시피 ingredient 삭제
+		List<RecipeIngredient> existingRecipeIngredientList =
+				recipeIngredientRepository.findByRecipe(recipe);
+		recipeIngredientRepository.deleteAll(existingRecipeIngredientList);
+
+		// 레시피 ingredient 추가
+		List<RecipeIngredient> ingredients = new ArrayList<>();
+		for (RecipeIngredientCreateDto ingredientDto : info.getIngredients()) {
+			RecipeIngredient ingredient = RecipeIngredient.builder()
+					.name(ingredientDto.getName())
+					.amount(ingredientDto.getAmount())
+					.recipe(recipe) // 재료와 레시피 연결
+					.build();
+			ingredients.add(ingredient);
+		}
+		recipeIngredientRepository.saveAll(ingredients);
+
+		List<RecipeIngredientInfoDto> updatedRecipeIngredients = new ArrayList<>();
+		for (RecipeIngredient recipeIngredient : ingredients) {
+			updatedRecipeIngredients.add(RecipeIngredientInfoDto.of(recipeIngredient));
+		}
+
+
+		// 레시피 스탭 수정 작업
+		// 기존 레시피 스탭 삭제
+		List<RecipeStep> existingRecipeStepList = recipeStepRepository.findByRecipe(recipe);
+		for (RecipeStep existingRecipeStep : existingRecipeStepList) {
+			// 이미지가 있는 스텝이면 s3에서 삭제
+			if (!(existingRecipeStep.getStepImageUrl() == null || existingRecipeStep.getStepImageUrl()
+					.isEmpty())) {
+				fileService.deleteImages(existingRecipeStep.getStepImageUrl());
+			}
+		}
+		recipeStepRepository.deleteAll(existingRecipeStepList);
+
+		// 레시피 스탭 추가
+		List<RecipeStepInfoDto> updatedRecipeStep = new ArrayList<>();
+		for (int i = 0; i < info.getSteps().size(); i++) {
+
+			RecipeStepCreateDto stepDto = info.getSteps().get(i);
+			MultipartFile imageFile = stepImages.get(i);
+
+			// 이미지 파일이 존재하면 저장
+			String stepImageUrl = null;
+			if (imageFile.getSize() > 0) {
+				stepImageUrl = fileService.uploadImageToS3(imageFile);
+			}
+
+			RecipeStep step = RecipeStep.builder()
+					.stepNo(i)
+					.stepImageUrl(stepImageUrl) // URL 설정
+					.stepDescription(stepDto.getDescription())
+					.stepTip(stepDto.getTip())
+					.recipe(recipe) // 레시피와 연결
+					.build();
+
+			updatedRecipeStep.add(RecipeStepInfoDto.of(step));
+
+			recipeStepRepository.save(step);
+		}
+
+		recipe.update(
+				info.getTitle(),
+				info.getSummary(),
+				recipeImageFilePath
+		);
+
+		recipeRepository.save(recipe);
+
+		return RecipeDetailDto.of(recipe);
+
 	}
 
 	@Transactional
