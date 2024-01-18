@@ -36,8 +36,8 @@ public class RecipeDto {
 
 		private String title;
 		private String summary;
-		private List<RecipeIngredientCreateDto> recipeIngredients;
-		private List<RecipeStepCreateDto> recipeSteps;
+		private List<RecipeIngredientCreateDto> ingredients;
+		private List<RecipeStepCreateDto> steps;
 
 	}
 
