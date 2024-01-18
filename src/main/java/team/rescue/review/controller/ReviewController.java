@@ -9,7 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +35,7 @@ public class ReviewController {
 	/**
 	 * 리뷰 등록
 	 *
-	 * @param data    리뷰 등록 요청 데이터
+	 * @param request 리뷰 등록 요청 데이터
 	 * @param image   리뷰 사진
 	 * @param details 로그인 유저
 	 * @return 생성된 리뷰 요약 데이터
@@ -44,16 +43,16 @@ public class ReviewController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<ReviewInfoDto>> createReview(
-			@RequestPart ReviewReqDto data,
+			@RequestPart ReviewReqDto request,
 			BindingResult bindingResult,
-			@RequestPart MultipartFile image,
+			@RequestPart(required = false) MultipartFile image,
 			@AuthenticationPrincipal PrincipalDetails details
 	) {
 
-		log.info("[리뷰 업로드] recipeId={}, title={}, imageOriginFileName={}", data.getRecipeId(),
-				data.getTitle(), image.getOriginalFilename());
+		log.info("[리뷰 업로드] recipeId={}, title={}, imageOriginFileName={}", request.getRecipeId(),
+				request.getTitle(), image.getOriginalFilename());
 
-		ReviewInfoDto reviewInfo = reviewService.createReview(data, image, details);
+		ReviewInfoDto reviewInfo = reviewService.createReview(request, image, details);
 
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피 리뷰가 등록되었습니다.", reviewInfo),
@@ -85,25 +84,27 @@ public class ReviewController {
 	/**
 	 * 리뷰 수정
 	 *
-	 * @param reviewId        수정할 리뷰 아이디
-	 * @param reviewUpdateDto 수정 내용
-	 * @param bindingResult   유효성 검증 오류
-	 * @param details         로그인 유저 Principal
+	 * @param reviewId      수정할 리뷰 아이디
+	 * @param request       수정 내용
+	 * @param bindingResult 유효성 검증 오류
+	 * @param details       로그인 유저 Principal
 	 * @return 수정된 리뷰 데이터
 	 */
 	@PatchMapping("/{reviewId}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<ReviewInfoDto>> updateReview(
 			@PathVariable Long reviewId,
-			@ModelAttribute ReviewUpdateDto reviewUpdateDto,
+			@RequestPart ReviewUpdateDto request,
 			BindingResult bindingResult,
+			@RequestPart(required = false) MultipartFile image,
 			@AuthenticationPrincipal PrincipalDetails details
 	) {
 
 		ReviewInfoDto reviewInfoDto = reviewService.updateReview(
 				details.getUsername(),
 				reviewId,
-				reviewUpdateDto
+				request,
+				image
 		);
 
 		return new ResponseEntity<>(
