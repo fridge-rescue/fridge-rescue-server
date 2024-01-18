@@ -149,7 +149,7 @@ public class RecipeService {
 		for (int i = 0; i < info.getSteps().size(); i++) {
 
 			RecipeStepCreateDto stepDto = info.getSteps().get(i);
-			MultipartFile imageFile = stepImages.get(0);
+			MultipartFile imageFile = stepImages.get(i);
 
 			// 이미지 파일이 존재하면 저장
 			String stepImageUrl = null;
