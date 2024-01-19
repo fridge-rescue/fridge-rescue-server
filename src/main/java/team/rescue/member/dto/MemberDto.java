@@ -37,6 +37,26 @@ public class MemberDto {
 	@Getter
 	@Setter
 	@Builder
+	public static class MemberInfoWithTokenDto {
+
+		private Long id;
+		private String nickname;
+		private RoleType role;
+		private String token;
+
+		public static MemberInfoWithTokenDto of(Member member, String token) {
+			return MemberInfoWithTokenDto.builder()
+					.id(member.getId())
+					.nickname(member.getNickname())
+					.role(member.getRole())
+					.token(token)
+					.build();
+		}
+	}
+
+	@Getter
+	@Setter
+	@Builder
 	public static class MemberDetailDto {
 
 		private Long id;

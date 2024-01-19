@@ -26,7 +26,7 @@ import team.rescue.auth.service.AuthService;
 import team.rescue.auth.type.ProviderType;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.dto.ResponseDto;
-import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.member.dto.MemberDto.MemberInfoWithTokenDto;
 
 @Slf4j
 @RestController
@@ -70,7 +70,7 @@ public class AuthController {
 	 */
 	@PostMapping("/email/confirm")
 	@PreAuthorize("permitAll()")
-	public ResponseEntity<ResponseDto<MemberInfoDto>> emailConfirm(
+	public ResponseEntity<ResponseDto<MemberInfoWithTokenDto>> emailConfirm(
 			@RequestBody @Valid JoinDto.EmailConfirmDto emailConfirmDto,
 			BindingResult bindingResult,
 			@AuthenticationPrincipal PrincipalDetails details
@@ -78,7 +78,7 @@ public class AuthController {
 
 		log.info("[이메일 코드 확인] code={}", emailConfirmDto.getCode());
 
-		MemberInfoDto memberInfoDto = null;
+		MemberInfoWithTokenDto memberInfoDto = null;
 
 		if (details == null) {
 			memberInfoDto = authService.confirmEmailCode(emailConfirmDto.getEmail(),
@@ -117,7 +117,7 @@ public class AuthController {
 	 * @param principalDetails 사용자 정보
 	 */
 	@DeleteMapping("/leave")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER') or hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<?>> deleteMember(
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
@@ -156,7 +156,7 @@ public class AuthController {
 	}
 
 	@GetMapping("/logout")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER') or hasAuthority('GUEST')")
 	public ResponseEntity<ResponseDto<?>> logout(
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
 

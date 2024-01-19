@@ -24,7 +24,7 @@ import team.rescue.error.type.AuthError;
 import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.fridge.service.FridgeService;
-import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.member.dto.MemberDto.MemberInfoWithTokenDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.util.RedisUtil;
@@ -111,7 +111,7 @@ public class AuthService implements UserDetailsService {
 	 * @return MemberInfo
 	 */
 	@Transactional
-	public MemberInfoDto confirmEmailCode(String email, String code) {
+	public MemberInfoWithTokenDto confirmEmailCode(String email, String code) {
 
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
@@ -125,7 +125,10 @@ public class AuthService implements UserDetailsService {
 		// 냉장고 생성
 		member.registerFridge(fridgeService.createFridge(member));
 
-		return MemberInfoDto.of(member);
+		PrincipalDetails principalDetails = new PrincipalDetails(member);
+		String accessToken = JwtTokenProvider.createToken(principalDetails, JwtTokenType.ACCESS_TOKEN);
+
+		return MemberInfoWithTokenDto.of(member, accessToken);
 	}
 
 	/**
