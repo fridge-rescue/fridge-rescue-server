@@ -36,6 +36,9 @@ public class RecipeDoc {
 	@Field(type = FieldType.Text)
 	private String ingredients;
 
+//	@Field(type = FieldType.Date)
+//	private LocalDateTime createdAt;
+
 	public static RecipeDoc of(Recipe recipe, List<RecipeIngredient> ingredients) {
 		return RecipeDoc.builder()
 				.id(recipe.getId())
@@ -45,6 +48,7 @@ public class RecipeDoc {
 				.ingredients(ingredients.stream()
 						.map(RecipeIngredient::getName)
 						.collect(Collectors.joining(" ")))
+//				.createdAt(recipe.getCreatedAt())
 				.build();
 	}
 }

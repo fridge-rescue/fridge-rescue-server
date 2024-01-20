@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SortType {
-	HOT("HOT"), DESC("DESC");
+	HOT("reviewCount"), DESC("createdAt");
 
 	private final String sortBy;
 }
