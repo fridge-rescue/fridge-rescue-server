@@ -50,6 +50,7 @@ public class RecipeService {
 	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional
+	@DistributedLock(prefix="get_recipe")
 	public RecipeDetailDto getRecipe(Long id) {
 
 		Recipe recipe = recipeRepository.findById(id)
