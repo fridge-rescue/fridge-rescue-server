@@ -49,7 +49,7 @@ public class RecipeService {
 	private final MemberRepository memberRepository;
 	private final BookmarkRepository bookmarkRepository;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public RecipeDetailDto getRecipe(Long id) {
 
 		Recipe recipe = recipeRepository.findById(id)
@@ -79,6 +79,8 @@ public class RecipeService {
 				recipeStepRepository.findByRecipe(recipe);
 		List<RecipeStepInfoDto> recipeStepDtoList =
 				recipeStepList.stream().map(RecipeStepInfoDto::of).toList();
+
+		recipe.increaseViewCount();
 
 		return RecipeDetailDto.builder()
 				.id(recipe.getId())

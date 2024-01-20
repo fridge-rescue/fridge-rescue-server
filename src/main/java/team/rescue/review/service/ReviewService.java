@@ -60,6 +60,8 @@ public class ReviewService {
 		Cook cook = cookRepository.getReferenceById(reviewReqDto.getCookId());
 		Recipe recipe = recipeRepository.getReferenceById(reviewReqDto.getRecipeId());
 
+		recipe.increaseReviewCount();
+
 		Review review = Review.builder()
 				.member(member)
 				.recipe(recipe)
