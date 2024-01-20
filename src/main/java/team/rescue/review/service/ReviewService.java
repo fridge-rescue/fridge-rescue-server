@@ -111,16 +111,19 @@ public class ReviewService {
 		// 리뷰 수정 요청 유저와 리뷰 작성 유저 동일인 검증
 		validateReviewAuthor(email, review);
 
-		// S3 이미지 수정
-		String imageUrl = fileService.uploadImageToS3(image);
+		if (image != null) {
+			// S3 이미지 수정
+			String imageUrl = fileService.uploadImageToS3(image);
 
-		// 기존 이미지 있는 경우 삭제
-		if (review.getImageUrl() != null) {
-			fileService.deleteImages(review.getImageUrl());
+			// 기존 이미지 있는 경우 삭제
+			if (review.getImageUrl() != null) {
+				fileService.deleteImages(review.getImageUrl());
+			}
+			// 리뷰 업데이트
+			review.update(request.getTitle(), imageUrl, request.getContents());
+		} else {
+			review.updateWithoutImage(request.getTitle(), request.getContents());
 		}
-
-		// 리뷰 업데이트
-		review.update(request.getTitle(), imageUrl, request.getContents());
 
 		return ReviewInfoDto.of(reviewRepository.save(review));
 	}
