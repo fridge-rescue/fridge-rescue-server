@@ -71,4 +71,8 @@ public class Review {
 		this.imageUrl = imageUrl;
 		this.contents = contents;
 	}
+	public void updateWithoutImage(String title, String contents) {
+		this.title = title;
+		this.contents = contents;
+	}
 }
