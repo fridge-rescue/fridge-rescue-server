@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.SearchPage;
+import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.StringQuery;
 import org.springframework.stereotype.Service;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
@@ -33,18 +36,18 @@ public class RecipeSearchService {
 	private final FridgeRepository fridgeRepository;
 	private final RecipeRepository recipeRepository;
 
-	public List<RecipeInfoDto> searchRecipeByKeyword(
+	public Page<RecipeInfoDto> searchRecipeByKeyword(
 			String keyword, Pageable pageable
 	) {
 
 		log.info("키워드 검색 서비스");
 
-		List<RecipeDoc> searchHits =
+		SearchPage<RecipeDoc> searchHits =
 				recipeSearchRepository.searchByKeyword(keyword, pageable);
 
-		List<RecipeInfoDto> recipeInfoDtos = searchHits.stream()
+		List<RecipeInfoDto> recipeInfoDtos = searchHits.getContent().stream()
 				.map(hit -> {
-					Recipe recipe = recipeRepository.findById(hit.getId())
+					Recipe recipe = recipeRepository.findById(hit.getContent().getId())
 							.orElseThrow(() -> {
 								log.error("레시피 없음");
 								return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
@@ -56,14 +59,12 @@ public class RecipeSearchService {
 								return new ServiceException(ServiceError.USER_NOT_FOUND);
 							});
 					MemberInfoDto memberInfoDto = MemberInfoDto.of(member);
-					return new RecipeInfoDto(hit.getId(), hit.getTitle(), memberInfoDto);
+					return RecipeInfoDto.of(
+							recipe, hit.getContent().getIngredients(), member, hit.getContent().getImage());
 				})
 				.collect(Collectors.toList());
 
-		return recipeInfoDtos;
-
-//		return null;
-
+		return new PageImpl<>(recipeInfoDtos);
 	}
 
 	public Page<RecipeInfoDto> searchRecipeByFridge(

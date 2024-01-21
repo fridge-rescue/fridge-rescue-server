@@ -2,17 +2,24 @@ package team.rescue.recipe.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import team.rescue.auth.type.RoleType;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.member.entity.Member;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientCreateDto;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientInfoDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
 import team.rescue.recipe.entity.Recipe;
+import team.rescue.recipe.entity.RecipeIngredient;
+import team.rescue.search.entity.RecipeDoc;
 
 public class RecipeDto {
 
@@ -51,6 +58,11 @@ public class RecipeDto {
 
 		private Long id;
 		private String title;
+		private String summary;
+		private Integer reviewCount;
+		private String ingredients;
+		private LocalDateTime createdAt;
+		private String image;
 		private MemberInfoDto author;
 
 		public static RecipeInfoDto of(Recipe recipe) {
@@ -60,6 +72,21 @@ public class RecipeDto {
 			recipeInfo.setAuthor(MemberInfoDto.of(recipe.getMember()));
 
 			return recipeInfo;
+		}
+		public static RecipeInfoDto of(
+				Recipe recipe, String ingredients,
+				Member member, String recipeImageFilePath) {
+
+			return RecipeInfoDto.builder()
+					.id(recipe.getId())
+					.title(recipe.getTitle())
+					.summary(recipe.getSummary())
+					.reviewCount(recipe.getReviewCount())
+					.ingredients(ingredients)
+					.createdAt(recipe.getCreatedAt())
+					.image(recipeImageFilePath)
+					.author(MemberInfoDto.of(member))
+					.build();
 		}
 	}
 

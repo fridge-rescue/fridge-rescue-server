@@ -46,7 +46,7 @@ public class SearchController {
 		log.info("[레시피 키워드 검색] keyword={}", keyword);
 
 		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-				Sort.by(sortType.getSortBy()));
+				Sort.by(sortType.getDirection(), sortType.getSortBy()));
 
 		Page<RecipeInfoDto> recipeDocs =
 				recipeSearchService.searchRecipeByKeyword(keyword, sortedPageable);
