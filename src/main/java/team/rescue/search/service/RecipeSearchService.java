@@ -72,16 +72,8 @@ public class RecipeSearchService {
 				recipeSearchRepository.searchByIngredients(ingredients.toString().strip(), pageable);
 
 		List<RecipeInfoDto> recipeInfoDtoList = searchPage.getSearchHits().stream()
-				.map(recipeDocSearchHit -> {
-					Recipe recipe = recipeRepository.findById(recipeDocSearchHit.getContent().getId())
-							.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
-
-					return RecipeInfoDto.builder()
-							.id(recipe.getId())
-							.title(recipe.getTitle())
-							.author(MemberInfoDto.of(recipe.getMember()))
-							.build();
-				}).collect(Collectors.toList());
+				.map(recipeDocSearchHit -> RecipeInfoDto.of(recipeDocSearchHit.getContent()))
+        .collect(Collectors.toList());
 
 		return new PageImpl<>(recipeInfoDtoList);
 	}

@@ -67,7 +67,10 @@ public class SearchController {
 		Page<RecipeInfoDto> recipeInfoPage =
 				recipeSearchService.searchRecipeByFridge(details.getMember().getId(), pageable);
 
-		return ResponseEntity.ok(new ResponseDto<>("냉장고 재료로 검색한 레시피 목록입니다.", recipeInfoPage));
+		return new ResponseEntity<>(
+				new ResponseDto<>("냉장고 재료로 검색한 레시피 목록입니다.", recipeInfoPage),
+				HttpStatus.OK
+		);
 	}
 
 	/**
