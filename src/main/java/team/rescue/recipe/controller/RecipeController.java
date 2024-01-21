@@ -68,10 +68,11 @@ public class RecipeController {
 	 */
 	@GetMapping("/{recipeId}")
 	public ResponseEntity<ResponseDto<RecipeDetailDto>> getRecipe(
-			@PathVariable Long recipeId
+			@PathVariable Long recipeId,
+			@AuthenticationPrincipal PrincipalDetails details
 	) {
 
-		RecipeDetailDto recipeDetailDto = recipeService.getRecipe(recipeId);
+		RecipeDetailDto recipeDetailDto = recipeService.getRecipe(recipeId, details);
 		return new ResponseEntity<>(
 				new ResponseDto<>("레시피 조회에 성공하였습니다.", recipeDetailDto),
 				HttpStatus.OK

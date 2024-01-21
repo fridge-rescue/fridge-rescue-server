@@ -63,7 +63,7 @@ public class RecipeService {
 
 	@Transactional
 	@DistributedLock(prefix = "get_recipe")
-	public RecipeDetailDto getRecipe(Long id) {
+	public RecipeDetailDto getRecipe(Long id, PrincipalDetails details) {
 
 		Recipe recipe = recipeRepository.findById(id)
 				.orElseThrow(() -> {
@@ -96,8 +96,10 @@ public class RecipeService {
 		recipe.increaseViewCount();
 
 		// 레시피 북마크 여부 반환
-		boolean isBookmarked =
-				bookmarkRepository.existsByRecipeAndMember(recipe, member);
+		boolean isBookmarked = false;
+		if (details != null) {
+			isBookmarked = bookmarkRepository.existsByRecipeAndMember(recipe, details.getMember());
+		}
 
 		return RecipeDetailDto.builder()
 				.id(recipe.getId())
