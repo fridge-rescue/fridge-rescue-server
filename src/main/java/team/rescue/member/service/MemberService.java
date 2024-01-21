@@ -19,7 +19,7 @@ import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
 import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
-import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 import team.rescue.recipe.entity.Bookmark;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.repository.BookmarkRepository;
@@ -86,21 +86,21 @@ public class MemberService {
 		return cookPage.map(CookInfoDto::of);
 	}
 
-	public Page<RecipeDetailDto> getMyRecipes(String email, Pageable pageable) {
+	public Page<RecipeInfoDto> getMyRecipes(String email, Pageable pageable) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
 		Page<Recipe> recipePage = recipeRepository.findByMember(member, pageable);
 
-		return recipePage.map(RecipeDetailDto::of);
+		return recipePage.map(RecipeInfoDto::of);
 	}
 
-	public Page<RecipeDetailDto> getMyBookmarks(String email, Pageable pageable) {
+	public Page<RecipeInfoDto> getMyBookmarks(String email, Pageable pageable) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
 		Page<Bookmark> bookmarkPage = bookmarkRepository.findByMember(member, pageable);
 
-		return bookmarkPage.map(bookmark -> RecipeDetailDto.of(bookmark.getRecipe()));
+		return bookmarkPage.map(bookmark -> RecipeInfoDto.of(bookmark.getRecipe()));
 	}
 }
