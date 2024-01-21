@@ -89,4 +89,12 @@ public class Recipe {
 	public void increaseReportCount() {
 		this.reportCount++;
 	}
+
+	public void increaseViewCount() {
+		this.viewCount++;
+	}
+
+	public void increaseReviewCount() {
+		this.reviewCount++;
+	}
 }

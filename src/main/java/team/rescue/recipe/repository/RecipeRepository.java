@@ -11,4 +11,8 @@ import team.rescue.recipe.entity.Recipe;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
 	Page<Recipe> findByMember(Member member, Pageable pageable);
+
+	Page<Recipe> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+	Page<Recipe> findAllByOrderByBookmarkCountDesc(Pageable pageable);
 }
