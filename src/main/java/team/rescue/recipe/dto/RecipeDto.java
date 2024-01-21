@@ -59,6 +59,7 @@ public class RecipeDto {
 		private Long id;
 		private String title;
 		private String summary;
+		private Integer viewCount;
 		private Integer reviewCount;
 		private LocalDateTime createdAt;
 		private String imageUrl;
@@ -69,6 +70,7 @@ public class RecipeDto {
 			recipeInfo.setId(recipe.getId());
 			recipeInfo.setTitle(recipe.getTitle());
 			recipeInfo.setSummary(recipe.getSummary());
+			recipeInfo.setViewCount(recipe.getViewCount());
 			recipeInfo.setReviewCount(recipe.getReviewCount());
 			recipeInfo.setCreatedAt(recipe.getCreatedAt());
 			recipeInfo.setImageUrl(recipe.getRecipeImageUrl());
@@ -82,6 +84,7 @@ public class RecipeDto {
 					.id(recipeDoc.getId())
 					.title(recipeDoc.getTitle())
 					.summary(recipeDoc.getSummary())
+					.viewCount(recipeDoc.getViewCount())
 					.reviewCount(recipeDoc.getReviewCount())
 					.createdAt(recipeDoc.getCreatedAt().toLocalDateTime())
 					.imageUrl(recipeDoc.getImage())

@@ -37,6 +37,9 @@ public class RecipeDoc {
 	private String summary;
 
 	@Field(type = FieldType.Integer)
+	private Integer viewCount;
+
+	@Field(type = FieldType.Integer)
 	private Integer reviewCount;
 
 	@Field(type = FieldType.Text)
@@ -63,6 +66,7 @@ public class RecipeDoc {
 				.id(recipe.getId())
 				.title(recipe.getTitle())
 				.summary(recipe.getSummary())
+				.viewCount(recipe.getViewCount())
 				.reviewCount(recipe.getReviewCount())
 				.ingredients(ingredients.stream()
 						.map(RecipeIngredient::getName)
