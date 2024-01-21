@@ -33,12 +33,36 @@ public class RecipeSearchService {
 	private final FridgeRepository fridgeRepository;
 	private final RecipeRepository recipeRepository;
 
-	public List<RecipeDoc> searchRecipeByKeyword(
+	public List<RecipeInfoDto> searchRecipeByKeyword(
 			String keyword, Pageable pageable
 	) {
 
 		log.info("키워드 검색 서비스");
-		return recipeSearchRepository.searchByKeyword(keyword, pageable);
+
+		List<RecipeDoc> searchHits =
+				recipeSearchRepository.searchByKeyword(keyword, pageable);
+
+		List<RecipeInfoDto> recipeInfoDtos = searchHits.stream()
+				.map(hit -> {
+					Recipe recipe = recipeRepository.findById(hit.getId())
+							.orElseThrow(() -> {
+								log.error("레시피 없음");
+								return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
+							});
+					Long memberId = recipe.getMember().getId();
+					Member member = memberRepository.findById(memberId)
+							.orElseThrow(() -> {
+								log.error("일치하는 사용자 정보 없음");
+								return new ServiceException(ServiceError.USER_NOT_FOUND);
+							});
+					MemberInfoDto memberInfoDto = MemberInfoDto.of(member);
+					return new RecipeInfoDto(hit.getId(), hit.getTitle(), memberInfoDto);
+				})
+				.collect(Collectors.toList());
+
+		return recipeInfoDtos;
+
+//		return null;
 
 	}
 
