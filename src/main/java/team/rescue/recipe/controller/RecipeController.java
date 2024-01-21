@@ -96,7 +96,7 @@ public class RecipeController {
 
 	@PatchMapping("/{recipeId}")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<ResponseDto<RecipeDetailDto>> updateRecipe(
+	public ResponseEntity<ResponseDto<RecipeInfoDto>> updateRecipe(
 			@PathVariable Long recipeId,
 			@RequestPart RecipeUpdateDto request,
 			@RequestPart MultipartFile recipeImage,
@@ -104,11 +104,11 @@ public class RecipeController {
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 
-		RecipeDetailDto recipeDetailDto =
+		RecipeInfoDto recipeInfoDto =
 				recipeService.updateRecipe(recipeId, request, recipeImage, stepImages, principalDetails);
 
 		return new ResponseEntity<>(
-				new ResponseDto<>("레시피가 성공적으로 수정되었습니다.", recipeDetailDto),
+				new ResponseDto<>("레시피가 성공적으로 수정되었습니다.", recipeInfoDto),
 				HttpStatus.OK
 		);
 	}
@@ -173,19 +173,19 @@ public class RecipeController {
 	}
 
 	@GetMapping("/recent")
-	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getRecentRecipes(
+	public ResponseEntity<ResponseDto<Page<RecipeInfoDto>>> getRecentRecipes(
 			@PageableDefault Pageable pageable
 	) {
-		Page<RecipeDetailDto> recipeDetailDtoPage = recipeService.getRecentRecipes(pageable);
+		Page<RecipeInfoDto> recipeDetailDtoPage = recipeService.getRecentRecipes(pageable);
 
 		return ResponseEntity.ok(new ResponseDto<>("최신 레시피 데이터를 조회했습니다.", recipeDetailDtoPage));
 	}
 
 	@GetMapping("/popular")
-	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getPopularRecipes(
+	public ResponseEntity<ResponseDto<Page<RecipeInfoDto>>> getPopularRecipes(
 			@PageableDefault Pageable pageable
 	) {
-		Page<RecipeDetailDto> recipeDetailDtoPage = recipeService.getPopularRecipes(pageable);
+		Page<RecipeInfoDto> recipeDetailDtoPage = recipeService.getPopularRecipes(pageable);
 
 		return ResponseEntity.ok(new ResponseDto<>("인기 레시피 데이터를 조회했습니다.", recipeDetailDtoPage));
 	}

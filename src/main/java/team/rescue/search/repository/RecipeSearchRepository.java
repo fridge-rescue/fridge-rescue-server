@@ -60,10 +60,13 @@ public class RecipeSearchRepository {
 	 * @param pageable 페이지네이션 정보
 	 * @return 키워드와 매치되는 Recipe Documents
 	 */
-	public List<RecipeDoc> searchByKeyword(String keyword, Pageable pageable) {
-		Criteria criteria = Criteria.where("ingredients").contains(keyword);
-		Query query = new CriteriaQuery(criteria).setPageable(pageable);
+	public SearchPage<RecipeDoc> searchByKeyword(String keyword, Pageable pageable) {
+		Criteria criteriaForTitle = Criteria.where("title").contains(keyword);
+		Criteria criteriaForSummary = Criteria.where("summary").contains(keyword);
+		Criteria combinedCriteria = criteriaForTitle.or(criteriaForSummary);
+
+		Query query = new CriteriaQuery(combinedCriteria).setPageable(pageable);
 		SearchHits<RecipeDoc> searchHits = searchOperations.search(query, RecipeDoc.class);
-		return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+		return SearchHitSupport.searchPageFor(searchHits, pageable);
 	}
 }

@@ -21,7 +21,7 @@ import team.rescue.cook.dto.CookDto.CookInfoDto;
 import team.rescue.member.dto.MemberDto;
 import team.rescue.member.dto.MemberDto.MemberDetailDto;
 import team.rescue.member.service.MemberService;
-import team.rescue.recipe.dto.RecipeDto.RecipeDetailDto;
+import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
 
 @Slf4j
 @RestController
@@ -88,26 +88,26 @@ public class MemberController {
 
 	@GetMapping("/recipes")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getMyRecipes(
+	public ResponseEntity<ResponseDto<Page<RecipeInfoDto>>> getMyRecipes(
 			@AuthenticationPrincipal PrincipalDetails principalDetails,
 			@PageableDefault Pageable pageable
 	) {
-		Page<RecipeDetailDto> recipeDetailDtoPage = memberService.getMyRecipes(
+		Page<RecipeInfoDto> recipeInfoDtos = memberService.getMyRecipes(
 				principalDetails.getUsername(), pageable);
 
-		return ResponseEntity.ok(new ResponseDto<>("등록한 레시피 내역을 조회하였습니다.", recipeDetailDtoPage));
+		return ResponseEntity.ok(new ResponseDto<>("등록한 레시피 내역을 조회하였습니다.", recipeInfoDtos));
 	}
 
 	@GetMapping("/bookmarks")
 	@PreAuthorize("hasAuthority('USER')")
-	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getMyBookmarks(
+	public ResponseEntity<ResponseDto<Page<RecipeInfoDto>>> getMyBookmarks(
 			@AuthenticationPrincipal PrincipalDetails principalDetails,
 			@PageableDefault Pageable pageable
 	) {
-		Page<RecipeDetailDto> recipeDetailDtoPage = memberService.getMyBookmarks(
+		Page<RecipeInfoDto> recipeInfoDtos = memberService.getMyBookmarks(
 				principalDetails.getUsername(), pageable
 		);
 
-		return ResponseEntity.ok(new ResponseDto<>("북마크한 레시피 내역을 조회하였습니다.", recipeDetailDtoPage));
+		return ResponseEntity.ok(new ResponseDto<>("북마크한 레시피 내역을 조회하였습니다.", recipeInfoDtos));
 	}
 }
