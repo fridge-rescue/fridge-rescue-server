@@ -147,7 +147,7 @@ public class RecipeService {
 		recipeIngredientRepository.saveAll(ingredients);
 
 		// Recipe Document 저장
-		RecipeDoc recipeDoc = RecipeDoc.of(recipe, ingredients);
+		RecipeDoc recipeDoc = RecipeDoc.of(recipe, ingredients, member, recipeImageFilePath);
 		recipeSearchRepository.save(recipeDoc);
 
 		// 레시피 스탭들 저장

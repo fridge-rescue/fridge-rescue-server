@@ -33,13 +33,20 @@ public class RecipeSearchService {
 	private final FridgeRepository fridgeRepository;
 	private final RecipeRepository recipeRepository;
 
-	public List<RecipeDoc> searchRecipeByKeyword(
+	public Page<RecipeInfoDto> searchRecipeByKeyword(
 			String keyword, Pageable pageable
 	) {
 
 		log.info("키워드 검색 서비스");
-		return recipeSearchRepository.searchByKeyword(keyword, pageable);
 
+		SearchPage<RecipeDoc> searchHits =
+				recipeSearchRepository.searchByKeyword(keyword, pageable);
+
+		List<RecipeInfoDto> recipeInfoDtos = searchHits.getContent().stream()
+				.map(hit -> RecipeInfoDto.of(hit.getContent()))
+				.collect(Collectors.toList());
+
+		return new PageImpl<>(recipeInfoDtos);
 	}
 
 	public Page<RecipeInfoDto> searchRecipeByFridge(
@@ -65,16 +72,8 @@ public class RecipeSearchService {
 				recipeSearchRepository.searchByIngredients(ingredients.toString().strip(), pageable);
 
 		List<RecipeInfoDto> recipeInfoDtoList = searchPage.getSearchHits().stream()
-				.map(recipeDocSearchHit -> {
-					Recipe recipe = recipeRepository.findById(recipeDocSearchHit.getContent().getId())
-							.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
-
-					return RecipeInfoDto.builder()
-							.id(recipe.getId())
-							.title(recipe.getTitle())
-							.author(MemberInfoDto.of(recipe.getMember()))
-							.build();
-				}).collect(Collectors.toList());
+				.map(recipeDocSearchHit -> RecipeInfoDto.of(recipeDocSearchHit.getContent()))
+        .collect(Collectors.toList());
 
 		return new PageImpl<>(recipeInfoDtoList);
 	}

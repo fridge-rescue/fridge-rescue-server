@@ -2,17 +2,24 @@ package team.rescue.recipe.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import team.rescue.auth.type.RoleType;
 import team.rescue.member.dto.MemberDto.MemberInfoDto;
+import team.rescue.member.entity.Member;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientCreateDto;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientInfoDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
 import team.rescue.recipe.entity.Recipe;
+import team.rescue.recipe.entity.RecipeIngredient;
+import team.rescue.search.entity.RecipeDoc;
 
 public class RecipeDto {
 
@@ -51,15 +58,39 @@ public class RecipeDto {
 
 		private Long id;
 		private String title;
+		private String summary;
+		private Integer viewCount;
+		private Integer reviewCount;
+		private LocalDateTime createdAt;
+		private String imageUrl;
 		private MemberInfoDto author;
 
 		public static RecipeInfoDto of(Recipe recipe) {
 			RecipeInfoDto recipeInfo = new RecipeInfoDto();
 			recipeInfo.setId(recipe.getId());
 			recipeInfo.setTitle(recipe.getTitle());
+			recipeInfo.setSummary(recipe.getSummary());
+			recipeInfo.setViewCount(recipe.getViewCount());
+			recipeInfo.setReviewCount(recipe.getReviewCount());
+			recipeInfo.setCreatedAt(recipe.getCreatedAt());
+			recipeInfo.setImageUrl(recipe.getRecipeImageUrl());
 			recipeInfo.setAuthor(MemberInfoDto.of(recipe.getMember()));
 
 			return recipeInfo;
+		}
+		public static RecipeInfoDto of(RecipeDoc recipeDoc) {
+
+			return RecipeInfoDto.builder()
+					.id(recipeDoc.getId())
+					.title(recipeDoc.getTitle())
+					.summary(recipeDoc.getSummary())
+					.viewCount(recipeDoc.getViewCount())
+					.reviewCount(recipeDoc.getReviewCount())
+					.createdAt(recipeDoc.getCreatedAt().toLocalDateTime())
+					.imageUrl(recipeDoc.getImage())
+					.author(MemberInfoDto.of(
+							recipeDoc.getMemberId(), recipeDoc.getMemberNickname(), recipeDoc.getMemberRole()))
+					.build();
 		}
 	}
 

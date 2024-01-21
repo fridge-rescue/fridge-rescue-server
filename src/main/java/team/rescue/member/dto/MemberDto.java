@@ -32,6 +32,15 @@ public class MemberDto {
 
 			return memberInfo;
 		}
+
+		public static MemberInfoDto of(Long memberId, String nickName, RoleType Role) {
+			MemberInfoDto memberInfo = new MemberInfoDto();
+			memberInfo.setId(memberId);
+			memberInfo.setNickname(nickName);
+			memberInfo.setRole(Role);
+
+			return memberInfo;
+		}
 	}
 
 	@Getter
