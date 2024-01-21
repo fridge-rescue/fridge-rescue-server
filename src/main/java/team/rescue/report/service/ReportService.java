@@ -44,14 +44,18 @@ public class ReportService {
 				recipeId, reporterId, reason
 		);
 
+		// 신고 유저
+		Member member = memberRepository.getReferenceById(reporterId);
+
 		// 신고 대상 레시피 신고 카운드 추가
 		Recipe recipe = recipeRepository.findById(recipeId)
 				.orElseThrow(() -> new ServiceException(ServiceError.RECIPE_NOT_FOUND));
 
-		recipe.increaseReportCount();
+		// 이미 해당 레시피를 신고한 경우
+		validateReport(member, recipe);
 
-		// 신고 유저
-		Member member = memberRepository.getReferenceById(reporterId);
+		// 레시피 신고 횟수 증가 처리
+		recipe.increaseReportCount();
 
 		Report report = Report.builder()
 				.reason(reason)
@@ -60,5 +64,15 @@ public class ReportService {
 				.build();
 
 		return ReportInfoDto.of(reportRepository.save(report));
+	}
+
+
+	private void validateReport(Member member, Recipe recipe) {
+		boolean exist =
+				reportRepository.existsByReportMemberAndReportedRecipe(member, recipe);
+
+		if (exist) {
+			throw new ServiceException(ServiceError.REPORT_ALREADY_REPORTED);
+		}
 	}
 }
