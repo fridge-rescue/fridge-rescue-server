@@ -16,5 +16,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
 	Optional<Bookmark> findByRecipeAndMember(Recipe recipe, Member member);
 
+	boolean existsByRecipeAndMember(Recipe recipe, Member member);
+
 	void deleteByRecipeAndMember(Recipe recipe, Member member);
 }

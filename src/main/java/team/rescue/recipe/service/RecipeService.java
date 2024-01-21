@@ -52,7 +52,7 @@ public class RecipeService {
 	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional
-	@DistributedLock(prefix="get_recipe")
+	@DistributedLock(prefix = "get_recipe")
 	public RecipeDetailDto getRecipe(Long id) {
 
 		Recipe recipe = recipeRepository.findById(id)
@@ -85,6 +85,10 @@ public class RecipeService {
 
 		recipe.increaseViewCount();
 
+		// 레시피 북마크 여부 반환
+		boolean isBookmarked =
+				bookmarkRepository.existsByRecipeAndMember(recipe, member);
+
 		return RecipeDetailDto.builder()
 				.id(recipe.getId())
 				.title(recipe.getTitle())
@@ -98,6 +102,7 @@ public class RecipeService {
 				.recipeIngredients(recipeIngredientDtoList)
 				.recipeSteps(recipeStepDtoList)
 				.author(memberInfoDto)
+				.isBookmarked(isBookmarked)
 				.build();
 	}
 
@@ -178,7 +183,7 @@ public class RecipeService {
 
 
 	@Transactional
-	public RecipeDetailDto updateRecipe(
+	public RecipeInfoDto updateRecipe(
 			Long recipeId,
 			RecipeUpdateDto info,
 			MultipartFile recipeImage,
@@ -280,7 +285,7 @@ public class RecipeService {
 
 		recipeRepository.save(recipe);
 
-		return RecipeDetailDto.of(recipe);
+		return RecipeInfoDto.of(recipe);
 
 	}
 
@@ -372,15 +377,15 @@ public class RecipeService {
 		}
 	}
 
-	public Page<RecipeDetailDto> getRecentRecipes(Pageable pageable) {
+	public Page<RecipeInfoDto> getRecentRecipes(Pageable pageable) {
 		Page<Recipe> recipePage = recipeRepository.findAllByOrderByCreatedAtDesc(pageable);
 
-		return recipePage.map(RecipeDetailDto::of);
+		return recipePage.map(RecipeInfoDto::of);
 	}
 
-	public Page<RecipeDetailDto> getPopularRecipes(Pageable pageable) {
+	public Page<RecipeInfoDto> getPopularRecipes(Pageable pageable) {
 		Page<Recipe> recipePage = recipeRepository.findAllByOrderByBookmarkCountDesc(pageable);
 
-		return recipePage.map(RecipeDetailDto::of);
+		return recipePage.map(RecipeInfoDto::of);
 	}
 }

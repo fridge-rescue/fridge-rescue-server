@@ -112,6 +112,7 @@ public class RecipeDto {
 		private List<RecipeIngredientInfoDto> recipeIngredients;
 		private List<RecipeStepInfoDto> recipeSteps;
 		private MemberInfoDto author;
+		private Boolean isBookmarked;
 
 		public static RecipeDetailDto of(Recipe recipe) {
 			return RecipeDetailDto.builder()
