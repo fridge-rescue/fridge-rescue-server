@@ -374,4 +374,10 @@ public class RecipeService {
 
 		return recipePage.map(RecipeDetailDto::of);
 	}
+
+	public Page<RecipeDetailDto> getPopularRecipes(Pageable pageable) {
+		Page<Recipe> recipePage = recipeRepository.findAllByOrderByBookmarkCountDesc(pageable);
+
+		return recipePage.map(RecipeDetailDto::of);
+	}
 }

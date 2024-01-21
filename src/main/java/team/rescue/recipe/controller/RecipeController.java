@@ -178,6 +178,15 @@ public class RecipeController {
 	) {
 		Page<RecipeDetailDto> recipeDetailDtoPage = recipeService.getRecentRecipes(pageable);
 
-		return ResponseEntity.ok(new ResponseDto<>("최신 레시피 데이터", recipeDetailDtoPage));
+		return ResponseEntity.ok(new ResponseDto<>("최신 레시피 데이터를 조회했습니다.", recipeDetailDtoPage));
+	}
+
+	@GetMapping("/popular")
+	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getPopularRecipes(
+			@PageableDefault Pageable pageable
+	) {
+		Page<RecipeDetailDto> recipeDetailDtoPage = recipeService.getPopularRecipes(pageable);
+
+		return ResponseEntity.ok(new ResponseDto<>("인기 레시피 데이터를 조회했습니다.", recipeDetailDtoPage));
 	}
 }
