@@ -1,5 +1,6 @@
 package team.rescue.recipe.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,15 @@ public class RecipeService {
 	private final RecipeSearchRepository recipeSearchRepository;
 	private final MemberRepository memberRepository;
 	private final BookmarkRepository bookmarkRepository;
+
+	/**
+	 * 현재 시각 기준으로 전체 레시피 개수 반환
+	 *
+	 * @return 전체 레시피 개수
+	 */
+	public Integer getTotalRecipeCount() {
+		return recipeRepository.countByCreatedAtBefore(LocalDateTime.now());
+	}
 
 	@Transactional
 	@DistributedLock(prefix = "get_recipe")
