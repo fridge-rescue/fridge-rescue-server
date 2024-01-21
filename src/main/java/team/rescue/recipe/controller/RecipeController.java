@@ -46,6 +46,21 @@ public class RecipeController {
 	private final ReviewService reviewService;
 
 	/**
+	 * 전체 레시피 개수 반환
+	 *
+	 * @return 전체 레시피 개수
+	 */
+	@GetMapping
+	public ResponseEntity<ResponseDto<Integer>> getTotalRecipeCount() {
+		Integer totalRecipeCount = recipeService.getTotalRecipeCount();
+		return new ResponseEntity<>(
+				new ResponseDto<>(null, totalRecipeCount),
+				HttpStatus.OK
+		);
+	}
+
+
+	/**
 	 * 특정 레시피 상세 조회
 	 *
 	 * @param recipeId 조회할 레시피 ID
