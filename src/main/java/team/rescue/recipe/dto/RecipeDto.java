@@ -60,32 +60,33 @@ public class RecipeDto {
 		private String title;
 		private String summary;
 		private Integer reviewCount;
-		private String ingredients;
 		private LocalDateTime createdAt;
-		private String image;
+		private String imageUrl;
 		private MemberInfoDto author;
 
 		public static RecipeInfoDto of(Recipe recipe) {
 			RecipeInfoDto recipeInfo = new RecipeInfoDto();
 			recipeInfo.setId(recipe.getId());
 			recipeInfo.setTitle(recipe.getTitle());
+			recipeInfo.setSummary(recipe.getSummary());
+			recipeInfo.setReviewCount(recipe.getReviewCount());
+			recipeInfo.setCreatedAt(recipe.getCreatedAt());
+			recipeInfo.setImageUrl(recipe.getRecipeImageUrl());
 			recipeInfo.setAuthor(MemberInfoDto.of(recipe.getMember()));
 
 			return recipeInfo;
 		}
-		public static RecipeInfoDto of(
-				Recipe recipe, String ingredients,
-				Member member, String recipeImageFilePath) {
+		public static RecipeInfoDto of(RecipeDoc recipeDoc) {
 
 			return RecipeInfoDto.builder()
-					.id(recipe.getId())
-					.title(recipe.getTitle())
-					.summary(recipe.getSummary())
-					.reviewCount(recipe.getReviewCount())
-					.ingredients(ingredients)
-					.createdAt(recipe.getCreatedAt())
-					.image(recipeImageFilePath)
-					.author(MemberInfoDto.of(member))
+					.id(recipeDoc.getId())
+					.title(recipeDoc.getTitle())
+					.summary(recipeDoc.getSummary())
+					.reviewCount(recipeDoc.getReviewCount())
+					.createdAt(recipeDoc.getCreatedAt().toLocalDateTime())
+					.imageUrl(recipeDoc.getImage())
+					.author(MemberInfoDto.of(
+							recipeDoc.getMemberId(), recipeDoc.getMemberNickname(), recipeDoc.getMemberRole()))
 					.build();
 		}
 	}

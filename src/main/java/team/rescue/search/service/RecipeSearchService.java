@@ -46,22 +46,7 @@ public class RecipeSearchService {
 				recipeSearchRepository.searchByKeyword(keyword, pageable);
 
 		List<RecipeInfoDto> recipeInfoDtos = searchHits.getContent().stream()
-				.map(hit -> {
-					Recipe recipe = recipeRepository.findById(hit.getContent().getId())
-							.orElseThrow(() -> {
-								log.error("레시피 없음");
-								return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
-							});
-					Long memberId = recipe.getMember().getId();
-					Member member = memberRepository.findById(memberId)
-							.orElseThrow(() -> {
-								log.error("일치하는 사용자 정보 없음");
-								return new ServiceException(ServiceError.USER_NOT_FOUND);
-							});
-					MemberInfoDto memberInfoDto = MemberInfoDto.of(member);
-					return RecipeInfoDto.of(
-							recipe, hit.getContent().getIngredients(), member, hit.getContent().getImage());
-				})
+				.map(hit -> RecipeInfoDto.of(hit.getContent()))
 				.collect(Collectors.toList());
 
 		return new PageImpl<>(recipeInfoDtos);
