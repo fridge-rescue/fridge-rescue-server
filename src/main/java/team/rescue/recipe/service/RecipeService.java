@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -193,10 +195,10 @@ public class RecipeService {
 				});
 
 		Recipe recipe = recipeRepository.findById(recipeId)
-		.orElseThrow(() -> {
-			log.error("레시피 없음");
-			return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
-		});
+				.orElseThrow(() -> {
+					log.error("레시피 없음");
+					return new ServiceException(ServiceError.RECIPE_NOT_FOUND);
+				});
 
 		if (!recipe.getMember().equals(member)) {
 			log.error("레시피를 작성한 회원이 아님");
@@ -208,7 +210,6 @@ public class RecipeService {
 		// 레시피 대표 이미지 업데이트
 		fileService.deleteImages(recipe.getRecipeImageUrl());
 		String recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
-
 
 		// 레시피 재료 수정 작업
 		// 기존 레시피 ingredient 삭제
@@ -232,7 +233,6 @@ public class RecipeService {
 		for (RecipeIngredient recipeIngredient : ingredients) {
 			updatedRecipeIngredients.add(RecipeIngredientInfoDto.of(recipeIngredient));
 		}
-
 
 		// 레시피 스탭 수정 작업
 		// 기존 레시피 스탭 삭제
@@ -370,5 +370,17 @@ public class RecipeService {
 					.isBookmarked(true)
 					.build();
 		}
+	}
+
+	public Page<RecipeDetailDto> getRecentRecipes(Pageable pageable) {
+		Page<Recipe> recipePage = recipeRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+		return recipePage.map(RecipeDetailDto::of);
+	}
+
+	public Page<RecipeDetailDto> getPopularRecipes(Pageable pageable) {
+		Page<Recipe> recipePage = recipeRepository.findAllByOrderByBookmarkCountDesc(pageable);
+
+		return recipePage.map(RecipeDetailDto::of);
 	}
 }

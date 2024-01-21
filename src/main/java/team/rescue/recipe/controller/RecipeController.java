@@ -3,10 +3,13 @@ package team.rescue.recipe.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -167,5 +170,23 @@ public class RecipeController {
 				new ResponseDto<>(null, recipeReviewList),
 				HttpStatus.OK
 		);
+	}
+
+	@GetMapping("/recent")
+	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getRecentRecipes(
+			@PageableDefault Pageable pageable
+	) {
+		Page<RecipeDetailDto> recipeDetailDtoPage = recipeService.getRecentRecipes(pageable);
+
+		return ResponseEntity.ok(new ResponseDto<>("최신 레시피 데이터를 조회했습니다.", recipeDetailDtoPage));
+	}
+
+	@GetMapping("/popular")
+	public ResponseEntity<ResponseDto<Page<RecipeDetailDto>>> getPopularRecipes(
+			@PageableDefault Pageable pageable
+	) {
+		Page<RecipeDetailDto> recipeDetailDtoPage = recipeService.getPopularRecipes(pageable);
+
+		return ResponseEntity.ok(new ResponseDto<>("인기 레시피 데이터를 조회했습니다.", recipeDetailDtoPage));
 	}
 }
