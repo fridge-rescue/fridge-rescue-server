@@ -8,6 +8,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.rescue.aop.DistributedLock;
 import team.rescue.auth.user.PrincipalDetails;
 import team.rescue.common.file.FileService;
 import team.rescue.cook.entity.Cook;
@@ -46,6 +47,7 @@ public class ReviewService {
 	 * @return 등록 리뷰 요약 데이터 DTO
 	 */
 	@Transactional
+	@DistributedLock(prefix="review_recipe")
 	public ReviewInfoDto createReview(
 			ReviewReqDto reviewReqDto,
 			MultipartFile image,
