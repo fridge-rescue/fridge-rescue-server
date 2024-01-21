@@ -21,6 +21,7 @@ public enum ServiceError {
 	FILE_DELETION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 삭제를 실패했습니다."),
 
 	// User
+	USER_ALREADY_LEAVE(HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다."),
 	EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "등록되지 않은 이메일입니다."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
 	EMAIL_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),

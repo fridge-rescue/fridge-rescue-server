@@ -70,6 +70,9 @@ public class Member {
 	@Column(name = "jwt_token")
 	private String token;
 
+	@Column(name = "is_enabled", nullable = false)
+	private Boolean isEnabled;
+
 	@OneToOne(mappedBy = "member")
 	private Fridge fridge;
 
@@ -118,6 +121,11 @@ public class Member {
 
 	public void updatePassword(String password) {
 		this.password = password;
+	}
+
+	// 회원 탈퇴
+	public void leave() {
+		this.isEnabled = false;
 	}
 }
 

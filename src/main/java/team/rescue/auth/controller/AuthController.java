@@ -123,7 +123,7 @@ public class AuthController {
 
 		String email = principalDetails.getUsername();
 
-		authService.deleteMember(email);
+		authService.disableMember(email);
 
 		return ResponseEntity.ok(new ResponseDto<>("회원 탈퇴가 정상적으로 처리되었습니다.", null));
 	}

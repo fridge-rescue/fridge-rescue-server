@@ -14,6 +14,7 @@ import team.rescue.cook.dto.CookDto.CookInfoDto;
 import team.rescue.cook.entity.Cook;
 import team.rescue.cook.repository.CookRepository;
 import team.rescue.error.exception.ServiceException;
+import team.rescue.error.type.ServiceError;
 import team.rescue.member.dto.MemberDto.MemberDetailDto;
 import team.rescue.member.dto.MemberDto.MemberNicknameUpdateDto;
 import team.rescue.member.dto.MemberDto.MemberPasswordUpdateDto;
@@ -41,6 +42,8 @@ public class MemberService {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
+		validateMember(member);
+		
 		return MemberDetailDto.of(member);
 	}
 
@@ -49,6 +52,8 @@ public class MemberService {
 			MemberNicknameUpdateDto memberNicknameUpdateDto) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		validateMember(member);
 
 		member.updateNickname(memberNicknameUpdateDto.getNickname());
 
@@ -62,6 +67,8 @@ public class MemberService {
 			MemberPasswordUpdateDto memberPasswordUpdateDto) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		validateMember(member);
 
 		boolean passwordMatch = passwordEncoder.matches(memberPasswordUpdateDto.getCurrentPassword(),
 				member.getPassword());
@@ -81,6 +88,8 @@ public class MemberService {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
+		validateMember(member);
+
 		Page<Cook> cookPage = cookRepository.findByMember(member, pageable);
 
 		return cookPage.map(CookInfoDto::of);
@@ -89,6 +98,8 @@ public class MemberService {
 	public Page<RecipeInfoDto> getMyRecipes(String email, Pageable pageable) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+
+		validateMember(member);
 
 		Page<Recipe> recipePage = recipeRepository.findByMember(member, pageable);
 
@@ -99,8 +110,23 @@ public class MemberService {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
+		validateMember(member);
+
 		Page<Bookmark> bookmarkPage = bookmarkRepository.findByMember(member, pageable);
 
 		return bookmarkPage.map(bookmark -> RecipeInfoDto.of(bookmark.getRecipe()));
+	}
+
+	/**
+	 * 탈퇴 유저 검증
+	 *
+	 * @param member 검증할 유저
+	 */
+	private void validateMember(Member member) {
+
+		// 탈퇴한 멤버 조회 시
+		if (!member.getIsEnabled()) {
+			throw new ServiceException(ServiceError.USER_ALREADY_LEAVE);
+		}
 	}
 }

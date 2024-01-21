@@ -51,6 +51,11 @@ public class AuthService implements UserDetailsService {
 		Member member = memberRepository.findUserByEmail(userEmail)
 				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
+		// 탈퇴한 회원 로그인 시도 시
+		if (!member.getIsEnabled()) {
+			throw new ServiceException(ServiceError.USER_ALREADY_LEAVE);
+		}
+
 		log.debug(member.getEmail());
 		return new PrincipalDetails(member);
 	}
@@ -78,6 +83,7 @@ public class AuthService implements UserDetailsService {
 				.password(passwordEncoder.encode(joinReqDto.getPassword()))
 				.role(RoleType.GUEST)
 				.provider(ProviderType.EMAIL)
+				.isEnabled(true)
 				.build();
 
 		// 인증 Email 전송 및 DTO 반환
@@ -162,12 +168,17 @@ public class AuthService implements UserDetailsService {
 	 * @param email 사용자 이메일
 	 */
 	@Transactional
-	public void deleteMember(String email) {
+	public void disableMember(String email) {
 		Member member = memberRepository.findUserByEmail(email)
 				.orElseThrow(() -> new ServiceException(ServiceError.USER_NOT_FOUND));
 
-		fridgeRepository.deleteByMember(member);
-		memberRepository.deleteById(member.getId());
+		// 이미 탈퇴한 회원인 경우
+		if (!member.getIsEnabled()) {
+			throw new ServiceException(ServiceError.USER_ALREADY_LEAVE);
+		}
+
+		// 삭제 유저 처리
+		member.leave();
 	}
 
 	/**

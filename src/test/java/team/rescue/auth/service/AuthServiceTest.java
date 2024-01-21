@@ -261,7 +261,7 @@ class AuthServiceTest {
 				.willReturn(Optional.of(member));
 
 		// when
-		authService.deleteMember("test@gmail.com");
+		authService.disableMember("test@gmail.com");
 
 		// then
 		verify(fridgeRepository, times(1)).deleteByMember(any());
@@ -278,7 +278,7 @@ class AuthServiceTest {
 
 		// when
 		ServiceException serviceException = assertThrows(ServiceException.class,
-				() -> authService.deleteMember("test@gmail.com"));
+				() -> authService.disableMember("test@gmail.com"));
 
 		// then
 		assertEquals(ServiceError.USER_NOT_FOUND.getHttpStatus(), serviceException.getStatusCode());
