@@ -59,7 +59,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return this.member.getIsEnabled();
 	}
 
 	@Override

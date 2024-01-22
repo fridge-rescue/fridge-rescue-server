@@ -139,7 +139,7 @@ class AuthControllerTest extends MockMember {
 	@WithMockMember(role = RoleType.USER)
 	void successDeleteMember() throws Exception {
 		// given
-		doNothing().when(authService).deleteMember("test@gmail.com");
+		doNothing().when(authService).disableMember("test@gmail.com");
 
 		// when
 		// then
