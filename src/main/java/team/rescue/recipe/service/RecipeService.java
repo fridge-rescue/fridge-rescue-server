@@ -389,12 +389,14 @@ public class RecipeService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public Page<RecipeInfoDto> getRecentRecipes(Pageable pageable) {
 		Page<Recipe> recipePage = recipeRepository.findAllByOrderByCreatedAtDesc(pageable);
 
 		return recipePage.map(RecipeInfoDto::of);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<RecipeInfoDto> getPopularRecipes(Pageable pageable) {
 		Page<Recipe> recipePage = recipeRepository.findAllByOrderByBookmarkCountDesc(pageable);
 
