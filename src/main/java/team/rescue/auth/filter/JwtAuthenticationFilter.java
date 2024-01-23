@@ -6,7 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,8 +27,16 @@ import team.rescue.error.exception.AuthException;
 import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.AuthError;
 import team.rescue.error.type.ServiceError;
+import team.rescue.fridge.entity.Fridge;
+import team.rescue.fridge.entity.FridgeIngredient;
+import team.rescue.fridge.repository.FridgeIngredientRepository;
+import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.notification.entity.NotificationProperty;
+import team.rescue.notification.event.NotificationEvent;
+import team.rescue.notification.event.NotificationEventPublisher;
+import team.rescue.notification.type.NotificationType;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
@@ -42,18 +52,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private final AuthenticationManager authenticationManager;
 	private final RedisUtil redisUtil;
 	private final MemberRepository memberRepository;
+	private final NotificationEventPublisher notificationEventPublisher;
+	private final FridgeRepository fridgeRepository;
+	private final FridgeIngredientRepository fridgeIngredientRepository;
 
 	public JwtAuthenticationFilter(
 			AuthenticationManager authenticationManager,
 			ObjectMapper objectMapper,
 			RedisUtil redisUtil,
-			MemberRepository memberRepository
+			MemberRepository memberRepository,
+			NotificationEventPublisher notificationEventPublisher,
+			FridgeRepository fridgeRepository,
+			FridgeIngredientRepository fridgeIngredientRepository
 	) {
 		setFilterProcessesUrl(LOGIN_PATH);
 		this.authenticationManager = authenticationManager;
 		this.objectMapper = objectMapper;
 		this.redisUtil = redisUtil;
 		this.memberRepository = memberRepository;
+		this.notificationEventPublisher = notificationEventPublisher;
+		this.fridgeRepository = fridgeRepository;
+		this.fridgeIngredientRepository = fridgeIngredientRepository;
 	}
 
 	@Override
@@ -112,8 +131,34 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// refresh token을 Header에 담아서 클라이언트에게 전달
 		response.setHeader(HEADER_REFRESH_TOKEN, refreshToken);
 
+		validateFridgeIngredientsExpirationDate(principalDetails);
+
 		new ObjectMapper().writeValue(response.getOutputStream(), loginResponse);
 
+	}
+
+	private void validateFridgeIngredientsExpirationDate(PrincipalDetails principalDetails) {
+		Fridge fridge = fridgeRepository.findByMember(principalDetails.getMember())
+				.orElseThrow(() -> new ServiceException(ServiceError.FRIDGE_NOT_FOUND));
+
+		List<FridgeIngredient> fridgeIngredients = fridgeIngredientRepository.findByFridge(fridge);
+
+		LocalDate today = LocalDate.now();
+
+		for (FridgeIngredient fridgeIngredient : fridgeIngredients) {
+			if (today.plusDays(1).isEqual(fridgeIngredient.getExpiredAt())) {
+				NotificationEvent event = NotificationEvent.builder()
+						.email(principalDetails.getMember().getEmail())
+						.notificationType(NotificationType.INGREDIENT_EXPIRED)
+						.notificationProperty(NotificationProperty.builder()
+								.contents(fridgeIngredient.getName() + "의 유통기한이 곧 만료됩니다. 냉장고를 확인하세요!")
+								.originId(fridgeIngredient.getId())
+								.originUserId(null)
+								.build())
+						.build();
+				notificationEventPublisher.publishEvent(event);
+			}
+		}
 	}
 
 	/**

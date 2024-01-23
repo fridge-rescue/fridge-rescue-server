@@ -1,5 +1,9 @@
 package team.rescue.notification.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,7 +25,11 @@ public class NotificationDto {
 		private Long id;
 		private NotificationType notificationType;
 		private NotificationProperty notificationProperty;
+		@JsonSerialize(using = LocalDateTimeSerializer.class)
+		@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 		private LocalDateTime createdAt;
+		@JsonSerialize(using = LocalDateTimeSerializer.class)
+		@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 		private LocalDateTime checkedAt;
 
 		public static NotificationInfoDto of(Notification notification) {
@@ -33,6 +41,7 @@ public class NotificationDto {
 					.checkedAt(notification.getCheckedAt())
 					.build();
 		}
+
 	}
 
 	@Getter

@@ -31,7 +31,10 @@ import team.rescue.auth.handler.OAuthAuthorizationFailureHandler;
 import team.rescue.auth.handler.OAuthAuthorizationSuccessHandler;
 import team.rescue.auth.service.AuthService;
 import team.rescue.auth.service.OAuthService;
+import team.rescue.fridge.repository.FridgeIngredientRepository;
+import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.notification.event.NotificationEventPublisher;
 import team.rescue.util.RedisUtil;
 
 @Slf4j
@@ -47,6 +50,9 @@ public class SecurityConfig {
 	private final RedisUtil redisUtil;
 	private final ObjectMapper objectMapper;
 	private final MemberRepository memberRepository;
+	private final NotificationEventPublisher notificationEventPublisher;
+	private final FridgeRepository fridgeRepository;
+	private final FridgeIngredientRepository fridgeIngredientRepository;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -125,7 +131,8 @@ public class SecurityConfig {
 
 			builder.addFilter(
 					new JwtAuthenticationFilter(authenticationManager, objectMapper, redisUtil,
-							memberRepository));
+							memberRepository, notificationEventPublisher, fridgeRepository,
+							fridgeIngredientRepository));
 			builder.addFilter(new JwtAuthorizationFilter(authenticationManager));
 			super.configure(builder);
 		}
