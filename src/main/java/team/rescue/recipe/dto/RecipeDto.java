@@ -11,7 +11,9 @@ import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientCreateDto;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientInfoDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepDeleteDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepUpdateDto;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.search.entity.RecipeDoc;
 
@@ -38,7 +40,8 @@ public class RecipeDto {
 		private String title;
 		private String summary;
 		private List<RecipeIngredientCreateDto> ingredients;
-		private List<RecipeStepCreateDto> steps;
+		private List<RecipeStepUpdateDto> updateSteps;
+		private List<RecipeStepDeleteDto> deleteSteps;
 
 	}
 

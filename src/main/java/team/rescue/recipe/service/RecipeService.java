@@ -3,6 +3,7 @@ package team.rescue.recipe.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,9 @@ import team.rescue.recipe.dto.RecipeDto.RecipeUpdateDto;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientCreateDto;
 import team.rescue.recipe.dto.RecipeIngredientDto.RecipeIngredientInfoDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepCreateDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepDeleteDto;
 import team.rescue.recipe.dto.RecipeStepDto.RecipeStepInfoDto;
+import team.rescue.recipe.dto.RecipeStepDto.RecipeStepUpdateDto;
 import team.rescue.recipe.entity.Bookmark;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.entity.RecipeIngredient;
@@ -222,11 +225,13 @@ public class RecipeService {
 			throw new ServiceException(ServiceError.RECIPE_MEMBER_UNMATCHED);
 		}
 
-		MemberInfoDto memberInfoDto = MemberInfoDto.of(member);
-
-		// 레시피 대표 이미지 업데이트
-		fileService.deleteImages(recipe.getRecipeImageUrl());
-		String recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
+		// 대표 이미지 수정
+		String recipeImageFilePath = recipe.getRecipeImageUrl();
+		if (recipeImage != null && !recipeImage.isEmpty()) {
+			// 레시피 대표 이미지 업데이트
+			fileService.deleteImages(recipeImageFilePath);
+			recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
+		}
 
 		// 레시피 재료 수정 작업
 		// 기존 레시피 ingredient 삭제
@@ -253,40 +258,38 @@ public class RecipeService {
 
 		// 레시피 스탭 수정 작업
 		// 기존 레시피 스탭 삭제
-		List<RecipeStep> existingRecipeStepList = recipeStepRepository.findByRecipe(recipe);
-		for (RecipeStep existingRecipeStep : existingRecipeStepList) {
+		for (RecipeStepDeleteDto existingRecipeStep : info.getDeleteSteps()) {
 			// 이미지가 있는 스텝이면 s3에서 삭제
-			if (!(existingRecipeStep.getStepImageUrl() == null || existingRecipeStep.getStepImageUrl()
-					.isEmpty())) {
-				fileService.deleteImages(existingRecipeStep.getStepImageUrl());
+			RecipeStep recipeStep = recipeStepRepository.findById(existingRecipeStep.getId())
+					.orElseThrow(() -> {
+						log.error("스탭을 불러올 수 없습니다.");
+						return new ServiceException(ServiceError.RECIPE_STEP_NOT_FOUND);
+					});
+			if (!(recipeStep.getStepImageUrl() == null || recipeStep.getStepImageUrl().isEmpty())) {
+				fileService.deleteImages(recipeStep.getStepImageUrl());
 			}
+			// 스탭 데이터 삭제
+			recipeStepRepository.delete(recipeStep);
 		}
-		recipeStepRepository.deleteAll(existingRecipeStepList);
 
-		// 레시피 스탭 추가
+		// 레시피 스탭 추가 / 수정
 		List<RecipeStepInfoDto> updatedRecipeStep = new ArrayList<>();
-		for (int i = 0; i < info.getSteps().size(); i++) {
+		for (int i = 0; i < info.getUpdateSteps().size(); i++) {
+			RecipeStepUpdateDto recipeStepUpdateDto = info.getUpdateSteps().get(i);
+			RecipeStep recipeStep = null;
 
-			RecipeStepCreateDto stepDto = info.getSteps().get(i);
-			MultipartFile imageFile = stepImages.get(i);
+			// 스탭 id가 null이면 새로운 스탭 추가
+			if (recipeStepUpdateDto.getId() == null) {
+				// 추가할 이미지가 있는 스탭이라면 이미지 저장
+				recipeStep = createNewRecipeStep(recipeStepUpdateDto, stepImages.get(i), recipe);
 
-			// 이미지 파일이 존재하면 저장
-			String stepImageUrl = null;
-			if (imageFile.getSize() > 0) {
-				stepImageUrl = fileService.uploadImageToS3(imageFile);
 			}
-
-			RecipeStep step = RecipeStep.builder()
-					.stepNo(i)
-					.stepImageUrl(stepImageUrl) // URL 설정
-					.stepDescription(stepDto.getDescription())
-					.stepTip(stepDto.getTip())
-					.recipe(recipe) // 레시피와 연결
-					.build();
-
-			updatedRecipeStep.add(RecipeStepInfoDto.of(step));
-
-			recipeStepRepository.save(step);
+			// 스탭 id가 있다면, 기존 스탭 수정
+			else {
+				recipeStep = updateExistingRecipeStep(recipeStepUpdateDto, stepImages.get(i));
+			}
+			recipeStepRepository.save(recipeStep);
+			updatedRecipeStep.add(RecipeStepInfoDto.of(recipeStep));
 		}
 
 		recipe.update(
@@ -298,7 +301,6 @@ public class RecipeService {
 		recipeRepository.save(recipe);
 
 		return RecipeInfoDto.of(recipe);
-
 	}
 
 	@Transactional
@@ -399,5 +401,38 @@ public class RecipeService {
 		Page<Recipe> recipePage = recipeRepository.findAllByOrderByBookmarkCountDesc(pageable);
 
 		return recipePage.map(RecipeInfoDto::of);
+	}
+
+	private RecipeStep createNewRecipeStep(RecipeStepUpdateDto dto, MultipartFile imageFile, Recipe recipe) {
+		String stepImageUrl = null;
+		if (imageFile.getSize() > 0) {
+			stepImageUrl = fileService.uploadImageToS3(imageFile);
+		}
+
+		return RecipeStep.builder()
+				.stepNo(dto.getStepNo())
+				.stepImageUrl(stepImageUrl)
+				.stepDescription(dto.getDescription())
+				.stepTip(dto.getTip())
+				.recipe(recipe)
+				.build();
+	}
+
+	private RecipeStep updateExistingRecipeStep(RecipeStepUpdateDto dto, MultipartFile imageFile) {
+		RecipeStep recipeStep = recipeStepRepository.findById(dto.getId())
+				.orElseThrow(() -> {
+					log.error("스탭을 불러올 수 없습니다.");
+					return new ServiceException(ServiceError.RECIPE_STEP_NOT_FOUND);
+				});
+
+		if (imageFile.getSize() > 0 && !Objects.equals(imageFile.getContentType(), "String")) {
+			String stepImageUrl = fileService.uploadImageToS3(imageFile);
+			fileService.deleteImages(recipeStep.getStepImageUrl());
+			recipeStep.updateRecipeStep(dto.getStepNo(), stepImageUrl, dto.getDescription(), dto.getTip());
+		} else {
+			recipeStep.updateRecipeStepWithoutImage(dto.getStepNo(), dto.getDescription(), dto.getTip());
+		}
+
+		return recipeStep;
 	}
 }
