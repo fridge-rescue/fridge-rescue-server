@@ -50,6 +50,9 @@ public enum ServiceError {
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰 정보가 없습니다."),
 	REVIEW_MEMBER_UNMATCHED(HttpStatus.FORBIDDEN, "리뷰를 작성한 회원이 아닙니다"),
 
+	// search
+	SEARCH_KEYWORD_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 키워드의 결과가 없습니다."),
+
 	// Lock
 	LOCK_ACQUISITION_FAIL(HttpStatus.BAD_REQUEST, "잠시 후 다시 시도해주세요."),
 	LOCK_ALREADY_ASSIGNED(HttpStatus.BAD_REQUEST, "잠시 후 다시 시도해주세요.");

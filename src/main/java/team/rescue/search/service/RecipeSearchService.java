@@ -14,11 +14,9 @@ import team.rescue.error.type.ServiceError;
 import team.rescue.fridge.entity.Fridge;
 import team.rescue.fridge.entity.FridgeIngredient;
 import team.rescue.fridge.repository.FridgeRepository;
-import team.rescue.member.dto.MemberDto.MemberInfoDto;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
-import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.search.entity.RecipeDoc;
 import team.rescue.search.repository.RecipeSearchRepository;
@@ -41,6 +39,11 @@ public class RecipeSearchService {
 
 		SearchPage<RecipeDoc> searchHits =
 				recipeSearchRepository.searchByKeyword(keyword, pageable);
+
+		// 검색 결과가 비어 있는지 확인
+		if (searchHits.isEmpty()) {
+			throw new ServiceException(ServiceError.SEARCH_KEYWORD_NOT_FOUND);
+		}
 
 		List<RecipeInfoDto> recipeInfoDtos = searchHits.getContent().stream()
 				.map(hit -> RecipeInfoDto.of(hit.getContent()))
