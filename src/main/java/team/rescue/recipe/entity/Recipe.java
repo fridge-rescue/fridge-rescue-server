@@ -42,7 +42,7 @@ public class Recipe {
 	@Column(name = "title", nullable = false, length = 100)
 	private String title;
 
-	@Column(name = "summary", length = 100)
+	@Column(name = "summary", length = 200)
 	private String summary;
 
 	@Column(name = "recipe_image_url", length = 150)
