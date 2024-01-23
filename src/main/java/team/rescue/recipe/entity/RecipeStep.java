@@ -38,13 +38,14 @@ public class RecipeStep {
 	@Column(name = "step_image_url", length = 150)
 	private String stepImageUrl;
 
-	@Column(name = "step_description", nullable = false, length = 100)
+	@Column(name = "step_description", nullable = false, length = 200)
 	private String stepDescription;
 
-	@Column(name = "step_tip", nullable = false, length = 100)
+	@Column(name = "step_tip", nullable = false, length = 200)
 	private String stepTip;
 
-	public void updateRecipeStep(int stepNo, String stepImageUrl, String stepContents, String stepTip) {
+	public void updateRecipeStep(int stepNo, String stepImageUrl, String stepContents,
+			String stepTip) {
 		this.stepNo = stepNo;
 		this.stepImageUrl = stepImageUrl;
 		this.stepDescription = stepContents;
