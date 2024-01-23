@@ -51,4 +51,10 @@ public class RecipeStep {
 		this.stepDescription = stepContents;
 		this.stepTip = stepTip;
 	}
+
+	public void updateRecipeStepWithoutImage(int stepNo, String stepContents, String stepTip) {
+		this.stepNo = stepNo;
+		this.stepDescription = stepContents;
+		this.stepTip = stepTip;
+	}
 }
