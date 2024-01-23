@@ -17,7 +17,6 @@ import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
-import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.search.entity.RecipeDoc;
 import team.rescue.search.repository.RecipeSearchRepository;
 
@@ -29,7 +28,6 @@ public class RecipeSearchService {
 	private final RecipeSearchRepository recipeSearchRepository;
 	private final MemberRepository memberRepository;
 	private final FridgeRepository fridgeRepository;
-	private final RecipeRepository recipeRepository;
 
 	public Page<RecipeInfoDto> searchRecipeByKeyword(
 			String keyword, Pageable pageable
@@ -37,8 +35,14 @@ public class RecipeSearchService {
 
 		log.info("키워드 검색 서비스");
 
-		SearchPage<RecipeDoc> searchHits =
-				recipeSearchRepository.searchByKeyword(keyword, pageable);
+		SearchPage<RecipeDoc> searchHits;
+
+		// 키워드에 공백이 포함되어 있는지 확인
+		if (keyword.contains(" ")) {
+			searchHits = recipeSearchRepository.searchByKeywordIs(keyword, pageable);
+		} else {
+			searchHits = recipeSearchRepository.searchByKeywordContains(keyword, pageable);
+		}
 
 		// 검색 결과가 비어 있는지 확인
 		if (searchHits.isEmpty()) {
