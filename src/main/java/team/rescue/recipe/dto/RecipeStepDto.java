@@ -27,6 +27,7 @@ public class RecipeStepDto {
 	@Builder
 	public static class RecipeStepInfoDto {
 
+		private Long id;
 		private int stepNo;
 		private String stepImageUrl;
 		private String stepDescription;
@@ -34,6 +35,7 @@ public class RecipeStepDto {
 
 		public static RecipeStepInfoDto of(RecipeStep recipeStep) {
 			return RecipeStepInfoDto.builder()
+					.id(recipeStep.getId())
 					.stepNo(recipeStep.getStepNo())
 					.stepImageUrl(recipeStep.getStepImageUrl())
 					.stepDescription(recipeStep.getStepDescription())
