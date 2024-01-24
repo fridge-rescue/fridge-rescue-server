@@ -1,7 +1,6 @@
 package team.rescue.search.entity;
 
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;

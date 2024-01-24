@@ -1,14 +1,12 @@
 package team.rescue.notification.service;
 
 import java.io.IOException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import team.rescue.notification.dto.NotificationDto.NotificationInfoDto;
-import team.rescue.notification.entity.Notification;
 import team.rescue.notification.repository.SseEmitterRepository;
 
 @RequiredArgsConstructor
@@ -44,17 +42,5 @@ public class SseEmitterService {
 			log.error("알림 전송 예외 발생");
 			sseEmitterRepository.deleteById(id);
 		}
-	}
-
-	public Map<String, Object> getEventCache(String email) {
-		return sseEmitterRepository.findAllEventCacheStartsWithId(email);
-	}
-
-	public Map<String, SseEmitter> getEmitters(String email) {
-		return sseEmitterRepository.findAllEmitterStartsWithId(email);
-	}
-
-	public void saveEventCache(String id, Notification notification) {
-		sseEmitterRepository.saveEventCache(id, notification);
 	}
 }

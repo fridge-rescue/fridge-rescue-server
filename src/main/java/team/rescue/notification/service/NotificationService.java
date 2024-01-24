@@ -5,7 +5,6 @@ import static team.rescue.error.type.ServiceError.NOTIFICATION_NOT_FOUND;
 import static team.rescue.error.type.ServiceError.USER_NOT_FOUND;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,35 +79,27 @@ public class NotificationService {
 		return NotificationInfoDto.of(updateNotification);
 	}
 
-	public SseEmitter subscribe(String email, String lastEventId) {
-		String id = email + "_" + System.currentTimeMillis();
-
-		SseEmitter sseEmitter = sseEmitterService.createEmitter(id);
-
-		sseEmitter.onTimeout(() -> sseEmitterService.deleteEmitter(id));
-		sseEmitter.onError(e -> sseEmitter.complete());
-		sseEmitter.onCompletion(() -> {
-			sseEmitterService.deleteEmitter(id);
-			redisMessageService.removeSubscribe(email);
-		});
-
-		// 503 에러 방지를 위한 더미 데이터 추가
+	public SseEmitter subscribe(String email) {
+		SseEmitter sseEmitter = sseEmitterService.createEmitter(email);
 		sseEmitterService.send("EventStream Created. [userEmail=" + email + "]", email, sseEmitter);
 
-		if (!lastEventId.isEmpty()) {
-			Map<String, Object> eventCache = sseEmitterService.getEventCache(email);
-			eventCache.entrySet().stream()
-					.filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-					.forEach(entry -> sseEmitterService.send(entry.getValue(), entry.getKey(), sseEmitter));
-		}
-
 		redisMessageService.subscribe(email);
+
+		sseEmitter.onTimeout(sseEmitter::complete);
+		sseEmitter.onError(e -> sseEmitter.complete());
+		sseEmitter.onCompletion(() -> {
+			sseEmitterService.deleteEmitter(email);
+			redisMessageService.removeSubscribe(email);
+		});
 
 		return sseEmitter;
 	}
 
 	@Transactional
 	public void sendNotification(NotificationEvent event) {
+
+		log.info("sendNotification 메서드 수행");
+
 		Member member = memberRepository.findUserByEmail(event.email())
 				.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
@@ -127,14 +118,6 @@ public class NotificationService {
 		)) {
 
 			notificationRepository.save(notification);
-
-			Map<String, SseEmitter> emitters = sseEmitterService.getEmitters(member.getEmail());
-			emitters.forEach(
-					(key, emitter) -> {
-						sseEmitterService.saveEventCache(key, notification);
-						sseEmitterService.send(NotificationInfoDto.of(notification), key, emitter);
-					}
-			);
 
 			redisMessageService.publish(event.email(), NotificationInfoDto.of(notification));
 		}

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -34,11 +33,10 @@ public class NotificationController {
 	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<SseEmitter> subscribe(
-			@AuthenticationPrincipal PrincipalDetails principalDetails,
-			@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId
+			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		return ResponseEntity.ok(
-				notificationService.subscribe(principalDetails.getUsername(), lastEventId));
+				notificationService.subscribe(principalDetails.getUsername()));
 	}
 
 	@GetMapping
