@@ -149,6 +149,7 @@ public class RecipeService {
 				.reviewCount(0)
 				.reportCount(0)
 				.bookmarkCount(0)
+				.isBlocked(false)
 				.member(member) // 멤버 연결
 				.build();
 
@@ -405,7 +406,8 @@ public class RecipeService {
 		return recipePage.map(RecipeInfoDto::of);
 	}
 
-	private RecipeStep createNewRecipeStep(RecipeStepUpdateDto dto, MultipartFile imageFile, Recipe recipe) {
+	private RecipeStep createNewRecipeStep(RecipeStepUpdateDto dto, MultipartFile imageFile,
+			Recipe recipe) {
 		String stepImageUrl = null;
 		if (imageFile.getSize() > 0) {
 			stepImageUrl = fileService.uploadImageToS3(imageFile);
@@ -430,7 +432,8 @@ public class RecipeService {
 		if (imageFile.getSize() > 0 && !Objects.equals(imageFile.getContentType(), "String")) {
 			String stepImageUrl = fileService.uploadImageToS3(imageFile);
 			fileService.deleteImages(recipeStep.getStepImageUrl());
-			recipeStep.updateRecipeStep(dto.getStepNo(), stepImageUrl, dto.getDescription(), dto.getTip());
+			recipeStep.updateRecipeStep(dto.getStepNo(), stepImageUrl, dto.getDescription(),
+					dto.getTip());
 		} else {
 			recipeStep.updateRecipeStepWithoutImage(dto.getStepNo(), dto.getDescription(), dto.getTip());
 		}

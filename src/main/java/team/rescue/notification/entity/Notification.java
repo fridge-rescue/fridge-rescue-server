@@ -1,6 +1,5 @@
 package team.rescue.notification.entity;
 
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -19,7 +18,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import team.rescue.member.entity.Member;
@@ -32,6 +33,7 @@ import team.rescue.notification.type.NotificationType;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@ToString
 public class Notification {
 
 	@Id
@@ -47,7 +49,7 @@ public class Notification {
 	@Column(name = "notification_type")
 	private NotificationType notificationType;
 
-	@Type(JsonType.class)
+	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "notification_property", columnDefinition = "json", nullable = false)
 	private NotificationProperty notificationProperty;
 
