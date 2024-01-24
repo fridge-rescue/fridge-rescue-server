@@ -228,7 +228,8 @@ public class RecipeService {
 
 		// 대표 이미지 수정
 		String recipeImageFilePath = recipe.getRecipeImageUrl();
-		if (recipeImage != null && !recipeImage.isEmpty()) {
+		if (recipeImage != null && !recipeImage.isEmpty() &&
+				!Objects.equals(recipeImage.getContentType(), "String")) {
 			// 레시피 대표 이미지 업데이트
 			fileService.deleteImages(recipeImageFilePath);
 			recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
