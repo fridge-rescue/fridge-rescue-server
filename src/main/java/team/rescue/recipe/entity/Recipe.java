@@ -60,6 +60,9 @@ public class Recipe {
 	@Column(name = "bookmark_count", nullable = false)
 	private Integer bookmarkCount;
 
+	@Column(name = "is_blocked", nullable = false)
+	private Boolean isBlocked;
+
 	@CreatedDate
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
