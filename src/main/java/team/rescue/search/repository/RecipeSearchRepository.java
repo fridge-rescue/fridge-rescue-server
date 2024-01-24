@@ -13,6 +13,7 @@ import org.springframework.data.elasticsearch.core.SearchPage;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.StringQuery;
 import org.springframework.stereotype.Component;
 import team.rescue.search.entity.RecipeDoc;
 
@@ -54,32 +55,15 @@ public class RecipeSearchRepository {
 	}
 
 	/**
-	 * Recipe Document 키워드 포함 기반 검색
+	 * Recipe Document 키워드 기반 검색
 	 *
 	 * @param keyword  검색할 keyword
 	 * @param pageable 페이지네이션 정보
 	 * @return 키워드와 매치되는 Recipe Documents
 	 */
-	public SearchPage<RecipeDoc> searchByKeywordContains(String keyword, Pageable pageable) {
-		Criteria criteriaForTitle = Criteria.where("title").contains(keyword);
-		Criteria criteriaForSummary = Criteria.where("summary").contains(keyword);
-		Criteria combinedCriteria = criteriaForTitle.or(criteriaForSummary);
-
-		Query query = new CriteriaQuery(combinedCriteria).setPageable(pageable);
-		SearchHits<RecipeDoc> searchHits = searchOperations.search(query, RecipeDoc.class);
-		return SearchHitSupport.searchPageFor(searchHits, pageable);
-	}
-
-	/**
-	 * Recipe Document 키워드 일 기반 검색
-	 *
-	 * @param keyword  검색할 keyword
-	 * @param pageable 페이지네이션 정보
-	 * @return 키워드와 매치되는 Recipe Documents
-	 */
-	public SearchPage<RecipeDoc> searchByKeywordIs(String keyword, Pageable pageable) {
-		Criteria criteriaForTitle = Criteria.where("title").is(keyword);
-		Criteria criteriaForSummary = Criteria.where("summary").is(keyword);
+	public SearchPage<RecipeDoc> searchByKeyword(String keyword, Pageable pageable) {
+		Criteria criteriaForTitle = Criteria.where("title").matches(keyword);
+		Criteria criteriaForSummary = Criteria.where("summary").matches(keyword);
 		Criteria combinedCriteria = criteriaForTitle.or(criteriaForSummary);
 
 		Query query = new CriteriaQuery(combinedCriteria).setPageable(pageable);

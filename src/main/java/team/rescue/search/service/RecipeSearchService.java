@@ -35,14 +35,8 @@ public class RecipeSearchService {
 
 		log.info("키워드 검색 서비스");
 
-		SearchPage<RecipeDoc> searchHits;
-
-		// 키워드에 공백이 포함되어 있는지 확인
-		if (keyword.contains(" ")) {
-			searchHits = recipeSearchRepository.searchByKeywordIs(keyword, pageable);
-		} else {
-			searchHits = recipeSearchRepository.searchByKeywordContains(keyword, pageable);
-		}
+		SearchPage<RecipeDoc> searchHits =
+				recipeSearchRepository.searchByKeyword(keyword, pageable);
 
 		// 검색 결과가 비어 있는지 확인
 		if (searchHits.isEmpty()) {
