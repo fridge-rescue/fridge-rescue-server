@@ -17,7 +17,6 @@ import team.rescue.fridge.repository.FridgeRepository;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
 import team.rescue.recipe.dto.RecipeDto.RecipeInfoDto;
-import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.search.entity.RecipeDoc;
 import team.rescue.search.repository.RecipeSearchRepository;
 
@@ -29,7 +28,6 @@ public class RecipeSearchService {
 	private final RecipeSearchRepository recipeSearchRepository;
 	private final MemberRepository memberRepository;
 	private final FridgeRepository fridgeRepository;
-	private final RecipeRepository recipeRepository;
 
 	public Page<RecipeInfoDto> searchRecipeByKeyword(
 			String keyword, Pageable pageable

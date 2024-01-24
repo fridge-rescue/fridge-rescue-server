@@ -1,15 +1,19 @@
 package team.rescue.search.repository;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHitSupport;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.SearchPage;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.StringQuery;
 import org.springframework.stereotype.Component;
 import team.rescue.search.entity.RecipeDoc;
 
@@ -58,8 +62,8 @@ public class RecipeSearchRepository {
 	 * @return 키워드와 매치되는 Recipe Documents
 	 */
 	public SearchPage<RecipeDoc> searchByKeyword(String keyword, Pageable pageable) {
-		Criteria criteriaForTitle = Criteria.where("title").is(keyword);
-		Criteria criteriaForSummary = Criteria.where("summary").is(keyword);
+		Criteria criteriaForTitle = Criteria.where("title").matches(keyword);
+		Criteria criteriaForSummary = Criteria.where("summary").matches(keyword);
 		Criteria combinedCriteria = criteriaForTitle.or(criteriaForSummary);
 
 		Query query = new CriteriaQuery(combinedCriteria).setPageable(pageable);
