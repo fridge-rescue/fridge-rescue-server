@@ -146,7 +146,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		LocalDate today = LocalDate.now();
 
 		for (FridgeIngredient fridgeIngredient : fridgeIngredients) {
-			if (today.plusDays(1).isEqual(fridgeIngredient.getExpiredAt())) {
+			if (fridgeIngredient.getExpiredAt() != null && today.plusDays(1)
+					.isEqual(fridgeIngredient.getExpiredAt())) {
 				NotificationEvent event = NotificationEvent.builder()
 						.email(principalDetails.getMember().getEmail())
 						.notificationType(NotificationType.INGREDIENT_EXPIRED)
