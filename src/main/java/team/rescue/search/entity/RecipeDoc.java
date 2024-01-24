@@ -20,7 +20,7 @@ import team.rescue.member.entity.Member;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.entity.RecipeIngredient;
 
-@Document(indexName = "recipetest2")
+@Document(indexName = "recipes")
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
