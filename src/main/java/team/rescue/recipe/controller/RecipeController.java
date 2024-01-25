@@ -115,7 +115,7 @@ public class RecipeController {
 	public ResponseEntity<ResponseDto<RecipeInfoDto>> updateRecipe(
 			@PathVariable Long recipeId,
 			@RequestPart RecipeUpdateDto request,
-			@RequestPart MultipartFile recipeImage,
+			@RequestPart(required = false) MultipartFile recipeImage,
 			@RequestPart List<MultipartFile> stepImages,
 			@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
