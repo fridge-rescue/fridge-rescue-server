@@ -77,6 +77,11 @@ public class Recipe {
 		this.recipeImageUrl = recipeImageUrl;
 	}
 
+	public void updateWithoutImage(String title, String summary) {
+		this.title = title;
+		this.summary = summary;
+	}
+
 	public void decreaseReviewCount() {
 		this.reviewCount--;
 	}

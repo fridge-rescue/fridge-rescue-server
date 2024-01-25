@@ -226,15 +226,6 @@ public class RecipeService {
 			throw new ServiceException(ServiceError.RECIPE_MEMBER_UNMATCHED);
 		}
 
-		// 대표 이미지 수정
-		String recipeImageFilePath = recipe.getRecipeImageUrl();
-		if (recipeImage != null && !recipeImage.isEmpty() &&
-				!Objects.equals(recipeImage.getContentType(), "String")) {
-			// 레시피 대표 이미지 업데이트
-			fileService.deleteImages(recipeImageFilePath);
-			recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
-		}
-
 		// 레시피 재료 수정 작업
 		// 기존 레시피 ingredient 삭제
 		List<RecipeIngredient> existingRecipeIngredientList =
@@ -294,11 +285,25 @@ public class RecipeService {
 			updatedRecipeStep.add(RecipeStepInfoDto.of(recipeStep));
 		}
 
-		recipe.update(
-				info.getTitle(),
-				info.getSummary(),
-				recipeImageFilePath
-		);
+		// 대표 이미지 수정
+		if (recipeImage.getSize() > 0 && !Objects.equals(recipeImage.getContentType(), "String")) {
+			String recipeImageFilePath = recipe.getRecipeImageUrl();
+			// 레시피 대표 이미지 업데이트
+			fileService.deleteImages(recipeImageFilePath);
+			recipeImageFilePath = fileService.uploadImageToS3(recipeImage);
+
+			recipe.update(
+					info.getTitle(),
+					info.getSummary(),
+					recipeImageFilePath
+			);
+		} else {
+			recipe.updateWithoutImage(
+					info.getTitle(),
+					info.getSummary()
+			);
+		}
+
 
 		recipeRepository.save(recipe);
 

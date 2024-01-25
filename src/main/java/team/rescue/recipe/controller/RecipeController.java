@@ -130,7 +130,7 @@ public class RecipeController {
 	}
 
 	@DeleteMapping("/{recipeId}")
-//	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<ResponseDto<RecipeInfoDto>> deleteRecipe(
 			@PathVariable Long recipeId,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
