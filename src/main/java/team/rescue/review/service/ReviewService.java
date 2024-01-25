@@ -17,6 +17,10 @@ import team.rescue.error.exception.ServiceException;
 import team.rescue.error.type.ServiceError;
 import team.rescue.member.entity.Member;
 import team.rescue.member.repository.MemberRepository;
+import team.rescue.notification.entity.NotificationProperty;
+import team.rescue.notification.event.NotificationEvent;
+import team.rescue.notification.event.NotificationEventPublisher;
+import team.rescue.notification.type.NotificationType;
 import team.rescue.recipe.entity.Recipe;
 import team.rescue.recipe.repository.RecipeRepository;
 import team.rescue.review.dto.ReviewDto.ReviewDetailDto;
@@ -36,6 +40,7 @@ public class ReviewService {
 	private final CookRepository cookRepository;
 	private final RecipeRepository recipeRepository;
 	private final FileService fileService;
+	private final NotificationEventPublisher notificationEventPublisher;
 
 
 	/**
@@ -47,7 +52,7 @@ public class ReviewService {
 	 * @return 등록 리뷰 요약 데이터 DTO
 	 */
 	@Transactional
-	@DistributedLock(prefix="review_recipe")
+	@DistributedLock(prefix = "review_recipe")
 	public ReviewInfoDto createReview(
 			ReviewReqDto reviewReqDto,
 			MultipartFile image,
@@ -72,6 +77,18 @@ public class ReviewService {
 				.contents(reviewReqDto.getContents())
 				.imageUrl(fileService.uploadImageToS3(image))
 				.build();
+
+		// 레시피 리뷰에 대한 이벤트 발행
+		NotificationEvent event = NotificationEvent.builder()
+				.email(recipe.getMember().getEmail())
+				.notificationType(NotificationType.RECIPE_REVIEWED)
+				.notificationProperty(NotificationProperty.builder()
+						.contents(member.getNickname() + "님이 " + recipe.getTitle() + " 게시글에 리뷰를 남겼습니다.")
+						.originId(recipe.getId())
+						.originUserId(member.getId())
+						.build())
+				.build();
+		notificationEventPublisher.publishEvent(event);
 
 		return ReviewInfoDto.of(reviewRepository.save(review));
 	}
